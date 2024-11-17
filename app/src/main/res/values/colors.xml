@@ -10,4 +10,5 @@
     <color name="darkerOrange">#E68900</color>
 
     <color name="pageGrey">#F7F8FC</color>
+    <color name="lineBreak">#D3D3D3</color>
 </resources>
