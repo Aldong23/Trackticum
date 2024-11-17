@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--  Custom Color theme  -->
+    <color name="deepTeal">#145673</color>
+    <color name="darkerTeal">#0D3C4E</color>
+    <color name="orange">#FF9800</color>
+    <color name="darkerOrange">#E68900</color>
+
+    <color name="pageGrey">#F7F8FC</color>
+</resources>

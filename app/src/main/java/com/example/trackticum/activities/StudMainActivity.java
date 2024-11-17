@@ -1,0 +1,51 @@
+package com.example.trackticum.activities;
+
+import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.trackticum.R;
+import com.example.trackticum.databinding.ActivityStudMainBinding;
+import com.example.trackticum.fragments.StudHomeFragment;
+import com.example.trackticum.fragments.StudProfileFragment;
+import com.example.trackticum.fragments.StudSettingsFragment;
+
+public class StudMainActivity extends AppCompatActivity {
+
+    ActivityStudMainBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        binding = ActivityStudMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        replaceFragment(new StudHomeFragment());
+
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+
+            int itemId = item.getItemId();
+
+            if(itemId == R.id.home){
+                replaceFragment(new StudHomeFragment());
+            }else if(itemId == R.id.profile){
+                replaceFragment(new StudProfileFragment());
+            }else if(itemId == R.id.settings){
+                replaceFragment(new StudSettingsFragment());
+            }
+
+            return true;
+        });
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
+    }
+}

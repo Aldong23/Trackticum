@@ -1,0 +1,52 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Trackticum" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/deepTeal</item>
+        <item name="colorPrimaryVariant">@color/darkerTeal</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/orange</item>
+        <item name="colorSecondaryVariant">@color/darkerOrange</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Customize your theme here. -->
+        <item name="android:screenOrientation">portrait</item>
+    </style>
+
+    <!-- No Action bar  -->
+    <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:screenOrientation">portrait</item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/deepTeal</item>
+        <item name="colorPrimaryVariant">@color/darkerTeal</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/orange</item>
+        <item name="colorSecondaryVariant">@color/darkerOrange</item>
+        <item name="colorOnSecondary">@color/black</item>
+    </style>
+
+    <!-- ImageView shape  -->
+    <style name="roundedImageViewRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!--  Font  -->
+    <style name="BoldText">
+        <item name="android:fontFamily">@font/sf_rounded_bold</item>
+    </style>
+    <style name="RegularText">
+        <item name="android:fontFamily">@font/sf_rounded_regular</item>
+    </style>
+    <style name="SemiBoldText">
+        <item name="android:fontFamily">@font/sf_rounded_semibold</item>
+    </style>
+
+    <style name="Theme.Trackticum" parent="Base.Theme.Trackticum" />
+</resources>
