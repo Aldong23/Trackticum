@@ -29,8 +29,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingVertical="8dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/com_logo_IV"
@@ -44,26 +43,26 @@
                 app:riv_oval="true" />
 
             <TextView
-                android:id="@+id/com_name_TV"
+                android:id="@+id/com_name_tv"
                 style="@style/BoldText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Village 88"
+                android:text="@string/loading_text"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="@+id/com_logo_IV"
                 app:layout_constraintStart_toStartOf="@+id/com_logo_IV"
                 app:layout_constraintTop_toBottomOf="@+id/com_logo_IV" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/com_status_tv"
                 style="@style/RegularText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="open"
+                android:text="@string/loading_text"
                 android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@+id/com_name_TV"
-                app:layout_constraintStart_toStartOf="@+id/com_name_TV"
-                app:layout_constraintTop_toBottomOf="@+id/com_name_TV" />
+                app:layout_constraintEnd_toEndOf="@+id/com_name_tv"
+                app:layout_constraintStart_toStartOf="@+id/com_name_tv"
+                app:layout_constraintTop_toBottomOf="@+id/com_name_tv" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -73,7 +72,7 @@
                 android:background="@drawable/rounded_background"
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5">
+                app:layout_constraintTop_toBottomOf="@+id/com_status_tv">
 
                 <TextView
                     android:id="@+id/information_tv"
@@ -88,7 +87,7 @@
                     android:id="@+id/location_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_location"
                     app:layout_constraintStart_toStartOf="@+id/information_tv"
                     app:layout_constraintTop_toBottomOf="@+id/information_tv" />
@@ -99,7 +98,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="San Fernando, Elyu"
+                    android:text="@string/loading_text"
+                    android:maxLines="2"
+                    android:ellipsize="end"
                     app:layout_constraintBottom_toBottomOf="@+id/location_icon"
                     app:layout_constraintStart_toEndOf="@+id/location_icon"
                     app:layout_constraintTop_toTopOf="@+id/location_icon" />
@@ -111,7 +112,7 @@
                     android:layout_marginTop="8dp"
                     android:src="@drawable/ic_email1"
                     app:layout_constraintStart_toStartOf="@+id/location_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/location_icon" />
+                    app:layout_constraintTop_toBottomOf="@+id/com_location_tv" />
 
                 <TextView
                     android:id="@+id/com_email_tv"
@@ -119,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="village88@gmail.com"
+                    android:text="@string/loading_text"
                     app:layout_constraintBottom_toBottomOf="@+id/email_icon"
                     app:layout_constraintStart_toEndOf="@+id/email_icon"
                     app:layout_constraintTop_toTopOf="@+id/email_icon" />
@@ -131,7 +132,7 @@
                     android:layout_marginTop="8dp"
                     android:src="@drawable/ic_users"
                     app:layout_constraintStart_toStartOf="@+id/email_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/email_icon" />
+                    app:layout_constraintTop_toBottomOf="@+id/com_email_tv" />
 
                 <TextView
                     android:id="@+id/com_slot_tv"
@@ -139,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="3"
+                    android:text="@string/loading_text"
                     app:layout_constraintBottom_toBottomOf="@+id/slot_icon"
                     app:layout_constraintStart_toEndOf="@+id/slot_icon"
                     app:layout_constraintTop_toTopOf="@+id/slot_icon" />
@@ -171,7 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:justificationMode="inter_word"
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                    android:text="@string/loading_text"
                     app:layout_constraintStart_toStartOf="@+id/about_tv"
                     app:layout_constraintTop_toBottomOf="@+id/about_tv" />
 

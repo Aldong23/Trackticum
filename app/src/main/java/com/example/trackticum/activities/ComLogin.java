@@ -93,7 +93,7 @@ public class ComLogin extends AppCompatActivity {
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            RequestQueue queue = Volley.newRequestQueue(this);
             String url = Constants.API_BASE_URL + "/company/com-login";
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

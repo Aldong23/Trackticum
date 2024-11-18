@@ -31,12 +31,6 @@
         <item name="colorOnSecondary">@color/black</item>
     </style>
 
-    <!-- ImageView shape  -->
-    <style name="roundedImageViewRounded">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
-
     <!--  Font  -->
     <style name="BoldText">
         <item name="android:fontFamily">@font/sf_rounded_bold</item>

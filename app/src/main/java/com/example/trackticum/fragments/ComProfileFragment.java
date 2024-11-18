@@ -1,5 +1,7 @@
 package com.example.trackticum.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,6 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.activities.ComEditProfile;
 import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.utils.Constants;
 import com.google.android.flexbox.FlexboxLayout;
@@ -47,9 +50,17 @@ public class ComProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
+    private static final int REQUEST_CODE_EDIT_PROFILE = 1001;
+
+    // For action bar
     private Toolbar toolbar;
-    private FlexboxLayout jobsContainer;
+
+    //Fetch Company Information
+    private TextView comNameTV, comStatusTV, comLocationTV, comEmailTV, comSlotTV, comBgTV;
     SharedPreferences sharedPreferences;
+
+    //for Skill Requirements
+    private FlexboxLayout jobsContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,11 +75,23 @@ public class ComProfileFragment extends Fragment {
     }
 
     private void initializeData(View view) {
+        //For action bar
         toolbar = view.findViewById(R.id.com_profile_toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("Profile");
 
+        //Fetch Company Information
+        comNameTV = view.findViewById(R.id.com_name_tv);
+        comStatusTV = view.findViewById(R.id.com_status_tv);
+        comLocationTV = view.findViewById(R.id.com_location_tv);
+        comEmailTV = view.findViewById(R.id.com_email_tv);
+        comSlotTV = view.findViewById(R.id.com_slot_tv);
+        comBgTV = view.findViewById(R.id.com_descrip_tv);
+        sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        fetchCompanyDetails();
+
+        //Setting up the Skill Requirements
         jobsContainer = view.findViewById(R.id.jobsContainer);
         List<String> jobOffers = Arrays.asList(
                 "Software Engineer",
@@ -103,6 +126,47 @@ public class ComProfileFragment extends Fragment {
 
     }
 
+    private void fetchCompanyDetails() {
+        String comId = sharedPreferences.getString("com_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/company/get-com-details/" + comId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject comDetails = new JSONObject(response);
+
+                int comID = comDetails.getInt("id");
+                String comName = comDetails.getString("com_name");
+                String comStatus = comDetails.getString("com_status");
+                String comLocation = comDetails.getString("com_address");
+                String comEmail = comDetails.getString("com_email");
+                String comSlot = comDetails.getString("com_slot");
+                String comBg = comDetails.getString("com_description");
+
+                comNameTV.setText(comName);
+                comStatusTV.setText(comStatus);
+                comLocationTV.setText(comLocation);
+                comEmailTV.setText(comEmail);
+                comSlotTV.setText(comSlot);
+                comBgTV.setText(comBg);
+
+            } catch (JSONException e) {
+                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+        });
+
+        queue.add(request);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_EDIT_PROFILE && resultCode == RESULT_OK) {
+            fetchCompanyDetails();
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +185,8 @@ public class ComProfileFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.edit_info) {
-            Toast.makeText(getContext(), "Edit clicked", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), ComEditProfile.class);
+            startActivityForResult(intent, REQUEST_CODE_EDIT_PROFILE);
             return true;
         }
 
