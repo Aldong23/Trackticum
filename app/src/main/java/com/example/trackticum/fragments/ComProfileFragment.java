@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.ComEditProfile;
+import com.example.trackticum.activities.ComManageJoboffer;
 import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.utils.Constants;
 import com.google.android.flexbox.FlexboxLayout;
@@ -58,6 +60,7 @@ public class ComProfileFragment extends Fragment {
     //Fetch Company Information
     private TextView comNameTV, comStatusTV, comLocationTV, comEmailTV, comSlotTV, comBgTV;
     SharedPreferences sharedPreferences;
+    ImageView manageJobOfferBtn;
 
     //for Skill Requirements
     private FlexboxLayout jobsContainer;
@@ -91,6 +94,8 @@ public class ComProfileFragment extends Fragment {
         sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         fetchCompanyDetails();
 
+        manageJobOfferBtn = view.findViewById(R.id.manage_joboffer_btn);
+
         //Setting up the Skill Requirements
         jobsContainer = view.findViewById(R.id.jobsContainer);
         List<String> jobOffers = Arrays.asList(
@@ -123,7 +128,14 @@ public class ComProfileFragment extends Fragment {
     }
 
     private void setupListeners(View view) {
+        manageJobOfferBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ComManageJoboffer.class);
+                startActivity(intent);
 
+            }
+        });
     }
 
     private void fetchCompanyDetails() {

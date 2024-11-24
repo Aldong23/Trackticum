@@ -1,6 +1,8 @@
 package com.example.trackticum.activities;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowInsetsController;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,14 @@ public class ComMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        //setting up the status bar
+        getWindow().setStatusBarColor(getResources().getColor(R.color.deepTeal));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().getInsetsController().setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(0); // Clear the flag for light status bar
+        }
+
         binding = ActivityComMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new ComHomeFragment());

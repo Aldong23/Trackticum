@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowInsetsController;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
@@ -53,6 +55,13 @@ public class ComEditProfile extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_com_edit_profile);
         setupWindowInsets();
+        //setting up the status bar
+        getWindow().setStatusBarColor(getResources().getColor(R.color.deepTeal));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().getInsetsController().setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(0); // Clear the flag for light status bar
+        }
 
         //Add code here
         initializeData();
