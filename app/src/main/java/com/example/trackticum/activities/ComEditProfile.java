@@ -1,21 +1,25 @@
 package com.example.trackticum.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowInsetsController;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -28,11 +32,16 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.utils.Constants;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.textfield.TextInputEditText;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +51,9 @@ public class ComEditProfile extends AppCompatActivity {
     private Toolbar toolbar;
 
     //Inputs
-    private TextInputEditText comNameET, comAddressET, comEmailET, comSlotET, comBgET;
-    private AutoCompleteTextView comStatusET;
-    private ArrayAdapter<String> adapterItems;
+    private TextInputEditText comNameET, comAddressET, comSlotET, comBgET;
+    RoundedImageView comLogoIV;
+    ImageButton uploadLogoBtn;
 
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
@@ -77,18 +86,13 @@ public class ComEditProfile extends AppCompatActivity {
 
         //initialized inputs
         comNameET = findViewById(R.id.com_name_ET);
-        comStatusET = findViewById(R.id.com_status_ET);
         comAddressET = findViewById(R.id.com_address_ET);
-        comEmailET = findViewById(R.id.com_email_ET);
         comSlotET = findViewById(R.id.com_slot_ET);
         comBgET = findViewById(R.id.com_bg_ET);
+        comLogoIV = findViewById(R.id.com_logo_IV);
+        uploadLogoBtn = findViewById(R.id.upload_logo_btn);
         progressDialog = new ProgressDialog(this);
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-
-        //set up dropdown inputs
-        String[] statusItems = {"Open", "Close"};
-        adapterItems = new ArrayAdapter<String>(this,R.layout.dropdown_layout,statusItems);
-        comStatusET.setAdapter(adapterItems);
 
         fetchOldComDetails();
 
@@ -96,7 +100,81 @@ public class ComEditProfile extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        uploadLogoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePicker.with(ComEditProfile.this)
+                        .cropSquare()
+                        .galleryOnly()
+                        .compress(1024)
+                        .maxResultSize(1080, 1080)
+                        .start();
+            }
+        });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            Uri uri = data.getData();
+
+            String base64Image = convertImageToBase64(uri);
+            if (base64Image != null) {
+                uploadImageToServer(base64Image, uri);
+            }
+        } else if (resultCode == ImagePicker.RESULT_ERROR && data != null) {
+            Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void uploadImageToServer(String base64Image, Uri uri) {
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Uploading");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        String comId = sharedPreferences.getString("com_id", null);
+        String url = Constants.API_BASE_URL + "/company/upload-com-logo";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Upload Successful", Toast.LENGTH_LONG).show();
+                    comLogoIV.setImageURI(uri);
+                },
+                error -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("company_id", comId);
+                params.put("logo", base64Image); // Send Base64 image string
+                return params;
+            }
+        };
+
+        queue.add(stringRequest);
+    }
+
+    private String convertImageToBase64(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            return Base64.encodeToString(bytes, Base64.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error encoding image", Toast.LENGTH_SHORT).show();
+            return null;
+        }
     }
 
     private void fetchOldComDetails() {
@@ -108,21 +186,26 @@ public class ComEditProfile extends AppCompatActivity {
                 JSONObject comDetails = new JSONObject(response);
 
                 int comID = comDetails.getInt("id");
-                String comName = comDetails.getString("com_name");
-                String comStatus = comDetails.getString("com_status");
-                String comLocation = comDetails.getString("com_address");
-                String comEmail = comDetails.getString("com_email");
-                String comSlot = comDetails.getString("com_slot");
-                String comBg = comDetails.getString("com_description");
+                String imageUrl = comDetails.getString("image_url");
+                String comName = comDetails.getString("name");
+                String comLocation = comDetails.getString("address");
+                String comSlot = comDetails.getString("slot");
+                String comBg = comDetails.getString("description");
 
                 comNameET.setText(comName);
-                comStatusET.setText(comStatus, false);
                 comAddressET.setText(comLocation);
-                comEmailET.setText(comEmail);
                 comSlotET.setText(comSlot);
                 comBgET.setText(comBg);
 
-                comStatusET.setAdapter(adapterItems);
+                if (!imageUrl.isEmpty()) {
+                    Picasso.get()
+                            .load(imageUrl)
+                            .placeholder(R.drawable.img_placeholder)
+                            .error(R.drawable.img_placeholder)
+                            .resize(500, 500)
+                            .centerCrop()
+                            .into(comLogoIV);
+                }
 
             } catch (JSONException e) {
                 Toast.makeText(this, "Error Fetching Details", Toast.LENGTH_SHORT).show();
@@ -135,30 +218,18 @@ public class ComEditProfile extends AppCompatActivity {
     }
 
     private void updateCompanyInfo() {
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         String comId = sharedPreferences.getString("com_id", null);
         String com_name = comNameET.getText().toString().trim();
-        String com_status = comStatusET.getText().toString().trim();
         String com_address = comAddressET.getText().toString().trim();
-        String com_email = comEmailET.getText().toString().trim();
         String com_slot = comSlotET.getText().toString().trim();
         String com_bg = comBgET.getText().toString().trim();
 
         if (com_name.isEmpty()) {
             comNameET.setError("Please enter your Name");
             comNameET.requestFocus();
-        } else if (com_status.isEmpty()) {
-            comStatusET.setError("Please enter your Status");
-            comStatusET.requestFocus();
         } else if (com_address.isEmpty()) {
             comAddressET.setError("Please enter your Address");
             comAddressET.requestFocus();
-        } else if (com_email.isEmpty()) {
-            comEmailET.setError("Please enter your Email");
-            comEmailET.requestFocus();
-        } else if (!com_email.matches(emailPattern)) {
-            comEmailET.setError("Please enter a valid email");
-            comEmailET.requestFocus();
         } else if (com_slot.isEmpty()) {
             comSlotET.setError("Please enter Slot");
             comSlotET.requestFocus();
@@ -173,7 +244,7 @@ public class ComEditProfile extends AppCompatActivity {
                     comBgET.requestFocus();
                 } else {
                     // All validations passed, proceed with the data
-                    saveDataToDatabase(comId, com_name, com_status, com_address, com_email, com_slot, com_bg);
+                    saveDataToDatabase(comId, com_name, com_address, com_slot, com_bg);
                 }
             } catch (NumberFormatException e) {
                 comSlotET.setError("Slot must be a valid number");
@@ -182,7 +253,7 @@ public class ComEditProfile extends AppCompatActivity {
         }
     }
 
-    private void saveDataToDatabase(String comId, String comName, String comStatus, String comAddress, String comEmail, String comSlot, String comBg) {
+    private void saveDataToDatabase(String comId, String comName, String comAddress, String comSlot, String comBg) {
         progressDialog.setMessage("Please wait...");
         progressDialog.setTitle("Saving");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -204,9 +275,7 @@ public class ComEditProfile extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("com_id", comId);
                 params.put("com_name", comName);
-                params.put("com_status", comStatus);
                 params.put("com_address", comAddress);
-                params.put("com_email", comEmail);
                 params.put("com_slot", comSlot);
                 params.put("com_bg", comBg);
                 return params;

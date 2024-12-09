@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ComManageJoboffer extends AppCompatActivity implements JobOfferAdapter.OnJobOfferClickListener {
+public class ComManageJoboffer extends AppCompatActivity {
 
     //For Action bar
     private Toolbar toolbar;
@@ -92,9 +93,11 @@ public class ComManageJoboffer extends AppCompatActivity implements JobOfferAdap
         //fetching job offer
         recyclerView = findViewById(R.id.joboffer_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
 
         jobOfferList = new ArrayList<>();
-        adapter = new JobOfferAdapter(jobOfferList, this);
+        adapter = new JobOfferAdapter(this, jobOfferList);
         recyclerView.setAdapter(adapter);
         fetchJobOffers();
     }
@@ -178,7 +181,7 @@ public class ComManageJoboffer extends AppCompatActivity implements JobOfferAdap
     private void fetchJobOffers() {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String comId = sharedPreferences.getString("com_id", null);
-        String url = Constants.API_BASE_URL + "/company/get-job-offers/" + comId; // Update with your API endpoint
+        String url = Constants.API_BASE_URL + "/company/get-job-offers/" + comId;
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -211,32 +214,6 @@ public class ComManageJoboffer extends AppCompatActivity implements JobOfferAdap
         queue.add(jsonArrayRequest);
     }
 
-    //set RecyclerView clickable
-    @Override
-    public void onEditClick(JobOffer jobOffer) {
-        Toast.makeText(this, "Edit: " + jobOffer.getJobTitle() + " " + jobOffer.getId(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDeleteClick(JobOffer jobOffer) {
-    // Show delete confirmation dialog
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Job Offer")
-                .setMessage("Are you sure you want to delete this job offer?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    // Perform delete action here (e.g., send API request to delete)
-                    deleteJobOffer(jobOffer);
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
-    private void deleteJobOffer(JobOffer jobOffer) {
-        // Send delete request to the server and update RecyclerView
-        // Example:
-        Toast.makeText(this, "Deleted: " + jobOffer.getJobTitle(), Toast.LENGTH_SHORT).show();
-        jobOfferList.remove(jobOffer); // Remove from list
-        adapter.notifyDataSetChanged(); // Refresh RecyclerView
-    }
 
     private void setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

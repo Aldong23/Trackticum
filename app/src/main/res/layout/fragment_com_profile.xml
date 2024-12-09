@@ -36,7 +36,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/logo_placeholder"
+                android:src="@drawable/img_placeholder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -54,7 +54,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/com_logo_IV" />
 
             <TextView
-                android:id="@+id/com_status_tv"
+                android:id="@+id/com_nature_tv"
                 style="@style/RegularText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                 android:background="@drawable/rounded_background"
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/com_status_tv">
+                app:layout_constraintTop_toBottomOf="@+id/com_nature_tv">
 
                 <TextView
                     android:id="@+id/information_tv"
@@ -95,13 +95,14 @@
                 <TextView
                     android:id="@+id/com_location_tv"
                     style="@style/RegularText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@string/loading_text"
-                    android:maxLines="2"
                     android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/loading_text"
                     app:layout_constraintBottom_toBottomOf="@+id/location_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/location_icon"
                     app:layout_constraintTop_toTopOf="@+id/location_icon" />
 
@@ -117,13 +118,35 @@
                 <TextView
                     android:id="@+id/com_email_tv"
                     style="@style/RegularText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="@string/loading_text"
                     app:layout_constraintBottom_toBottomOf="@+id/email_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/email_icon"
                     app:layout_constraintTop_toTopOf="@+id/email_icon" />
+
+                <ImageView
+                    android:id="@+id/contact_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_telephone"
+                    app:layout_constraintStart_toStartOf="@+id/email_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/com_email_tv" />
+
+                <TextView
+                    android:id="@+id/com_contact_tv"
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/loading_text"
+                    app:layout_constraintBottom_toBottomOf="@+id/contact_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/contact_icon"
+                    app:layout_constraintTop_toTopOf="@+id/contact_icon" />
 
                 <ImageView
                     android:id="@+id/slot_icon"
@@ -131,17 +154,18 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="8dp"
                     android:src="@drawable/ic_users"
-                    app:layout_constraintStart_toStartOf="@+id/email_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/com_email_tv" />
+                    app:layout_constraintStart_toStartOf="@+id/contact_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/com_contact_tv" />
 
                 <TextView
                     android:id="@+id/com_slot_tv"
                     style="@style/RegularText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="@string/loading_text"
                     app:layout_constraintBottom_toBottomOf="@+id/slot_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/slot_icon"
                     app:layout_constraintTop_toTopOf="@+id/slot_icon" />
 
@@ -196,10 +220,11 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/manage_joboffer_btn"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_edit1"
                     app:layout_constraintBottom_toBottomOf="@+id/job_offer_tv"
                     app:layout_constraintEnd_toEndOf="parent"

@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +40,8 @@ import com.example.trackticum.activities.ComManageJoboffer;
 import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.utils.Constants;
 import com.google.android.flexbox.FlexboxLayout;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,9 +61,10 @@ public class ComProfileFragment extends Fragment {
     private Toolbar toolbar;
 
     //Fetch Company Information
-    private TextView comNameTV, comStatusTV, comLocationTV, comEmailTV, comSlotTV, comBgTV;
+    private TextView comNameTV, comNatureTV, comLocationTV, comEmailTV, comSlotTV, comContactTV, comBgTV;
+    private RoundedImageView comLogoIV;
     SharedPreferences sharedPreferences;
-    ImageView manageJobOfferBtn;
+    private ImageButton manageJobOfferBtn;
 
     //for Skill Requirements
     private FlexboxLayout jobsContainer;
@@ -85,11 +89,13 @@ public class ComProfileFragment extends Fragment {
         activity.getSupportActionBar().setTitle("Profile");
 
         //Fetch Company Information
+        comLogoIV = view.findViewById(R.id.com_logo_IV);
         comNameTV = view.findViewById(R.id.com_name_tv);
-        comStatusTV = view.findViewById(R.id.com_status_tv);
+        comNatureTV = view.findViewById(R.id.com_nature_tv);
         comLocationTV = view.findViewById(R.id.com_location_tv);
         comEmailTV = view.findViewById(R.id.com_email_tv);
         comSlotTV = view.findViewById(R.id.com_slot_tv);
+        comContactTV = view.findViewById(R.id.com_contact_tv);
         comBgTV = view.findViewById(R.id.com_descrip_tv);
         sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         fetchCompanyDetails();
@@ -147,19 +153,33 @@ public class ComProfileFragment extends Fragment {
                 JSONObject comDetails = new JSONObject(response);
 
                 int comID = comDetails.getInt("id");
-                String comName = comDetails.getString("com_name");
-                String comStatus = comDetails.getString("com_status");
-                String comLocation = comDetails.getString("com_address");
-                String comEmail = comDetails.getString("com_email");
-                String comSlot = comDetails.getString("com_slot");
-                String comBg = comDetails.getString("com_description");
+                String imageUrl = comDetails.getString("image_url");
+                String comName = comDetails.getString("name");
+                String comNature = comDetails.getString("nature");
+                String comLocation = comDetails.getString("address");
+                String comEmail = comDetails.getString("email");
+                String comSlot = comDetails.getString("slot");
+                String comContact = comDetails.getString("contact");
+                String comBg = comDetails.getString("description");
 
                 comNameTV.setText(comName);
-                comStatusTV.setText(comStatus);
+                comNatureTV.setText(comNature);
                 comLocationTV.setText(comLocation);
                 comEmailTV.setText(comEmail);
                 comSlotTV.setText(comSlot);
+                comContactTV.setText(comContact);
                 comBgTV.setText(comBg);
+
+                Picasso.get().invalidate(imageUrl);
+                if (!imageUrl.isEmpty()) {
+                    Picasso.get()
+                            .load(imageUrl)
+                            .placeholder(R.drawable.img_placeholder)
+                            .error(R.drawable.img_placeholder)
+                            .resize(500, 500)
+                            .centerCrop()
+                            .into(comLogoIV);
+                }
 
             } catch (JSONException e) {
                 Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
