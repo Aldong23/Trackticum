@@ -32,6 +32,9 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
@@ -43,6 +46,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,8 +58,6 @@ public class ComProfileFragment extends Fragment {
     public ComProfileFragment() {
         // Required empty public constructor
     }
-
-    private static final int REQUEST_CODE_EDIT_PROFILE = 1001;
 
     // For action bar
     private Toolbar toolbar;
@@ -104,33 +106,7 @@ public class ComProfileFragment extends Fragment {
 
         //Setting up the Skill Requirements
         jobsContainer = view.findViewById(R.id.jobsContainer);
-        List<String> jobOffers = Arrays.asList(
-                "Software Engineer",
-                "UI/UX Designer",
-                "Marketing Specialist",
-                "Data Analyst",
-                "Product Manager"
-        );
-
-        for (String job : jobOffers) {
-            TextView jobTextView = new TextView(requireActivity());
-            jobTextView.setText(job);
-            jobTextView.setPadding(16, 8, 16, 8);
-            jobTextView.setBackgroundResource(R.drawable.job_offer_style);
-            jobTextView.setTextColor(Color.BLACK);
-
-            Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
-            jobTextView.setTypeface(customFont);
-
-            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                    FlexboxLayout.LayoutParams.WRAP_CONTENT,
-                    FlexboxLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(2, 2, 2, 2);
-            jobTextView.setLayoutParams(params);
-
-            jobsContainer.addView(jobTextView);
-        }
+        fetchJobOffer();
     }
 
     private void setupListeners(View view) {
@@ -191,12 +167,68 @@ public class ComProfileFragment extends Fragment {
         queue.add(request);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_EDIT_PROFILE && resultCode == RESULT_OK) {
-            fetchCompanyDetails();
-        }
+    private void fetchJobOffer() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String comId = sharedPreferences.getString("com_id", null);
+
+        String url = Constants.API_BASE_URL + "/company/get-job-offers/" + comId;
+
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Clear the existing views in jobsContainer
+                            jobsContainer.removeAllViews();
+
+                            // Loop through the job offers in the response
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject obj = response.getJSONObject(i);
+                                int jobOfferId = obj.getInt("id");
+                                String jobTitle = obj.getString("name");
+
+                                // Create TextView for each job offer
+                                TextView jobTextView = new TextView(requireActivity());
+                                jobTextView.setText(jobTitle);
+                                jobTextView.setPadding(16, 8, 16, 8);
+                                jobTextView.setBackgroundResource(R.drawable.job_offer_style);
+                                jobTextView.setTextColor(Color.BLACK);
+
+                                Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
+                                jobTextView.setTypeface(customFont);
+
+                                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                                        FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                                        FlexboxLayout.LayoutParams.WRAP_CONTENT
+                                );
+                                params.setMargins(2, 2, 2, 2);
+                                jobTextView.setLayoutParams(params);
+
+                                // Add the TextView to the container
+                                jobsContainer.addView(jobTextView);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(requireContext(), "Error processing job offers", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        Toast.makeText(requireContext(), "Failed to fetch job offers", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        // Add the request to the RequestQueue
+        requestQueue.add(jsonArrayRequest);
     }
 
     @Override
@@ -218,10 +250,29 @@ public class ComProfileFragment extends Fragment {
 
         if (id == R.id.edit_info) {
             Intent intent = new Intent(getActivity(), ComEditProfile.class);
-            startActivityForResult(intent, REQUEST_CODE_EDIT_PROFILE);
+            startActivity(intent);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        boolean refreshProfile = prefs.getBoolean("refreshComProfile", false);
+        boolean refreshJobOffer = prefs.getBoolean("refreshJobOffers", false);
+
+        if(refreshProfile){
+            fetchCompanyDetails();
+            prefs.edit().putBoolean("refreshComProfile", false).apply();
+        }
+        if(refreshJobOffer){
+            fetchJobOffer();
+            prefs.edit().putBoolean("refreshJobOffers", false).apply();
+        }
+
     }
 }

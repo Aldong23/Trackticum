@@ -1,6 +1,7 @@
 package com.example.trackticum.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ComManageJoboffer extends AppCompatActivity {
+public class ComManageJoboffer extends AppCompatActivity implements JobOfferAdapter.JobOfferActions {
 
     //For Action bar
     private Toolbar toolbar;
@@ -97,9 +98,13 @@ public class ComManageJoboffer extends AppCompatActivity {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         jobOfferList = new ArrayList<>();
-        adapter = new JobOfferAdapter(this, jobOfferList);
+        adapter = new JobOfferAdapter(this, jobOfferList, this);
         recyclerView.setAdapter(adapter);
         fetchJobOffers();
+
+        //request to refresh profile
+        SharedPreferences prefs = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        prefs.edit().putBoolean("refreshJobOffers", true).apply();
     }
 
     private void setupListeners() {
@@ -194,7 +199,7 @@ public class ComManageJoboffer extends AppCompatActivity {
                             try {
                                 JSONObject obj = response.getJSONObject(i);
                                 int jobOfferId = obj.getInt("id");
-                                String jobTitle = obj.getString("job_title");
+                                String jobTitle = obj.getString("name");
 
                                 jobOfferList.add(new JobOffer(jobOfferId, jobTitle));
                             } catch (JSONException e) {
@@ -214,6 +219,66 @@ public class ComManageJoboffer extends AppCompatActivity {
         queue.add(jsonArrayRequest);
     }
 
+    @Override
+    public void onDeleteJobOffer(int jobId) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Deleting");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        String url = Constants.API_BASE_URL + "/company/delete-job-offers/" + jobId;
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressDialog.dismiss();
+                        Toast.makeText(ComManageJoboffer.this, "Job offer deleted successfully", Toast.LENGTH_SHORT).show();
+                        fetchJobOffers();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(ComManageJoboffer.this, "Failed to delete job offer", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        queue.add(stringRequest);
+    }
+
+    @Override
+    public void onEditJobOffer(String jobTitle, int jobId) {
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Saving");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = Constants.API_BASE_URL + "/company/update-job-offer";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(ComManageJoboffer.this, response, Toast.LENGTH_LONG).show();
+                    fetchJobOffers();
+                }, error -> {
+            progressDialog.dismiss();
+            Toast.makeText(ComManageJoboffer.this, "Failed to update", Toast.LENGTH_SHORT).show();
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("joboffer_id", String.valueOf(jobId));
+                params.put("job_title", jobTitle);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
 
     private void setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

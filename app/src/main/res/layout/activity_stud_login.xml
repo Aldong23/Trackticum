@@ -14,15 +14,15 @@
         android:layout_marginBottom="25dp"
         android:text="Login"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/login_studid_layout"
-        app:layout_constraintEnd_toEndOf="@+id/login_studid_layout"
-        app:layout_constraintStart_toStartOf="@+id/login_studid_layout" />
+        app:layout_constraintBottom_toTopOf="@+id/login_studno_layout"
+        app:layout_constraintEnd_toEndOf="@+id/login_studno_layout"
+        app:layout_constraintStart_toStartOf="@+id/login_studno_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/login_studid_layout"
+        android:id="@+id/login_studno_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Student ID"
+        android:hint="Student Number"
         android:layout_marginHorizontal="35dp"
         android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toTopOf="@+id/login_password_layout"
@@ -31,7 +31,7 @@
         app:startIconDrawable="@drawable/ic_person">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/login_studid"
+            android:id="@+id/login_studno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" />

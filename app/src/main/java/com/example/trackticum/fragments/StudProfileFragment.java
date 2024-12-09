@@ -39,7 +39,7 @@ public class StudProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_com_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_stud_profile, container, false);
 
         // Add code below
         initializeData(view);
@@ -53,15 +53,15 @@ public class StudProfileFragment extends Fragment {
         emailTV = view.findViewById(R.id.user_email_tv);
         logoutBTN = view.findViewById(R.id.logout_btn);
         sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String studUserid = sharedPreferences.getString("stud_userid", null);
+        String studId = sharedPreferences.getString("stud_id", null);
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
-        String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studUserid;
+        String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studId;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
             try {
                 JSONObject studDetails = new JSONObject(response);
 
-                int studId = studDetails.getInt("stud_id");
+                int studNo = studDetails.getInt("student_number");
                 String studFirstname = studDetails.getString("stud_firstname");
                 String studMiddlename = studDetails.getString("stud_middlename");
                 String studLastname = studDetails.getString("stud_lastname");

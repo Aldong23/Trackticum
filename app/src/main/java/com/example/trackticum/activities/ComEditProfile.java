@@ -96,7 +96,8 @@ public class ComEditProfile extends AppCompatActivity {
 
         fetchOldComDetails();
 
-
+        //request to refresh profile
+        sharedPreferences.edit().putBoolean("refreshComProfile", true).apply();
     }
 
     private void setupListeners() {
@@ -302,8 +303,6 @@ public class ComEditProfile extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            Intent resultIntent = new Intent();
-            setResult(RESULT_OK, resultIntent);
             finish();
             return true;
         } else if (id == R.id.save_info) {

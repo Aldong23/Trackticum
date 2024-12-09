@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class StudLogin extends AppCompatActivity {
 
-    private TextInputEditText studid_et, studpassword_et;
+    private TextInputEditText studno_et, studpassword_et;
     private Button login_btn, company_link_btn;
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
@@ -49,7 +49,7 @@ public class StudLogin extends AppCompatActivity {
     }
 
     private void initializeData() {
-        studid_et = findViewById(R.id.login_studid);
+        studno_et = findViewById(R.id.login_studno);
         studpassword_et = findViewById(R.id.login_password);
         login_btn = findViewById(R.id.login_btn);
         company_link_btn = findViewById(R.id.company_link_btn);
@@ -74,12 +74,12 @@ public class StudLogin extends AppCompatActivity {
     }
 
     private void performLogin() {
-        String stud_id = studid_et.getText().toString().trim();
+        String stud_no = studno_et.getText().toString().trim();
         String stud_password = studpassword_et.getText().toString().trim();
 
-        if (stud_id.isEmpty()) {
-            studid_et.setError("Please enter your Student ID");
-            studid_et.requestFocus();
+        if (stud_no.isEmpty()) {
+            studno_et.setError("Please enter your Student ID");
+            studno_et.requestFocus();
         } else if (stud_password.isEmpty()) {
             studpassword_et.setError("Please enter your password");
             studpassword_et.requestFocus();
@@ -98,10 +98,10 @@ public class StudLogin extends AppCompatActivity {
                         JSONObject jsonResponse = new JSONObject(response);
                         boolean status = jsonResponse.getBoolean("status");
                         String message = jsonResponse.getString("message");
-                        int studUserid = jsonResponse.getInt("stud_userid");
+                        int stud_id = jsonResponse.getInt("stud_id");
 
                         if (status) {
-                            storeStudIdToSession(String.valueOf(studUserid));
+                            storeStudIdToSession(String.valueOf(stud_id));
                             redirectToMain();
                         }
                         progressDialog.dismiss();
@@ -117,7 +117,7 @@ public class StudLogin extends AppCompatActivity {
                     @Override
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<>();
-                        params.put("student_id", stud_id);
+                        params.put("student_number", stud_no);
                         params.put("password", stud_password);
                         return params;
                     }
@@ -128,7 +128,7 @@ public class StudLogin extends AppCompatActivity {
 
     private void storeStudIdToSession(String studUserid) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("stud_userid", studUserid);
+        editor.putString("stud_id", studUserid);
         editor.apply();
     }
 
@@ -143,7 +143,7 @@ public class StudLogin extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        String studUserid = sharedPreferences.getString("stud_userid", null);
+        String studUserid = sharedPreferences.getString("stud_id", null);
         String comId = sharedPreferences.getString("com_id", null);
         if (studUserid != null && comId == null) {
             Intent intent = new Intent(StudLogin.this, StudMainActivity.class);

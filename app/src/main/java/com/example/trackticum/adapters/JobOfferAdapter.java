@@ -16,22 +16,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
-import com.example.trackticum.activities.ComManageJoboffer;
 import com.example.trackticum.models.JobOffer;
-import com.example.trackticum.utils.Constants;
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -39,10 +26,17 @@ public class JobOfferAdapter extends RecyclerView.Adapter<JobOfferAdapter.JobOff
 
     Context context;
     private List<JobOffer> jobOfferList;
+    private JobOfferActions actions;
 
-    public JobOfferAdapter(Context context, List<JobOffer> jobOfferList) {
+    public JobOfferAdapter(Context context, List<JobOffer> jobOfferList, JobOfferActions actions) {
         this.context = context;
         this.jobOfferList = jobOfferList;
+        this.actions = actions;
+    }
+
+    public interface JobOfferActions {
+        void onDeleteJobOffer(int jobId);
+        void onEditJobOffer(String jobTitle, int jobId);
     }
 
     @NonNull
@@ -80,7 +74,7 @@ public class JobOfferAdapter extends RecyclerView.Adapter<JobOfferAdapter.JobOff
                         String jobTitle = editTextJobTitle.getText().toString().trim();
 
                         if (!jobTitle.isEmpty()) {
-                            saveJobOfferToDB(jobTitle, jobOffer.getId());
+                            actions.onEditJobOffer(jobTitle, jobOffer.getId());
                         } else {
                             Toast.makeText(context, "Please input job title!", Toast.LENGTH_SHORT).show();
                         }
@@ -108,46 +102,13 @@ public class JobOfferAdapter extends RecyclerView.Adapter<JobOfferAdapter.JobOff
                         .setMessage("Are you sure you want to delete this job offer?")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             // Perform delete action here (e.g., send API request to delete)
-                            deleteJobOffer(jobOffer.getId());
+                            actions.onDeleteJobOffer(jobOffer.getId());
                         })
                         .setNegativeButton("No", null)
                         .show();
             }
         });
 
-    }
-
-    private void deleteJobOffer(int id) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.setTitle("Deleting");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-
-        String url = Constants.API_BASE_URL + "/company/delete-job-offers/" + id;
-        RequestQueue queue = Volley.newRequestQueue(context);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-                        Toast.makeText(context, "Job offer deleted successfully", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(context, "Failed to delete job offer", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        queue.add(stringRequest);
-    }
-
-    private void saveJobOfferToDB(String jobTitle, int id) {
-        Toast.makeText(context, jobTitle + " " + String.valueOf(id), Toast.LENGTH_SHORT).show();
     }
 
     @Override
