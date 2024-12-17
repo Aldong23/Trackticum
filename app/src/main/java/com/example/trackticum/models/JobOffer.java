@@ -1,7 +1,7 @@
 package com.example.trackticum.models;
 
 public class JobOffer {
-    private final int id; // Add id for unique identification
+    private final int id;
     private final String jobTitle;
 
     public JobOffer(int id, String jobTitle) {

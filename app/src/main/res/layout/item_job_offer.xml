@@ -8,11 +8,12 @@
 
     <TextView
         android:id="@+id/job_title_tv"
+        style="@style/RegularText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Loading"
         android:textSize="18sp"
-        style="@style/RegularText"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="16dp" />
 

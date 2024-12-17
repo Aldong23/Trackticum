@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -99,16 +98,17 @@ public class StudLogin extends AppCompatActivity {
                         boolean status = jsonResponse.getBoolean("status");
                         String message = jsonResponse.getString("message");
                         int stud_id = jsonResponse.getInt("stud_id");
+                        int department_id = jsonResponse.getInt("dep_id");
 
                         if (status) {
-                            storeStudIdToSession(String.valueOf(stud_id));
+                            storeStudIdToSession(String.valueOf(stud_id), String.valueOf(department_id));
                             redirectToMain();
                         }
                         progressDialog.dismiss();
                         Toast.makeText(StudLogin.this, message, Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         progressDialog.dismiss();
-                        Toast.makeText(StudLogin.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StudLogin.this, "Login Error", Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
                     progressDialog.dismiss();
@@ -126,9 +126,10 @@ public class StudLogin extends AppCompatActivity {
         }
     }
 
-    private void storeStudIdToSession(String studUserid) {
+    private void storeStudIdToSession(String studUserid, String departmentId) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("stud_id", studUserid);
+        editor.putString("dep_id", departmentId);
         editor.apply();
     }
 

@@ -13,16 +13,25 @@
 
     <application
         android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Trackticum"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.StudViewRequirement"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudRequirements"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudEditProfile"
+            android:exported="false" />
         <activity
             android:name=".activities.ComManageJoboffer"
             android:exported="false" />
