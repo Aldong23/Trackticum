@@ -13,7 +13,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.trackticum.R;
 import com.example.trackticum.databinding.ActivityStudMainBinding;
 import com.example.trackticum.fragments.StudHomeFragment;
+import com.example.trackticum.fragments.StudNotificationFragment;
 import com.example.trackticum.fragments.StudProfileFragment;
+import com.example.trackticum.fragments.StudQrFragment;
 import com.example.trackticum.fragments.StudSettingsFragment;
 
 public class StudMainActivity extends AppCompatActivity {
@@ -43,6 +45,10 @@ public class StudMainActivity extends AppCompatActivity {
 
             if(itemId == R.id.home){
                 replaceFragment(new StudHomeFragment());
+            }else if(itemId == R.id.notification){
+                replaceFragment(new StudNotificationFragment());
+            }else if(itemId == R.id.gen_qr){
+                replaceFragment(new StudQrFragment());
             }else if(itemId == R.id.profile){
                 replaceFragment(new StudProfileFragment());
             }else if(itemId == R.id.settings){

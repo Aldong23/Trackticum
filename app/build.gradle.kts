@@ -51,4 +51,5 @@ dependencies {
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
     implementation ("com.github.dhaval2404:imagepicker:2.1")
     implementation ("com.squareup.picasso:picasso:2.8")
+    implementation ("com.github.androidmads:QRGenerator:1.0.5")
 }

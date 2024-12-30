@@ -24,6 +24,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.StudShowCompany"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudManageSkills"
+            android:exported="false" />
+        <activity
             android:name=".activities.StudViewRequirement"
             android:exported="false" />
         <activity

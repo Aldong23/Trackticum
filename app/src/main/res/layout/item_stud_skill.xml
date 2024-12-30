@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/skill_title_tv"
+        style="@style/RegularText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Loading"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <ImageButton
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/action_delete"
+        app:layout_constraintBottom_toBottomOf="@+id/skill_title_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/skill_title_tv" />
+
+    <ImageButton
+        android:id="@+id/edit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/action_edit"
+        app:layout_constraintBottom_toBottomOf="@+id/delete_btn"
+        app:layout_constraintEnd_toStartOf="@+id/delete_btn"
+        app:layout_constraintTop_toTopOf="@+id/delete_btn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

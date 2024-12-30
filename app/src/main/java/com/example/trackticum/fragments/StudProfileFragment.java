@@ -3,12 +3,15 @@ package com.example.trackticum.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -19,28 +22,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
-import com.example.trackticum.activities.ComEditProfile;
-import com.example.trackticum.activities.StudLogin;
+import com.example.trackticum.activities.StudEditProfile;
+import com.example.trackticum.activities.StudManageSkills;
 import com.example.trackticum.activities.StudRequirements;
 import com.example.trackticum.utils.Constants;
+import com.google.android.flexbox.FlexboxLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -61,6 +67,11 @@ public class StudProfileFragment extends Fragment {
 
     //button for requirements and weekly report
     private Button viewReqBTN, viewWeeklyReportBTN;
+
+    private ImageButton viewStudSkillsBTN;
+
+    //for Skill Requirements
+    private FlexboxLayout skillsContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,9 +117,14 @@ public class StudProfileFragment extends Fragment {
         //button for requirements and weekly report
         viewReqBTN = view.findViewById(R.id.view_req_btn);
         viewWeeklyReportBTN = view.findViewById(R.id.view_weekly_btn);
+        viewStudSkillsBTN = view.findViewById(R.id.manage_mykills_btn);
 
         //fetching all details
         fetchStudAndComDetails();
+
+        //Setting up the Skill Requirements
+        skillsContainer = view.findViewById(R.id.myskillscontatiner);
+        fetchSkills();
     }
 
     private void setupListeners() {
@@ -116,6 +132,13 @@ public class StudProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), StudRequirements.class);
+                startActivity(intent);
+            }
+        });
+        viewStudSkillsBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), StudManageSkills.class);
                 startActivity(intent);
             }
         });
@@ -130,7 +153,7 @@ public class StudProfileFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(response);
 
                 String comId = jsonObject.getString("company_id");
-                String studImageUrl = jsonObject.getString("image");
+                String studImageUrl = jsonObject.getString("image_url");
                 String studFname = jsonObject.getString("firstname");
                 String studLname = jsonObject.getString("lastname");
                 String studMinitial = jsonObject.getString("middle_initial") + ".";
@@ -200,6 +223,69 @@ public class StudProfileFragment extends Fragment {
         queue.add(request);
     }
 
+    private void fetchSkills() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String studID = sharedPreferences.getString("stud_id", null);
+
+        String url = Constants.API_BASE_URL + "/student/get-skills/" + studID;
+
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Clear the existing views in jobsContainer
+                            skillsContainer.removeAllViews();
+
+                            // Loop through the job offers in the response
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject obj = response.getJSONObject(i);
+                                int skillID = obj.getInt("id");
+                                String skillTitle = obj.getString("name");
+
+                                // Create TextView for each job offer
+                                TextView jobTextView = new TextView(requireActivity());
+                                jobTextView.setText(skillTitle);
+                                jobTextView.setPadding(16, 8, 16, 8);
+                                jobTextView.setBackgroundResource(R.drawable.job_offer_style);
+                                jobTextView.setTextColor(Color.BLACK);
+
+                                Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
+                                jobTextView.setTypeface(customFont);
+
+                                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                                        FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                                        FlexboxLayout.LayoutParams.WRAP_CONTENT
+                                );
+                                params.setMargins(2, 2, 2, 2);
+                                jobTextView.setLayoutParams(params);
+
+                                // Add the TextView to the container
+                                skillsContainer.addView(jobTextView);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(requireContext(), "Error processing skills", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        );
+
+        // Add the request to the RequestQueue
+        requestQueue.add(jsonArrayRequest);
+    }
+
     public String calculateAge(String studBirthday) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -241,8 +327,8 @@ public class StudProfileFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.edit_info) {
-//            Intent intent = new Intent(getActivity(), ComEditProfile.class);
-//            startActivity(intent);
+            Intent intent = new Intent(getActivity(), StudEditProfile.class);
+            startActivity(intent);
             return true;
         }
 
@@ -252,5 +338,18 @@ public class StudProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        boolean refreshProfile = prefs.getBoolean("refreshStudProfile", false);
+        boolean refreshSkills = prefs.getBoolean("refreshSkills", false);
+
+        if(refreshProfile){
+            fetchStudAndComDetails();
+            prefs.edit().putBoolean("refreshStudProfile", false).apply();
+        }
+        if(refreshSkills){
+            fetchSkills();
+            prefs.edit().putBoolean("refreshSkills", false).apply();
+        }
     }
 }

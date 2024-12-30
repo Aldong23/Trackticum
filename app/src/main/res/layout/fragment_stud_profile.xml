@@ -101,17 +101,59 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/stud_overview_details"
+                android:id="@+id/stud_skills_label"
                 style="@style/BoldText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:text="My Details"
+                android:text="My Skills"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/stud_profile_header" />
+
+            <ImageButton
+                android:id="@+id/manage_mykills_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_edit1"
+                app:layout_constraintBottom_toBottomOf="@+id/stud_skills_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/stud_skills_label" />
+
+            <View
+                android:id="@+id/divider0"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="@color/lineBreak"
+                app:layout_constraintTop_toBottomOf="@+id/stud_skills_label"
+                tools:layout_editor_absoluteX="15dp" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/myskillscontatiner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="16dp"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:layout_constraintTop_toBottomOf="@+id/divider0" />
+
+            <TextView
+                android:id="@+id/stud_overview_details"
+                style="@style/BoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="My Details"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@+id/myskillscontatiner"
+                app:layout_constraintTop_toBottomOf="@+id/myskillscontatiner" />
 
             <View
                 android:id="@+id/divider"
@@ -236,7 +278,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Gender"
+                android:text="Sex at birth"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/contact_icon"
@@ -267,6 +309,42 @@
                 app:layout_constraintTop_toTopOf="@+id/gender_icon" />
 
             <TextView
+                android:id="@+id/bday_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Birthday"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/gender_icon"
+                app:layout_constraintTop_toBottomOf="@+id/gender_icon" />
+
+            <ImageView
+                android:id="@+id/bday_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_calendar"
+                app:layout_constraintStart_toStartOf="@+id/bday_label"
+                app:layout_constraintTop_toBottomOf="@+id/bday_label" />
+
+            <TextView
+                android:id="@+id/stud_birthday_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/bday_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/bday_icon"
+                app:layout_constraintTop_toTopOf="@+id/bday_icon" />
+
+            <TextView
                 android:id="@+id/age_label"
                 style="@style/SemiBoldText"
                 android:layout_width="0dp"
@@ -275,8 +353,8 @@
                 android:text="Age"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/gender_icon"
-                app:layout_constraintTop_toBottomOf="@+id/gender_icon" />
+                app:layout_constraintStart_toStartOf="@+id/bday_icon"
+                app:layout_constraintTop_toBottomOf="@+id/bday_icon" />
 
             <ImageView
                 android:id="@+id/age_icon"
