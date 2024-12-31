@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -55,11 +56,14 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
     private Toolbar toolbar;
     SharedPreferences sharedPreferences;
+    LottieAnimationView notApprovedLottie;
 
     //fetching list of companies
     private RecyclerView recyclerView;
     private StudCompaniesAdapter adapter;
     private List<StudCompanies> companiesList;
+
+    private String companyId, isApproved;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,10 +87,8 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("Home");
 
-        //fetch students details
-        fetchStudDetails();
-
         // for fetching companies
+        notApprovedLottie = view.findViewById(R.id.not_approved_lottie);
         recyclerView = view.findViewById(R.id.stud_companies_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -94,6 +96,8 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         companiesList = new ArrayList<>();
         adapter = new StudCompaniesAdapter(requireContext(), companiesList,this);
         recyclerView.setAdapter(adapter);
+
+        fetchStudDetails();
 
     }
 
@@ -109,8 +113,16 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 String company_id = studDetails.getString("company_id");
                 String is_approved = studDetails.getString("is_approved");
 
+                companyId = company_id;
+                isApproved = is_approved;
+
                 if(is_approved.equals("1") && is_approved != null){
+                    notApprovedLottie.setVisibility(View.GONE);
                     fetchCompanies();
+                }else{
+                    notApprovedLottie.setVisibility(View.VISIBLE);
+                    companiesList.clear();
+                    adapter.notifyDataSetChanged();
                 }
 
 
@@ -134,24 +146,31 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        companiesList.clear();
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject obj = response.getJSONObject(i);
-                                String comID = obj.getString("id");
-                                String comLogo = obj.getString("image");
-                                String imageUrl = Constants.API_BASE_URL + "/" + comLogo;
-                                String comName = obj.getString("name");
-                                String comAddress = obj.getString("address");
-                                String comDescription = obj.getString("description");
-                                String comSlot = obj.getString("slot");
+                        if (response != null && response.length() > 0){
+                            notApprovedLottie.setVisibility(View.GONE);
+                            companiesList.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject obj = response.getJSONObject(i);
+                                    String comID = obj.getString("id");
+                                    String comLogo = obj.getString("image");
+                                    String imageUrl = Constants.API_BASE_URL + "/" + comLogo;
+                                    String comName = obj.getString("name");
+                                    String comAddress = obj.getString("address");
+                                    String comDescription = obj.getString("description");
+                                    String comSlot = obj.getString("slot");
 
-                                companiesList.add(new StudCompanies(comID, comName, imageUrl, comAddress, comDescription, comSlot));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                    companiesList.add(new StudCompanies(comID, comName, imageUrl, comAddress, comDescription, comSlot));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                            adapter.notifyDataSetChanged();
+                        }else{
+                            notApprovedLottie.setVisibility(View.VISIBLE);
+                            companiesList.clear();
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
@@ -172,6 +191,8 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
     public void onViewCompanies(String comID) {
         Intent intent = new Intent(requireContext(), StudShowCompany.class);
         intent.putExtra("com_id", comID);
+        intent.putExtra("stud_com_id", companyId);
+        intent.putExtra("stud_is_approved", isApproved);
         startActivity(intent);
     }
 

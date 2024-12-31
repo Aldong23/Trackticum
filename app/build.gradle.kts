@@ -52,4 +52,5 @@ dependencies {
     implementation ("com.github.dhaval2404:imagepicker:2.1")
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation ("com.github.androidmads:QRGenerator:1.0.5")
+    implementation ("com.airbnb.android:lottie:6.6.2")
 }

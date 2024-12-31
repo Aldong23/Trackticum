@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsetsController;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +29,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
@@ -44,31 +42,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudShowCompany extends AppCompatActivity {
+public class ComShowApplicants extends AppCompatActivity {
 
     // For action bar
     private Toolbar toolbar;
     ProgressDialog progressDialog;
 
-    //Fetch Company Information
-    private TextView comNameTV, comNatureTV, comLocationTV, comEmailTV, comSlotTV, comContactTV, comBgTV;
-    private RoundedImageView comLogoIV;
+    //widget for student details
+    private RoundedImageView studImageIV;
+    private TextView studNameTV, studNoTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studBirthdayTV, studAgeTV, studAddressTV;
     SharedPreferences sharedPreferences;
-    private ExtendedFloatingActionButton applyBTN;
+    private ExtendedFloatingActionButton acceptBTN;
 
     //for Skill Requirements
-    private FlexboxLayout jobsContainer;
+    private FlexboxLayout skillsContainer;
 
-    private String comId, studComID, studIsApproved;
+    String studID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_stud_show_company);
+        setContentView(R.layout.activity_com_show_applicants);
         setupWindowInsets();
         //setting up the status bar
         getWindow().setStatusBarColor(getResources().getColor(R.color.deepTeal));
@@ -85,50 +86,44 @@ public class StudShowCompany extends AppCompatActivity {
 
     private void initializeData() {
         //set up action bar
-        toolbar = findViewById(R.id.show_company_toolbar);
+        toolbar = findViewById(R.id.com_applicants_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Companies");
+        getSupportActionBar().setTitle("Applicant");
         toolbar.setNavigationIcon(R.drawable.ic_back);
 
         progressDialog = new ProgressDialog(this);
-
-        //Fetch Company Information
-        comId = getIntent().getStringExtra("com_id");
-        studComID = getIntent().getStringExtra("stud_com_id");
-        studIsApproved = getIntent().getStringExtra("stud_is_approved");
-        comLogoIV = findViewById(R.id.com_logo_IV);
-        comNameTV = findViewById(R.id.com_name_tv);
-        comNatureTV = findViewById(R.id.com_nature_tv);
-        comLocationTV = findViewById(R.id.com_location_tv);
-        comEmailTV = findViewById(R.id.com_email_tv);
-        comSlotTV = findViewById(R.id.com_slot_tv);
-        comContactTV = findViewById(R.id.com_contact_tv);
-        comBgTV = findViewById(R.id.com_descrip_tv);
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        fetchCompanyDetails();
 
-        applyBTN = findViewById(R.id.apply_btn);
-        if(!studComID.equals("null") && studComID != null && !studComID.isEmpty()){
-            applyBTN.setVisibility(View.GONE);
-        }else{
-            applyBTN.setVisibility(View.VISIBLE);
-            checkIfApplied();
-        }
+        //initialize widget for student details
+        studID = getIntent().getStringExtra("stud_id");
+        studImageIV = findViewById(R.id.stud_pic_IV);
+        studNameTV = findViewById(R.id.stud_name_tv);
+        studNoTV = findViewById(R.id.stud_no_tv);
+        studDepTV = findViewById(R.id.stud_school_dep_tv);
+        studEmailTV = findViewById(R.id.stud_email_tv);
+        studContactTV = findViewById(R.id.stud_contact_tv);
+        studGenderTV = findViewById(R.id.stud_gender_tv);
+        studBirthdayTV = findViewById(R.id.stud_birthday_tv);
+        studAgeTV = findViewById(R.id.stud_age_tv);
+        studAddressTV = findViewById(R.id.stud_address_tv);
+        acceptBTN = findViewById(R.id.accept_btn);
+
+        fetchStudDetails();
 
         //Setting up the Skill Requirements
-        jobsContainer = findViewById(R.id.jobsContainer);
-        fetchJobOffer();
+        skillsContainer = findViewById(R.id.skillscontatiner);
+        fetchSkills();
     }
 
     private void setupListeners() {
-        applyBTN.setOnClickListener(new View.OnClickListener() {
+        acceptBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(StudShowCompany.this);
-                builder.setTitle("Confirm Application");
-                builder.setMessage("Are you sure you want to apply to this company?");
+                AlertDialog.Builder builder = new AlertDialog.Builder(ComShowApplicants.this);
+                builder.setTitle("Confirm Acceptance");
+                builder.setMessage("Are you sure you want to accept this student?");
                 builder.setPositiveButton("Yes", (dialog, which) -> {
-                    processApply();
+                    acceptStudent();
                 });
                 builder.setNegativeButton("No", (dialog, which) -> {
                     dialog.dismiss();
@@ -139,26 +134,26 @@ public class StudShowCompany extends AppCompatActivity {
         });
     }
 
-    private void processApply() {
-        String studID = sharedPreferences.getString("stud_id", null);
-
+    private void acceptStudent() {
+        String comId = sharedPreferences.getString("com_id", null);
         progressDialog.setMessage("Please wait...");
-        progressDialog.setTitle("Applying");
+        progressDialog.setTitle("Accepting");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = Constants.API_BASE_URL + "/student/apply-to-company";
+        String url = Constants.API_BASE_URL + "/company/accept-student";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 response -> {
                     progressDialog.dismiss();
                     try {
-                        // Parse JSON response for better feedback
                         JSONObject jsonResponse = new JSONObject(response);
                         if (jsonResponse.getBoolean("success")) {
-                            Toast.makeText(this, "Application sent successfully!", Toast.LENGTH_SHORT).show();
-                            checkIfApplied();
+                            Toast.makeText(this, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
+                            acceptBTN.setEnabled(false);
+                            acceptBTN.setText("Accepted");
+                            sharedPreferences.edit().putBoolean("refreshApplicantsList", true).apply();
                         } else {
                             Toast.makeText(this, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
                         }
@@ -166,8 +161,8 @@ public class StudShowCompany extends AppCompatActivity {
                         Toast.makeText(this, "Response parsing error", Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(this, "Failed to add", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+            Toast.makeText(this, "Failed to accept student. Please try again.", Toast.LENGTH_SHORT).show();
         }) {
             @Override
             protected Map<String, String> getParams() {
@@ -180,40 +175,48 @@ public class StudShowCompany extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void fetchCompanyDetails() {
+    private void fetchStudDetails() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = Constants.API_BASE_URL + "/company/get-com-details/" + comId;
+        String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
             try {
-                JSONObject comDetails = new JSONObject(response);
+                JSONObject jsonObject = new JSONObject(response);
 
-                int comID = comDetails.getInt("id");
-                String imageUrl = comDetails.getString("image_url");
-                String comName = comDetails.getString("name");
-                String comNature = comDetails.getString("nature");
-                String comLocation = comDetails.getString("address");
-                String comEmail = comDetails.getString("email");
-                String comSlot = comDetails.getString("slot");
-                String comContact = comDetails.getString("contact");
-                String comBg = comDetails.getString("description");
+                String studImageUrl = jsonObject.getString("image_url");
+                String studFname = jsonObject.getString("firstname");
+                String studLname = jsonObject.getString("lastname");
+                String studMinitial = jsonObject.getString("middle_initial") + ".";
+                String studName = studFname + " " + studMinitial + " " + studLname;
+                String stud_no = jsonObject.getString("student_number");
+                String schoolDepartment = jsonObject.getString("department_name");
+                String studEmail = jsonObject.getString("email");
+                String studContact = jsonObject.getString("contact");
+                String studGender = jsonObject.getString("gender");
+                String studBirthday = jsonObject.getString("birthday");
+                String studAge = calculateAge(studBirthday);
+                String studAddress = jsonObject.getString("address");
 
-                comNameTV.setText(comName);
-                comNatureTV.setText(comNature);
-                comLocationTV.setText(comLocation);
-                comEmailTV.setText(comEmail);
-                comSlotTV.setText(comSlot);
-                comContactTV.setText(comContact);
-                comBgTV.setText(comBg);
+                //students details
+                studNameTV.setText(studName);
+                studNoTV.setText(stud_no);
+                studDepTV.setText(schoolDepartment);
+                studEmailTV.setText(studEmail);
+                studContactTV.setText(studContact);
+                studGenderTV.setText(studGender);
+                studBirthdayTV.setText(studBirthday);
+                studAgeTV.setText(studAge);
+                studAddressTV.setText(studAddress);
 
-                Picasso.get().invalidate(imageUrl);
-                if (!imageUrl.isEmpty()) {
+
+                Picasso.get().invalidate(studImageUrl);
+                if (!studImageUrl.isEmpty()) {
                     Picasso.get()
-                            .load(imageUrl)
+                            .load(studImageUrl)
                             .placeholder(R.drawable.img_placeholder)
                             .error(R.drawable.img_placeholder)
                             .resize(500, 500)
                             .centerCrop()
-                            .into(comLogoIV);
+                            .into(studImageIV);
                 }
 
             } catch (JSONException e) {
@@ -226,9 +229,11 @@ public class StudShowCompany extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void fetchJobOffer() {
-        String url = Constants.API_BASE_URL + "/company/get-job-offers/" + comId;
+    private void fetchSkills() {
+        String url = Constants.API_BASE_URL + "/student/get-skills/" + studID;
+
         RequestQueue requestQueue = Volley.newRequestQueue(this);
+
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
@@ -238,22 +243,22 @@ public class StudShowCompany extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         try {
                             // Clear the existing views in jobsContainer
-                            jobsContainer.removeAllViews();
+                            skillsContainer.removeAllViews();
 
                             // Loop through the job offers in the response
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject obj = response.getJSONObject(i);
-                                int jobOfferId = obj.getInt("id");
-                                String jobTitle = obj.getString("name");
+                                int skillID = obj.getInt("id");
+                                String skillTitle = obj.getString("name");
 
                                 // Create TextView for each job offer
-                                TextView jobTextView = new TextView(StudShowCompany.this);
-                                jobTextView.setText(jobTitle);
+                                TextView jobTextView = new TextView(ComShowApplicants.this);
+                                jobTextView.setText(skillTitle);
                                 jobTextView.setPadding(16, 8, 16, 8);
                                 jobTextView.setBackgroundResource(R.drawable.job_offer_style);
                                 jobTextView.setTextColor(Color.BLACK);
 
-                                Typeface customFont = ResourcesCompat.getFont(StudShowCompany.this, R.font.sf_rounded_regular);
+                                Typeface customFont = ResourcesCompat.getFont(ComShowApplicants.this, R.font.sf_rounded_regular);
                                 jobTextView.setTypeface(customFont);
 
                                 FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
@@ -264,11 +269,11 @@ public class StudShowCompany extends AppCompatActivity {
                                 jobTextView.setLayoutParams(params);
 
                                 // Add the TextView to the container
-                                jobsContainer.addView(jobTextView);
+                                skillsContainer.addView(jobTextView);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(StudShowCompany.this, "Error processing job offers", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ComShowApplicants.this, "Error processing skills", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -276,7 +281,6 @@ public class StudShowCompany extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        Toast.makeText(StudShowCompany.this, "Failed to fetch job offers", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -285,43 +289,28 @@ public class StudShowCompany extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    private void checkIfApplied() {
-        String studID = sharedPreferences.getString("stud_id", null);
-        String url = Constants.API_BASE_URL + "/student/pending-application/" + studID + "/" + comId;
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            if (response.has("exists")) {
-                                boolean exists = response.getBoolean("exists");
-                                if (exists) {
-                                    applyBTN.setEnabled(false);
-                                    applyBTN.setText("Applied");
-                                } else {
-                                    applyBTN.setEnabled(true);
-                                    applyBTN.setText("Quick Apply");
-                                }
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Unexpected response from server", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Error parsing server response", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "Failed to check pending application", Toast.LENGTH_SHORT).show();
-                    }
-                });
+    public String calculateAge(String studBirthday) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);
 
-        queue.add(jsonObjectRequest);
+            Date birthDate = sdf.parse(studBirthday);
+            Calendar today = Calendar.getInstance();
+            Calendar birth = Calendar.getInstance();
+            birth.setTime(birthDate);
+
+            int age = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+
+            if (today.get(Calendar.DAY_OF_YEAR) < birth.get(Calendar.DAY_OF_YEAR)) {
+                age--;
+            }
+
+            return String.valueOf(age);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Invalid Date";
+        }
     }
-
 
     private void setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -340,4 +329,5 @@ public class StudShowCompany extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

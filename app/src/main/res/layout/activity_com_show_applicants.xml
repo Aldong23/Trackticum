@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.ComShowApplicants"
+    android:background="@color/pageGrey">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/com_applicants_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/com_applicants_toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/stud_profile_header"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:paddingVertical="8dp"
+                android:background="?attr/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ExtraText">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/stud_pic_IV"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="16dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/img_placeholder"
+                    app:riv_border_width="5dp"
+                    app:riv_border_color="@android:color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:riv_oval="true" />
+
+                <TextView
+                    android:id="@+id/stud_name_tv"
+                    style="@style/BoldText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/loading_text"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/stud_pic_IV"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/stud_pic_IV"
+                    app:layout_constraintTop_toTopOf="@+id/stud_pic_IV" />
+
+                <TextView
+                    android:id="@+id/stud_no_tv"
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/loading_text"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+
+                    app:layout_constraintStart_toStartOf="@+id/stud_name_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/stud_name_tv" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/stud_skills_label"
+                style="@style/BoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:text="Skills"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stud_profile_header" />
+
+            <View
+                android:id="@+id/divider0"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="@color/lineBreak"
+                app:layout_constraintTop_toBottomOf="@+id/stud_skills_label"
+                tools:layout_editor_absoluteX="15dp" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/skillscontatiner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="16dp"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:layout_constraintTop_toBottomOf="@+id/divider0" />
+
+            <TextView
+                android:id="@+id/stud_overview_details"
+                style="@style/BoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Student Details"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@+id/skillscontatiner"
+                app:layout_constraintTop_toBottomOf="@+id/skillscontatiner" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="@color/lineBreak"
+                app:layout_constraintTop_toBottomOf="@+id/stud_overview_details"
+                tools:layout_editor_absoluteX="15dp" />
+
+            <TextView
+                android:id="@+id/school_dep_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="School Department"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/divider"
+                app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+            <ImageView
+                android:id="@+id/school_department_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_school"
+                app:layout_constraintStart_toStartOf="@+id/school_dep_label"
+                app:layout_constraintTop_toBottomOf="@+id/school_dep_label" />
+
+            <TextView
+                android:id="@+id/stud_school_dep_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/school_department_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/school_department_icon"
+                app:layout_constraintTop_toTopOf="@+id/school_department_icon" />
+
+            <TextView
+                android:id="@+id/email_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Email"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/school_department_icon"
+                app:layout_constraintTop_toBottomOf="@+id/school_department_icon" />
+
+            <ImageView
+                android:id="@+id/email_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_email1"
+                app:layout_constraintStart_toStartOf="@+id/email_label"
+                app:layout_constraintTop_toBottomOf="@+id/email_label" />
+
+            <TextView
+                android:id="@+id/stud_email_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/email_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/email_icon"
+                app:layout_constraintTop_toTopOf="@+id/email_icon" />
+
+            <TextView
+                android:id="@+id/contact_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Contact"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/email_icon"
+                app:layout_constraintTop_toBottomOf="@+id/email_icon" />
+
+            <ImageView
+                android:id="@+id/contact_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_telephone"
+                app:layout_constraintStart_toStartOf="@+id/contact_label"
+                app:layout_constraintTop_toBottomOf="@+id/contact_label" />
+
+            <TextView
+                android:id="@+id/stud_contact_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/contact_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/contact_icon"
+                app:layout_constraintTop_toTopOf="@+id/contact_icon" />
+
+            <TextView
+                android:id="@+id/gender_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Sex at birth"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/contact_icon"
+                app:layout_constraintTop_toBottomOf="@+id/contact_icon" />
+
+            <ImageView
+                android:id="@+id/gender_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_gender"
+                app:layout_constraintStart_toStartOf="@+id/gender_label"
+                app:layout_constraintTop_toBottomOf="@+id/gender_label" />
+
+            <TextView
+                android:id="@+id/stud_gender_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/gender_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/gender_icon"
+                app:layout_constraintTop_toTopOf="@+id/gender_icon" />
+
+            <TextView
+                android:id="@+id/bday_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Birthday"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/gender_icon"
+                app:layout_constraintTop_toBottomOf="@+id/gender_icon" />
+
+            <ImageView
+                android:id="@+id/bday_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_calendar"
+                app:layout_constraintStart_toStartOf="@+id/bday_label"
+                app:layout_constraintTop_toBottomOf="@+id/bday_label" />
+
+            <TextView
+                android:id="@+id/stud_birthday_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/bday_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/bday_icon"
+                app:layout_constraintTop_toTopOf="@+id/bday_icon" />
+
+            <TextView
+                android:id="@+id/age_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Age"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/bday_icon"
+                app:layout_constraintTop_toBottomOf="@+id/bday_icon" />
+
+            <ImageView
+                android:id="@+id/age_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_calendar"
+                app:layout_constraintStart_toStartOf="@+id/age_label"
+                app:layout_constraintTop_toBottomOf="@+id/age_label" />
+
+            <TextView
+                android:id="@+id/stud_age_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/age_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/age_icon"
+                app:layout_constraintTop_toTopOf="@+id/age_icon" />
+
+            <TextView
+                android:id="@+id/address_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Address"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/age_icon"
+                app:layout_constraintTop_toBottomOf="@+id/age_icon" />
+
+            <ImageView
+                android:id="@+id/address_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_location"
+                app:layout_constraintStart_toStartOf="@+id/address_label"
+                app:layout_constraintTop_toBottomOf="@+id/address_label" />
+
+            <TextView
+                android:id="@+id/stud_address_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/address_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/address_icon"
+                app:layout_constraintTop_toTopOf="@+id/address_icon" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/accept_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Accept"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

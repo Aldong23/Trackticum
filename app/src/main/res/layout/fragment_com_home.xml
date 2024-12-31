@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".fragments.ComHomeFragment">
+    tools:context=".fragments.ComHomeFragment"
+    android:background="@color/pageGrey">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.appcompat.widget.Toolbar
@@ -20,14 +21,114 @@
         app:menu="@menu/com_home_actionbar_menu"
         app:titleTextColor="@android:color/white" />
 
-    <TextView
-        android:id="@+id/homeid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Company Home"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/com_home_toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/announcement_container"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:paddingVertical="8dp"
+            android:background="?attr/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ExtraText">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/stud_pic_IV"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginStart="16dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/img_placeholder"
+                app:riv_border_width="5dp"
+                app:riv_border_color="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:riv_oval="true" />
+
+            <TextView
+                android:id="@+id/stud_name_tv"
+                style="@style/BoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/loading_text"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintBottom_toTopOf="@+id/stud_no_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/stud_no_tv" />
+
+            <TextView
+                android:id="@+id/stud_no_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/loading_text"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/stud_pic_IV"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/stud_isapprove_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/loading_text"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/stud_no_tv"
+                app:layout_constraintTop_toBottomOf="@+id/stud_no_tv" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/applicants_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/sf_rounded_bold"
+            android:text="Applicants"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/announcement_container" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/com_applicants_rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scrollbars="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/applicants_label"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/empty_lottie"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/applicants_label"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:visibility="gone"
+            app:lottie_rawRes="@raw/not_approved" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
