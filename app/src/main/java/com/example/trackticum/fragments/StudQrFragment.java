@@ -1,66 +1,169 @@
 package com.example.trackticum.fragments;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.utils.Constants;
+import com.makeramen.roundedimageview.RoundedImageView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StudQrFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
+
 public class StudQrFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public StudQrFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment StudQrFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static StudQrFragment newInstance(String param1, String param2) {
-        StudQrFragment fragment = new StudQrFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private Toolbar toolbar;
+    SharedPreferences sharedPreferences;
+    ProgressDialog progressDialog;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private RoundedImageView qrCodeIV;
+    private Button genQrBtn;
+
+    private Bitmap bitmap;
+    int smallerDimension;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stud_qr, container, false);
+        View view = inflater.inflate(R.layout.fragment_stud_qr, container, false);
+
+        // Add code below
+        initializeData(view);
+        setupListeners();
+
+        return view;
+    }
+
+    private void initializeData(View view) {
+        sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        progressDialog = new ProgressDialog(requireContext());
+
+        //For action bar
+        toolbar = view.findViewById(R.id.stud_qr_toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setTitle("Qr Code");
+        smallerDimension = Math.min(getResources().getDisplayMetrics().widthPixels,getResources().getDisplayMetrics().heightPixels) * 3 / 4;
+
+        qrCodeIV = view.findViewById(R.id.qr_code_iv);
+        genQrBtn = view.findViewById(R.id.generate_qr_btn);
+
+        fetchQrCode();
+    }
+
+    private void setupListeners() {
+        genQrBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveQrToDB();
+            }
+        });
+    }
+
+    private void saveQrToDB() {
+        String studID = sharedPreferences.getString("stud_id", null);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Generating");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/generate-qr-code/" + studID;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            progressDialog.dismiss();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                boolean isSuccess = jsonObject.getBoolean("success");
+                String message = jsonObject.getString("message");
+
+                if (isSuccess) {
+                    String qrContent = jsonObject.getString("qr_code");
+                    generateQR(qrContent); // Assuming this is a method to display/generate the QR image
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Error parsing QR response", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            progressDialog.dismiss();
+            Toast.makeText(requireContext(), "Failed to generate QR. Please try again.", Toast.LENGTH_SHORT).show();
+            Log.e("Error Fetching QR", error.toString());
+        });
+
+        queue.add(request);
+    }
+
+
+    private void generateQR(String qrContent) {
+
+        QRGEncoder qrgEncoder = new QRGEncoder(qrContent, null, QRGContents.Type.TEXT, smallerDimension);
+
+        qrgEncoder.setColorBlack(getResources().getColor(R.color.pageGrey, null));
+        qrgEncoder.setColorWhite(getResources().getColor(R.color.deepTeal, null));
+
+        try {
+            bitmap = qrgEncoder.getBitmap();
+
+            // Set the bitmap to the ImageView
+//            qrCodeIV.setBorderWidth((float) 0);
+            qrCodeIV.setImageBitmap(bitmap);
+
+
+        } catch (Exception e) {
+            Toast.makeText(requireActivity(), "Error generating QR code", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void fetchQrCode() {
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studID;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+
+                String qrContent = jsonObject.getString("qr_code");
+
+                if(!qrContent.isEmpty() && !qrContent.equalsIgnoreCase("null")){
+                    generateQR(qrContent);
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Error Fetching QR", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+        });
+
+        queue.add(request);
     }
 }

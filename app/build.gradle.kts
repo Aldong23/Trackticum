@@ -53,4 +53,6 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation ("com.github.androidmads:QRGenerator:1.0.5")
     implementation ("com.airbnb.android:lottie:6.6.2")
+    implementation ("com.github.yuriy-budiyev:code-scanner:2.3.0")
+    implementation ("com.karumi:dexter:6.2.3")
 }

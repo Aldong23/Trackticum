@@ -15,6 +15,7 @@ import com.example.trackticum.databinding.ActivityComMainBinding;
 import com.example.trackticum.databinding.ActivityComMainBinding;
 import com.example.trackticum.fragments.ComHomeFragment;
 import com.example.trackticum.fragments.ComProfileFragment;
+import com.example.trackticum.fragments.ComScanQrFragment;
 import com.example.trackticum.fragments.ComSettingsFragment;
 
 public class ComMainActivity extends AppCompatActivity {
@@ -43,6 +44,10 @@ public class ComMainActivity extends AppCompatActivity {
 
             if(itemId == R.id.home){
                 replaceFragment(new ComHomeFragment());
+            }else if(itemId == R.id.notification){
+
+            }else if(itemId == R.id.scan_qr){
+                replaceFragment(new ComScanQrFragment());
             }else if(itemId == R.id.profile){
                 replaceFragment(new ComProfileFragment());
             }else if(itemId == R.id.settings){
