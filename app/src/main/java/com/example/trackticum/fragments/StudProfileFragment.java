@@ -37,6 +37,7 @@ import com.example.trackticum.R;
 import com.example.trackticum.activities.StudEditProfile;
 import com.example.trackticum.activities.StudManageSkills;
 import com.example.trackticum.activities.StudRequirements;
+import com.example.trackticum.activities.StudShowDtr;
 import com.example.trackticum.utils.Constants;
 import com.google.android.flexbox.FlexboxLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -66,7 +67,7 @@ public class StudProfileFragment extends Fragment {
     private TextView comNameTV, studStatusTV, studHrsToCompleteTV, comAddressTV, comSupervisorTV, comContactTV;
 
     //button for requirements and weekly report
-    private Button viewReqBTN, viewWeeklyReportBTN;
+    private Button viewReqBTN, viewWeeklyReportBTN, viewDtrButton;
 
     private ImageButton viewStudSkillsBTN;
 
@@ -118,6 +119,7 @@ public class StudProfileFragment extends Fragment {
         viewReqBTN = view.findViewById(R.id.view_req_btn);
         viewWeeklyReportBTN = view.findViewById(R.id.view_weekly_btn);
         viewStudSkillsBTN = view.findViewById(R.id.manage_mykills_btn);
+        viewDtrButton = view.findViewById(R.id.view_dtr_btn);
 
         //fetching all details
         fetchStudAndComDetails();
@@ -139,6 +141,13 @@ public class StudProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), StudManageSkills.class);
+                startActivity(intent);
+            }
+        });
+        viewDtrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), StudShowDtr.class);
                 startActivity(intent);
             }
         });

@@ -55,4 +55,5 @@ dependencies {
     implementation ("com.airbnb.android:lottie:6.6.2")
     implementation ("com.github.yuriy-budiyev:code-scanner:2.3.0")
     implementation ("com.karumi:dexter:6.2.3")
+    implementation ("com.itextpdf:itextpdf:5.5.13")
 }

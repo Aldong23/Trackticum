@@ -40,6 +40,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.ComEditProfile;
 import com.example.trackticum.activities.ComManageJoboffer;
+import com.example.trackticum.activities.ComViewInterns;
 import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.utils.Constants;
 import com.google.android.flexbox.FlexboxLayout;
@@ -67,6 +68,7 @@ public class ComProfileFragment extends Fragment {
     private RoundedImageView comLogoIV;
     SharedPreferences sharedPreferences;
     private ImageButton manageJobOfferBtn;
+    private Button viewInternsBTN;
 
     //for Skill Requirements
     private FlexboxLayout jobsContainer;
@@ -103,6 +105,7 @@ public class ComProfileFragment extends Fragment {
         fetchCompanyDetails();
 
         manageJobOfferBtn = view.findViewById(R.id.manage_joboffer_btn);
+        viewInternsBTN = view.findViewById(R.id.view_interns_btn);
 
         //Setting up the Skill Requirements
         jobsContainer = view.findViewById(R.id.jobsContainer);
@@ -116,6 +119,13 @@ public class ComProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ComManageJoboffer.class);
                 startActivity(intent);
 
+            }
+        });
+        viewInternsBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ComViewInterns.class);
+                startActivity(intent);
             }
         });
     }

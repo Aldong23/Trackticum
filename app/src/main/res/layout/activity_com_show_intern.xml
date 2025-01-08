@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".activities.ComShowIntern"
     android:fitsSystemWindows="true"
-    tools:context=".fragments.StudProfileFragment"
     android:background="@color/pageGrey">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/stud_profile_toolbar"
+        android:id="@+id/com_interns_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -17,14 +18,13 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/stud_profile_actionbar_menu"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stud_profile_toolbar">
+        app:layout_constraintTop_toBottomOf="@id/com_interns_toolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/stud_profile_header"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="130dp"
                 android:paddingVertical="8dp"
                 android:background="?attr/colorPrimary"
                 app:layout_constraintTop_toTopOf="parent"
@@ -42,8 +42,8 @@
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/stud_pic_IV"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_marginStart="16dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/img_placeholder"
@@ -59,44 +59,32 @@
                     style="@style/BoldText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@string/loading_text"
                     android:textColor="@color/white"
                     android:textSize="24sp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    app:layout_constraintBottom_toTopOf="@+id/stud_no_tv"
+                    app:layout_constraintBottom_toBottomOf="@+id/stud_pic_IV"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/stud_no_tv" />
+                    app:layout_constraintStart_toEndOf="@+id/stud_pic_IV"
+                    app:layout_constraintTop_toTopOf="@+id/stud_pic_IV" />
 
                 <TextView
                     android:id="@+id/stud_no_tv"
                     style="@style/RegularText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@string/loading_text"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/stud_pic_IV"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/stud_isapprove_tv"
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/loading_text"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/stud_no_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/stud_no_tv" />
+                    app:layout_constraintStart_toStartOf="@+id/stud_name_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/stud_name_tv" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -107,22 +95,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:text="My Skills"
+                android:text="Skills"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/stud_profile_header" />
-
-            <ImageButton
-                android:id="@+id/manage_mykills_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="16dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_edit1"
-                app:layout_constraintBottom_toBottomOf="@+id/stud_skills_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/stud_skills_label" />
 
             <View
                 android:id="@+id/divider0"
@@ -134,7 +111,7 @@
                 tools:layout_editor_absoluteX="15dp" />
 
             <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/myskillscontatiner"
+                android:id="@+id/skillscontatiner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -149,11 +126,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="My Details"
+                android:text="Student Details"
                 android:textColor="@color/black"
                 android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="@+id/myskillscontatiner"
-                app:layout_constraintTop_toBottomOf="@+id/myskillscontatiner" />
+                app:layout_constraintStart_toStartOf="@+id/skillscontatiner"
+                app:layout_constraintTop_toBottomOf="@+id/skillscontatiner" />
 
             <View
                 android:id="@+id/divider"
@@ -416,280 +393,46 @@
                 app:layout_constraintStart_toEndOf="@+id/address_icon"
                 app:layout_constraintTop_toTopOf="@+id/address_icon" />
 
-            <TextView
-                android:id="@+id/stud_company_details"
-                style="@style/BoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:text="Company Details"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/address_icon" />
-
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginHorizontal="16dp"
-                android:background="@color/lineBreak"
-                app:layout_constraintTop_toBottomOf="@+id/stud_company_details"
-                tools:layout_editor_absoluteX="15dp" />
-
-            <TextView
-                android:id="@+id/company_name_label"
-                style="@style/SemiBoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Company"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/divider2"
-                app:layout_constraintTop_toBottomOf="@+id/divider2" />
-
-            <ImageView
-                android:id="@+id/company_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_company"
-                app:layout_constraintStart_toStartOf="@+id/company_name_label"
-                app:layout_constraintTop_toBottomOf="@+id/company_name_label" />
-
-            <TextView
-                android:id="@+id/com_name_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/loading_text"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/company_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/company_icon"
-                app:layout_constraintTop_toTopOf="@+id/company_icon" />
-
-            <TextView
-                android:id="@+id/status_label"
-                style="@style/SemiBoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Status"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/company_icon"
-                app:layout_constraintTop_toBottomOf="@+id/company_icon" />
-
-            <ImageView
-                android:id="@+id/status_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_check"
-                app:layout_constraintStart_toStartOf="@+id/status_label"
-                app:layout_constraintTop_toBottomOf="@+id/status_label" />
-
-            <TextView
-                android:id="@+id/stud_status_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/loading_text"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/status_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/status_icon"
-                app:layout_constraintTop_toTopOf="@+id/status_icon" />
-
-            <TextView
-                android:id="@+id/hours_label"
-                style="@style/SemiBoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="No. of hours to complete"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/status_icon"
-                app:layout_constraintTop_toBottomOf="@+id/status_icon" />
-
-            <ImageView
-                android:id="@+id/hours_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_time"
-                app:layout_constraintStart_toStartOf="@+id/hours_label"
-                app:layout_constraintTop_toBottomOf="@+id/hours_label" />
-
-            <TextView
-                android:id="@+id/stud_hours_to_complete_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/loading_text"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/hours_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/hours_icon"
-                app:layout_constraintTop_toTopOf="@+id/hours_icon" />
-
-            <TextView
-                android:id="@+id/com_address_label"
-                style="@style/SemiBoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Address of Company"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/hours_icon"
-                app:layout_constraintTop_toBottomOf="@+id/hours_icon" />
-
-            <ImageView
-                android:id="@+id/com_address_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_location"
-                app:layout_constraintStart_toStartOf="@+id/com_address_label"
-                app:layout_constraintTop_toBottomOf="@+id/com_address_label" />
-
-            <TextView
-                android:id="@+id/com_address_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/loading_text"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/com_address_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/com_address_icon"
-                app:layout_constraintTop_toTopOf="@+id/com_address_icon" />
-
-            <TextView
-                android:id="@+id/supervisor_label"
-                style="@style/SemiBoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Supervisor"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/com_address_icon"
-                app:layout_constraintTop_toBottomOf="@+id/com_address_icon" />
-
-            <ImageView
-                android:id="@+id/supervisor_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_person1"
-                app:layout_constraintStart_toStartOf="@+id/supervisor_label"
-                app:layout_constraintTop_toBottomOf="@+id/supervisor_label" />
-
-            <TextView
-                android:id="@+id/stud_supervisor_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/loading_text"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/supervisor_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/supervisor_icon"
-                app:layout_constraintTop_toTopOf="@+id/supervisor_icon" />
-
-            <TextView
-                android:id="@+id/com_contact_label"
-                style="@style/SemiBoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Contact"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/supervisor_icon"
-                app:layout_constraintTop_toBottomOf="@+id/supervisor_icon" />
-
-            <ImageView
-                android:id="@+id/com_contact_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_telephone"
-                app:layout_constraintStart_toStartOf="@+id/com_contact_label"
-                app:layout_constraintTop_toBottomOf="@+id/com_contact_label" />
-
-            <TextView
-                android:id="@+id/com_contact_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/loading_text"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/com_contact_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/com_contact_icon"
-                app:layout_constraintTop_toTopOf="@+id/com_contact_icon" />
-
-            <Button
-                android:id="@+id/view_req_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="64dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="View Requirements"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/com_contact_icon" />
-
             <Button
                 android:id="@+id/view_dtr_btn"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_marginHorizontal="64dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="View Dtr"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="64dp"
+                android:text="View DTR"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_req_btn" />
-
+                app:layout_constraintTop_toBottomOf="@+id/stud_address_tv" />
 
             <Button
                 android:id="@+id/view_weekly_btn"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_marginHorizontal="64dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="64dp"
                 android:text="View Weekly Report"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/view_dtr_btn"
+                app:layout_constraintStart_toStartOf="@+id/view_dtr_btn"
                 app:layout_constraintTop_toBottomOf="@+id/view_dtr_btn" />
+
+            <Button
+                android:id="@+id/view_evaluation_btn"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="64dp"
+                android:text="View Evaluations"
+                app:layout_constraintEnd_toEndOf="@+id/view_weekly_btn"
+                app:layout_constraintStart_toStartOf="@+id/view_weekly_btn"
+                app:layout_constraintTop_toBottomOf="@+id/view_weekly_btn" />
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
