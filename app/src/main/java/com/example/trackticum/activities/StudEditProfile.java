@@ -19,8 +19,8 @@ import android.view.View;
 import android.view.WindowInsetsController;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -60,10 +60,10 @@ public class StudEditProfile extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
 
-    private TextInputEditText studContactET, studBirthdayET, studAddressET;
+    private TextInputEditText studEmailET, studContactET, studBirthdayET, studAddressET, studParentET, comDepartmentEt;
     private AutoCompleteTextView studSexET;
     private RoundedImageView studentIV;
-    private ImageButton uploadImageBTN;
+    private Button uploadImageBTN;
 
     private ArrayAdapter<String> adapterItems;
 
@@ -104,11 +104,14 @@ public class StudEditProfile extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
 
         //inputs
+        studEmailET = findViewById(R.id.stud_email_et);
         studContactET = findViewById(R.id.stud_contact_et);
         studBirthdayET = findViewById(R.id.stud_birthday_et);
         studAddressET = findViewById(R.id.stud_address_et);
         studSexET = findViewById(R.id.stud_sex_et);
         studentIV = findViewById(R.id.stud_image_tv);
+        studParentET = findViewById(R.id.stud_parent_et);
+        comDepartmentEt = findViewById(R.id.com_department_et);
         uploadImageBTN = findViewById(R.id.upload_image_btn);
 
         //set up dropdown inputs
@@ -137,9 +140,6 @@ public class StudEditProfile extends AppCompatActivity {
 
 
         fetchStudOldDetails();
-
-        //request to refresh profile
-        sharedPreferences.edit().putBoolean("refreshStudProfile", true).apply();
     }
 
     private void setupListeners() {
@@ -168,8 +168,6 @@ public class StudEditProfile extends AppCompatActivity {
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR && data != null) {
             Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -202,6 +200,8 @@ public class StudEditProfile extends AppCompatActivity {
                     progressDialog.dismiss();
                     Toast.makeText(this, "Upload Successful", Toast.LENGTH_LONG).show();
                     studentIV.setImageURI(uri);
+                    //request to refresh profile
+                    sharedPreferences.edit().putBoolean("refreshStudProfile", true).apply();
                 },
                 error -> {
                     progressDialog.dismiss();
@@ -228,16 +228,22 @@ public class StudEditProfile extends AppCompatActivity {
             try {
                 JSONObject studDetails = new JSONObject(response);
 
-                int stud_id = studDetails.getInt("id");
+                String stud_id = studDetails.getString("id");
                 String imageUrl = studDetails.getString("image_url");
+                String email = studDetails.getString("email");
                 String contact = studDetails.getString("contact");
                 String sex = studDetails.getString("gender");
-                String birthday = studDetails.getString("birthday");
+                String birthday = studDetails.getString("formatted_birthday");
                 String address = studDetails.getString("address");
+                String parent = studDetails.getString("parent_guardian");
+                String comDepartment = studDetails.getString("department_assigned");
 
-                studContactET.setText(contact);
-                studBirthdayET.setText(birthday);
-                studAddressET.setText(address);
+                studEmailET.setText(!email.equals("null") ? email : "");
+                studContactET.setText(!contact.equals("null") ? contact : "");
+                studBirthdayET.setText(!birthday.equals("null") ? birthday : "");
+                studAddressET.setText(!address.equals("null") ? address : "");
+                studParentET.setText(!parent.equals("null") ? parent : "");
+                comDepartmentEt.setText(!comDepartment.equals("null") ? comDepartment : "");
                 studSexET.setText(sex, false);
 
                 studSexET.setAdapter(adapterItems);
@@ -263,14 +269,24 @@ public class StudEditProfile extends AppCompatActivity {
 
     private void updateStudInfo() {
         String contactPattern = "[0][6-9][0-9]{9}";
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
         String studID = sharedPreferences.getString("stud_id", null);
+        String stud_email = studEmailET.getText().toString().trim();
         String stud_contact = studContactET.getText().toString().trim();
         String stud_sex = studSexET.getText().toString().trim();
         String stud_birthday = studBirthdayET.getText().toString().trim();
         String stud_address = studAddressET.getText().toString().trim();
+        String stud_parent = studParentET.getText().toString().trim();
+        String com_department = comDepartmentEt.getText().toString().trim();
 
-        if (stud_contact.isEmpty()) {
+        if (stud_email.isEmpty()) {
+            studEmailET.setError("Please enter your email");
+            studEmailET.requestFocus();
+        } else if (!stud_email.matches(emailPattern)) {
+            studEmailET.setError("Invalid email format");
+            studEmailET.requestFocus();
+        } else if (stud_contact.isEmpty()) {
             studContactET.setError("Please enter your contact");
             studContactET.requestFocus();
         } else if (!stud_contact.matches(contactPattern)) {
@@ -285,12 +301,15 @@ public class StudEditProfile extends AppCompatActivity {
         } else if (stud_address.isEmpty()) {
             studSexET.setError("Please enter your address");
             studSexET.requestFocus();
+        } else if (stud_parent.isEmpty()) {
+            studParentET.setError("Please enter the parent/guardian name");
+            studParentET.requestFocus();
         } else {
-            saveDataToDatabase(studID, stud_contact, stud_sex, stud_birthday, stud_address);
+            saveDataToDatabase(studID, stud_email, stud_contact, stud_sex, stud_birthday, stud_address, stud_parent, com_department);
         }
     }
 
-    private void saveDataToDatabase(String studID, String studContact, String studSex, String studBirthday, String studAddress) {
+    private void saveDataToDatabase(String studID, String studEmail, String studContact, String studSex, String studBirthday, String studAddress, String studParent, String comDepartment) {
         progressDialog.setMessage("Please wait...");
         progressDialog.setTitle("Saving");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -302,19 +321,35 @@ public class StudEditProfile extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 response -> {
                     progressDialog.dismiss();
-                    Toast.makeText(StudEditProfile.this, response, Toast.LENGTH_LONG).show();
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        String message = jsonResponse.getString("message");
+                        boolean status = jsonResponse.getBoolean("status");
+                        Toast.makeText(StudEditProfile.this, message, Toast.LENGTH_LONG).show();
+
+                        // Check if the update was successful before refreshing
+                        if (status) {
+                            sharedPreferences.edit().putBoolean("refreshStudProfile", true).apply();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(StudEditProfile.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
                 }, error -> {
-            progressDialog.dismiss();
-            Toast.makeText(StudEditProfile.this, "Failed to update", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Toast.makeText(StudEditProfile.this, "Failed to update", Toast.LENGTH_SHORT).show();
         }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("stud_id", studID);
+                params.put("stud_email", studEmail);
                 params.put("stud_contact", studContact);
                 params.put("stud_sex", studSex);
                 params.put("stud_birthday", studBirthday);
                 params.put("stud_address", studAddress);
+                params.put("stud_parent", studParent);
+                params.put("com_department", comDepartment);
                 return params;
             }
         };
@@ -346,5 +381,11 @@ public class StudEditProfile extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }

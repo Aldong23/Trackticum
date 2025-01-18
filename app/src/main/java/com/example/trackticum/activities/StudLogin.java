@@ -97,11 +97,11 @@ public class StudLogin extends AppCompatActivity {
                         JSONObject jsonResponse = new JSONObject(response);
                         boolean status = jsonResponse.getBoolean("status");
                         String message = jsonResponse.getString("message");
-                        int stud_id = jsonResponse.getInt("stud_id");
-                        int department_id = jsonResponse.getInt("dep_id");
-
                         if (status) {
-                            storeStudIdToSession(String.valueOf(stud_id), String.valueOf(department_id));
+                            String stud_id = jsonResponse.getString("stud_id");
+                            String department_id = jsonResponse.getString("dep_id");
+                            String school_year_id = jsonResponse.getString("school_year_id");
+                            storeStudIdToSession(stud_id, department_id, school_year_id);
                             redirectToMain();
                         }
                         progressDialog.dismiss();
@@ -126,10 +126,11 @@ public class StudLogin extends AppCompatActivity {
         }
     }
 
-    private void storeStudIdToSession(String studUserid, String departmentId) {
+    private void storeStudIdToSession(String studUserid, String departmentId, String school_year_id) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("stud_id", studUserid);
         editor.putString("dep_id", departmentId);
+        editor.putString("sy_id", school_year_id);
         editor.apply();
     }
 
@@ -165,5 +166,11 @@ public class StudLogin extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }

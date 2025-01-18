@@ -212,7 +212,7 @@ public class StudManageSkills extends AppCompatActivity implements StudSkillAdap
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(StudManageSkills.this, "Failed to fetch job offers", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StudManageSkills.this, "Failed to fetch skills", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -296,6 +296,12 @@ public class StudManageSkills extends AppCompatActivity implements StudSkillAdap
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 
 }

@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +40,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.ComEditProfile;
+import com.example.trackticum.activities.ComEditTIme;
 import com.example.trackticum.activities.ComManageJoboffer;
 import com.example.trackticum.activities.ComViewInterns;
 import com.example.trackticum.activities.StudLogin;
@@ -64,10 +66,10 @@ public class ComProfileFragment extends Fragment {
     private Toolbar toolbar;
 
     //Fetch Company Information
-    private TextView comNameTV, comNatureTV, comLocationTV, comEmailTV, comSlotTV, comContactTV, comBgTV;
+    private TextView comNameTV, comNatureTV, comLocationTV, comEmailTV, comSlotTV, comContactTV, comBgTV, amTimeInOutTV, pmTimeInOutTV;
     private RoundedImageView comLogoIV;
     SharedPreferences sharedPreferences;
-    private ImageButton manageJobOfferBtn;
+    private ImageButton manageJobOfferBtn, editTimeBtn;
     private Button viewInternsBTN;
 
     //for Skill Requirements
@@ -101,6 +103,9 @@ public class ComProfileFragment extends Fragment {
         comSlotTV = view.findViewById(R.id.com_slot_tv);
         comContactTV = view.findViewById(R.id.com_contact_tv);
         comBgTV = view.findViewById(R.id.com_descrip_tv);
+        amTimeInOutTV = view.findViewById(R.id.am_time_in_out);
+        pmTimeInOutTV = view.findViewById(R.id.pm_time_in_out);
+        editTimeBtn = view.findViewById(R.id.edit_time_btn);
         sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         fetchCompanyDetails();
 
@@ -118,7 +123,13 @@ public class ComProfileFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ComManageJoboffer.class);
                 startActivity(intent);
-
+            }
+        });
+        editTimeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ComEditTIme.class);
+                startActivity(intent);
             }
         });
         viewInternsBTN.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +158,12 @@ public class ComProfileFragment extends Fragment {
                 String comSlot = comDetails.getString("slot");
                 String comContact = comDetails.getString("contact");
                 String comBg = comDetails.getString("description");
+                String amTimeIn = comDetails.getString("am_time_in");
+                String amTimeOut = comDetails.getString("am_time_out");
+                String amInOut = amTimeIn + " - " + amTimeOut;
+                String pmTimeIn = comDetails.getString("pm_time_in");
+                String pmTimeOut = comDetails.getString("pm_time_out");
+                String pmInOut = pmTimeIn + " - " + pmTimeOut;
 
                 comNameTV.setText(comName);
                 comNatureTV.setText(comNature);
@@ -154,7 +171,9 @@ public class ComProfileFragment extends Fragment {
                 comEmailTV.setText(comEmail);
                 comSlotTV.setText(comSlot);
                 comContactTV.setText(comContact);
-                comBgTV.setText(comBg);
+                comBgTV.setText(Html.fromHtml(comBg, Html.FROM_HTML_MODE_LEGACY));
+                amTimeInOutTV.setText(!amInOut.equals("null - null") ? amInOut : "N/A");
+                pmTimeInOutTV.setText(!pmInOut.equals("null - null") ? pmInOut : "N/A");
 
                 Picasso.get().invalidate(imageUrl);
                 if (!imageUrl.isEmpty()) {
@@ -284,5 +303,11 @@ public class ComProfileFragment extends Fragment {
             prefs.edit().putBoolean("refreshJobOffers", false).apply();
         }
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
 }

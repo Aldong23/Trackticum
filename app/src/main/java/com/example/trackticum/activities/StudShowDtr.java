@@ -292,7 +292,9 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
                 String studLname = jsonObject.getString("lastname");
                 String studMinitial = jsonObject.getString("middle_initial") + ".";
                 String studName = studFname + " " + studMinitial + " " + studLname;
+                String studCourse = jsonObject.getString("course");
                 String studYear = jsonObject.getString("year");
+                String studCourseAndYear = studCourse + " " + studYear;
                 String comName = jsonObject.getString("company_name");
                 String comAddress = jsonObject.getString("company_address");
                 String comNameAndAddress = comName + "/" + comAddress;
@@ -315,19 +317,20 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
                     dtrData.add(new String[]{date, amTimeIn, amTimeOut, pmTimeIn, pmTimeOut, totalHours, isSigned});
                 }
 
-                createPDF(coordinatorName, departmentLogo, studName, studYear, comNameAndAddress, supervisor, comDepartment, dtrData);
+                createPDF(coordinatorName, departmentLogo, studName, studCourseAndYear, comNameAndAddress, supervisor, !comDepartment.equals("null") ? comDepartment : "", dtrData);
             } catch (JSONException e) {
                 Toast.makeText(this, "Error Fetching Details", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
         }, error -> {
             Log.e("Error Fetching Details", error.toString());
+            progressDialog.dismiss();
         });
 
         queue.add(request);
     }
 
-    public void createPDF(String coordinatorName, String departmentLogo, String studName, String studYear, String comNameAndAddress, String supervisor, String comDepartment, List<String[]> dtrData) {
+    public void createPDF(String coordinatorName, String departmentLogo, String studName, String studCourseAndYear, String comNameAndAddress, String supervisor, String comDepartment, List<String[]> dtrData) {
 
         Font boldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
         Font smallFont = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
@@ -416,7 +419,7 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
                 table.addCell(cell);
 
                 // Row 2: Year
-                cell = new PdfPCell(new Phrase("COURSE & YEAR: " + studYear));
+                cell = new PdfPCell(new Phrase("COURSE & YEAR: " + studCourseAndYear));
                 cell.setColspan(9);
                 table.addCell(cell);
 
@@ -702,8 +705,6 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
 
                         // Populate the AutoCompleteTextView
                         populateAutoCompleteTextView(monthsList);
-                    } else {
-                        Toast.makeText(this, "No data available", Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -784,10 +785,10 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
         TextInputEditText pmOut = dialogView.findViewById(R.id.pmTimeOutInput);
 
         // Pre-fill the fields with existing values
-        amIn.setText(amTimeIn);
-        amOut.setText(amTimeOut);
-        pmIn.setText(pmTimeIn);
-        pmOut.setText(pmTimeOut);
+        amIn.setText(!amTimeIn.equals("null") ? amTimeIn : "");
+        amOut.setText(!amTimeOut.equals("null") ? amTimeOut : "");
+        pmIn.setText(!pmTimeIn.equals("null") ? pmTimeIn : "");
+        pmOut.setText(!pmTimeOut.equals("null") ? pmTimeOut : "");
 
         // Set up TimePickerDialog with AM/PM selection in the dialog itself
         View.OnClickListener timeClickListener = v -> {
@@ -853,6 +854,9 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
                             JSONObject jsonResponse = new JSONObject(response);
                             String message = jsonResponse.getString("message");
                             Toast.makeText(StudShowDtr.this, message, Toast.LENGTH_LONG).show();
+//                            fetchMonthFilter();
+//                            studSexET.setText(sex, false);
+//                            studSexET.setAdapter(adapterItems);
                             fetchDtrList(formatDate(actionFilter));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -894,6 +898,7 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
                         JSONObject jsonResponse = new JSONObject(response);
                         String message = jsonResponse.getString("message");
                         Toast.makeText(StudShowDtr.this, message, Toast.LENGTH_LONG).show();
+//                        fetchMonthFilter();
                         fetchDtrList(formatDate(actionFilter));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -942,6 +947,12 @@ public class StudShowDtr extends AppCompatActivity implements StudDtrAdapter.Stu
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 
 }

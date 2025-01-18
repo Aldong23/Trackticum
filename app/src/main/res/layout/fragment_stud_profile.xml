@@ -59,14 +59,15 @@
                     style="@style/BoldText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:text="@string/loading_text"
                     android:textColor="@color/white"
                     android:textSize="24sp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
                     app:layout_constraintBottom_toTopOf="@+id/stud_no_tv"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/stud_no_tv" />
+                    app:layout_constraintStart_toStartOf="@+id/stud_no_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/stud_no_tv"
@@ -100,6 +101,69 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Horizontal Scrollable Buttons -->
+            <HorizontalScrollView
+                android:id="@+id/buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stud_profile_header">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="2dp"
+                    android:paddingHorizontal="8dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/view_req_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Initial Requirements"
+                        android:layout_marginEnd="8dp"/>
+
+                    <Button
+                        android:id="@+id/view_pre_rec"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pre-Requirements"
+                        android:layout_marginEnd="8dp"/>
+
+
+                    <Button
+                        android:id="@+id/view_dtr_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Daily Time Record"
+                        android:layout_marginEnd="8dp"/>
+
+
+                    <Button
+                        android:id="@+id/view_weekly_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Weekly Report"
+                        android:layout_marginEnd="8dp"/>
+
+                    <Button
+                        android:id="@+id/view_post_requirement"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Post-Requirement"
+                        android:layout_marginEnd="8dp"/>
+
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
             <TextView
                 android:id="@+id/stud_skills_label"
                 style="@style/BoldText"
@@ -111,7 +175,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/stud_profile_header" />
+                app:layout_constraintTop_toBottomOf="@+id/buttons" />
 
             <ImageButton
                 android:id="@+id/manage_mykills_btn"
@@ -475,6 +539,42 @@
                 app:layout_constraintTop_toTopOf="@+id/company_icon" />
 
             <TextView
+                android:id="@+id/com_dep_label"
+                style="@style/SemiBoldText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Department Assigned"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/company_icon"
+                app:layout_constraintTop_toBottomOf="@+id/company_icon" />
+
+            <ImageView
+                android:id="@+id/com_dep_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_company"
+                app:layout_constraintStart_toStartOf="@+id/com_dep_label"
+                app:layout_constraintTop_toBottomOf="@+id/com_dep_label" />
+
+            <TextView
+                android:id="@+id/com_dep_tv"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/com_dep_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/com_dep_icon"
+                app:layout_constraintTop_toTopOf="@+id/com_dep_icon" />
+
+            <TextView
                 android:id="@+id/status_label"
                 style="@style/SemiBoldText"
                 android:layout_width="0dp"
@@ -483,8 +583,8 @@
                 android:text="Status"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/company_icon"
-                app:layout_constraintTop_toBottomOf="@+id/company_icon" />
+                app:layout_constraintStart_toStartOf="@+id/com_dep_icon"
+                app:layout_constraintTop_toBottomOf="@+id/com_dep_icon" />
 
             <ImageView
                 android:id="@+id/status_icon"
@@ -511,27 +611,27 @@
                 app:layout_constraintTop_toTopOf="@+id/status_icon" />
 
             <TextView
-                android:id="@+id/hours_label"
+                android:id="@+id/date_label"
                 style="@style/SemiBoldText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="No. of hours to complete"
+                android:text="Deployed DAte"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/status_icon"
                 app:layout_constraintTop_toBottomOf="@+id/status_icon" />
 
             <ImageView
-                android:id="@+id/hours_icon"
+                android:id="@+id/date_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_time"
-                app:layout_constraintStart_toStartOf="@+id/hours_label"
-                app:layout_constraintTop_toBottomOf="@+id/hours_label" />
+                android:src="@drawable/ic_calendar"
+                app:layout_constraintStart_toStartOf="@+id/date_label"
+                app:layout_constraintTop_toBottomOf="@+id/date_label" />
 
             <TextView
-                android:id="@+id/stud_hours_to_complete_tv"
+                android:id="@+id/stud_deployed_tv"
                 style="@style/RegularText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -541,10 +641,10 @@
                 android:text="@string/loading_text"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/hours_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/date_icon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/hours_icon"
-                app:layout_constraintTop_toTopOf="@+id/hours_icon" />
+                app:layout_constraintStart_toEndOf="@+id/date_icon"
+                app:layout_constraintTop_toTopOf="@+id/date_icon" />
 
             <TextView
                 android:id="@+id/com_address_label"
@@ -555,8 +655,8 @@
                 android:text="Address of Company"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/hours_icon"
-                app:layout_constraintTop_toBottomOf="@+id/hours_icon" />
+                app:layout_constraintStart_toStartOf="@+id/date_icon"
+                app:layout_constraintTop_toBottomOf="@+id/date_icon" />
 
             <ImageView
                 android:id="@+id/com_address_icon"
@@ -653,43 +753,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/com_contact_icon"
                 app:layout_constraintTop_toTopOf="@+id/com_contact_icon" />
-
-            <Button
-                android:id="@+id/view_req_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="64dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="View Requirements"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/com_contact_icon" />
-
-            <Button
-                android:id="@+id/view_dtr_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="64dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="View Dtr"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_req_btn" />
-
-
-            <Button
-                android:id="@+id/view_weekly_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="64dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="View Weekly Report"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_dtr_btn" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

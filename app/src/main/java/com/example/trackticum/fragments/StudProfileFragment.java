@@ -1,5 +1,6 @@
 package com.example.trackticum.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,8 +37,10 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.StudEditProfile;
 import com.example.trackticum.activities.StudManageSkills;
+import com.example.trackticum.activities.StudPreRequirements;
 import com.example.trackticum.activities.StudRequirements;
 import com.example.trackticum.activities.StudShowDtr;
+import com.example.trackticum.activities.StudViewWeekly;
 import com.example.trackticum.utils.Constants;
 import com.google.android.flexbox.FlexboxLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -58,16 +61,17 @@ public class StudProfileFragment extends Fragment {
     }
     private Toolbar toolbar;
     SharedPreferences sharedPreferences;
+    ProgressDialog progressDialog;
 
     //widget for student details
     private RoundedImageView studImageIV;
-    private TextView studNameTV, studNoTV, studApproveTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studAgeTV, studAddressTV;
+    private TextView studNameTV, studNoTV, studApproveTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studBirthdayTV, studAgeTV, studAddressTV;
 
     //widget for Company Details
-    private TextView comNameTV, studStatusTV, studHrsToCompleteTV, comAddressTV, comSupervisorTV, comContactTV;
+    private TextView comNameTV, comDepartment, studStatusTV, studDeployedTV, comAddressTV, comSupervisorTV, comContactTV;
 
     //button for requirements and weekly report
-    private Button viewReqBTN, viewWeeklyReportBTN, viewDtrButton;
+    private Button viewInitialReqBTN, viewPreReqBTN, viewWeeklyReportBTN, viewDtrButton, viewPostRequirement;
 
     private ImageButton viewStudSkillsBTN;
 
@@ -88,6 +92,7 @@ public class StudProfileFragment extends Fragment {
 
     private void initializeData(View view) {
         sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        progressDialog = new ProgressDialog(requireContext());
 
         //For action bar
         toolbar = view.findViewById(R.id.stud_profile_toolbar);
@@ -104,22 +109,31 @@ public class StudProfileFragment extends Fragment {
         studEmailTV = view.findViewById(R.id.stud_email_tv);
         studContactTV = view.findViewById(R.id.stud_contact_tv);
         studGenderTV = view.findViewById(R.id.stud_gender_tv);
+        studBirthdayTV = view.findViewById(R.id.stud_birthday_tv);
         studAgeTV = view.findViewById(R.id.stud_age_tv);
         studAddressTV = view.findViewById(R.id.stud_address_tv);
 
         //initialize widget for company details
         comNameTV = view.findViewById(R.id.com_name_tv);
+        comDepartment = view.findViewById(R.id.com_dep_tv);
         studStatusTV = view.findViewById(R.id.stud_status_tv);
-        studHrsToCompleteTV = view.findViewById(R.id.stud_hours_to_complete_tv);
+        studDeployedTV = view.findViewById(R.id.stud_deployed_tv);
         comAddressTV = view.findViewById(R.id.com_address_tv);
         comSupervisorTV = view.findViewById(R.id.stud_supervisor_tv);
         comContactTV = view.findViewById(R.id.com_contact_tv);
 
         //button for requirements and weekly report
-        viewReqBTN = view.findViewById(R.id.view_req_btn);
+        viewInitialReqBTN = view.findViewById(R.id.view_req_btn);
+        viewPreReqBTN = view.findViewById(R.id.view_pre_rec);
         viewWeeklyReportBTN = view.findViewById(R.id.view_weekly_btn);
         viewStudSkillsBTN = view.findViewById(R.id.manage_mykills_btn);
         viewDtrButton = view.findViewById(R.id.view_dtr_btn);
+        viewPostRequirement = view.findViewById(R.id.view_post_requirement);
+
+        viewPreReqBTN.setVisibility(View.GONE);
+        viewDtrButton.setVisibility(View.GONE);
+        viewWeeklyReportBTN.setVisibility(View.GONE);
+        viewPostRequirement.setVisibility(View.GONE);
 
         //fetching all details
         fetchStudAndComDetails();
@@ -130,7 +144,7 @@ public class StudProfileFragment extends Fragment {
     }
 
     private void setupListeners() {
-        viewReqBTN.setOnClickListener(new View.OnClickListener() {
+        viewInitialReqBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), StudRequirements.class);
@@ -151,9 +165,24 @@ public class StudProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        viewWeeklyReportBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), StudViewWeekly.class);
+                startActivity(intent);
+            }
+        });
+        viewPreReqBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), StudPreRequirements.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchStudAndComDetails() {
+
         String studID = sharedPreferences.getString("stud_id", null);
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/student/get-studcom-details/" + studID;
@@ -165,19 +194,21 @@ public class StudProfileFragment extends Fragment {
                 String studImageUrl = jsonObject.getString("image_url");
                 String studFname = jsonObject.getString("firstname");
                 String studLname = jsonObject.getString("lastname");
-                String studMinitial = jsonObject.getString("middle_initial") + ".";
+                String studMinitial = jsonObject.getString("middle_initial");
                 String studName = studFname + " " + studMinitial + " " + studLname;
                 String stud_no = jsonObject.getString("student_number");
-                int isApproved = jsonObject.getInt("is_approved");
-                String schoolDepartment = jsonObject.getString("department_name");
+                String isApproved = jsonObject.getString("is_approve");
+                String schoolDepartment = jsonObject.getString("college_name");
                 String studEmail = jsonObject.getString("email");
                 String studContact = jsonObject.getString("contact");
                 String studGender = jsonObject.getString("gender");
-                String studBirthday = jsonObject.getString("birthday");
-                String studAge = calculateAge(studBirthday);
+                String studBirthday = jsonObject.getString("formatted_birthday");
+                String studAge = calculateAge(jsonObject.getString("birthday"));
                 String studAddress = jsonObject.getString("address");
                 String comName = jsonObject.getString("company_name");
+                String comDep = jsonObject.getString("department_assigned");
                 String studStatus = jsonObject.getString("status");
+                String stud_deployed_date = jsonObject.getString("deployed_date");
                 String comAddress = jsonObject.getString("company_address");
                 String supervisor = jsonObject.getString("supervisor");
                 String comContact = jsonObject.getString("company_contact");
@@ -185,26 +216,29 @@ public class StudProfileFragment extends Fragment {
                 //students details
                 studNameTV.setText(studName);
                 studNoTV.setText(stud_no);
-                studApproveTV.setText(isApproved == 1 ? "Approved" : "Not Approved");
-                studDepTV.setText(schoolDepartment);
-                studEmailTV.setText(studEmail);
-                studContactTV.setText(studContact);
-                studGenderTV.setText(studGender);
+                studApproveTV.setText(isApproved.equals("1") ? "Approved" : "Not Approved");
+                studDepTV.setText(!schoolDepartment.equals("null") ? schoolDepartment : "N/A");
+                studEmailTV.setText(!studEmail.equals("null") ? studEmail : "N/A");
+                studContactTV.setText(!studContact.equals("null") ? studContact : "N/A");
+                studGenderTV.setText(studGender.toLowerCase());
+                studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");
                 studAgeTV.setText(studAge);
-                studAddressTV.setText(studAddress);
+                studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
 
                 //company details
                 if (comId != null && !comId.equalsIgnoreCase("null")) {
                     comNameTV.setText(comName);
+                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
                     studStatusTV.setText(studStatus);
-                    studHrsToCompleteTV.setText("Loading");
+                    studDeployedTV.setText(!stud_deployed_date.equals("null") ? stud_deployed_date : "N/A");
                     comAddressTV.setText(comAddress);
                     comSupervisorTV.setText(supervisor);
                     comContactTV.setText(comContact);
                 } else {
                     comNameTV.setText("No Details");
+                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
                     studStatusTV.setText("No Details");
-                    studHrsToCompleteTV.setText("No Details");
+                    studDeployedTV.setText("No Details");
                     comAddressTV.setText("No Details");
                     comSupervisorTV.setText("No Details");
                     comContactTV.setText("No Details");
@@ -222,6 +256,21 @@ public class StudProfileFragment extends Fragment {
                             .into(studImageIV);
                 }
 
+                if(comId.equals("null") || comId.isEmpty()){
+                    viewDtrButton.setVisibility(View.GONE);
+                    viewWeeklyReportBTN.setVisibility(View.GONE);
+                }else{
+                    viewPreReqBTN.setVisibility(View.VISIBLE);
+                    if(studStatus.equalsIgnoreCase("For Approval")) {
+                        viewDtrButton.setVisibility(View.GONE);
+                        viewWeeklyReportBTN.setVisibility(View.GONE);
+                        viewPostRequirement.setVisibility(View.GONE);
+                    } else {
+                        viewDtrButton.setVisibility(View.VISIBLE);
+                        viewWeeklyReportBTN.setVisibility(View.VISIBLE);
+                        viewPostRequirement.setVisibility(View.VISIBLE);
+                    }
+                }
             } catch (JSONException e) {
                 Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
             }
@@ -314,7 +363,7 @@ public class StudProfileFragment extends Fragment {
             return String.valueOf(age);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Invalid Date";
+            return "N/A";
         }
     }
 
@@ -360,5 +409,11 @@ public class StudProfileFragment extends Fragment {
             fetchSkills();
             prefs.edit().putBoolean("refreshSkills", false).apply();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
 }

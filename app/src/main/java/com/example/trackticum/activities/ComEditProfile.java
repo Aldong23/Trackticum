@@ -8,12 +8,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsetsController;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -53,7 +55,7 @@ public class ComEditProfile extends AppCompatActivity {
     //Inputs
     private TextInputEditText comNameET, comAddressET, comSlotET, comBgET;
     RoundedImageView comLogoIV;
-    ImageButton uploadLogoBtn;
+    Button uploadLogoBtn;
 
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
@@ -96,8 +98,6 @@ public class ComEditProfile extends AppCompatActivity {
 
         fetchOldComDetails();
 
-        //request to refresh profile
-        sharedPreferences.edit().putBoolean("refreshComProfile", true).apply();
     }
 
     private void setupListeners() {
@@ -147,6 +147,9 @@ public class ComEditProfile extends AppCompatActivity {
                     progressDialog.dismiss();
                     Toast.makeText(this, "Upload Successful", Toast.LENGTH_LONG).show();
                     comLogoIV.setImageURI(uri);
+
+                    //request to refresh profile
+                    sharedPreferences.edit().putBoolean("refreshComProfile", true).apply();
                 },
                 error -> {
                     progressDialog.dismiss();
@@ -196,7 +199,7 @@ public class ComEditProfile extends AppCompatActivity {
                 comNameET.setText(comName);
                 comAddressET.setText(comLocation);
                 comSlotET.setText(comSlot);
-                comBgET.setText(comBg);
+                comBgET.setText(Html.fromHtml(comBg, Html.FROM_HTML_MODE_LEGACY));
 
                 if (!imageUrl.isEmpty()) {
                     Picasso.get()
@@ -267,6 +270,9 @@ public class ComEditProfile extends AppCompatActivity {
                 response -> {
                     progressDialog.dismiss();
                     Toast.makeText(ComEditProfile.this, response, Toast.LENGTH_LONG).show();
+
+                    //request to refresh profile
+                    sharedPreferences.edit().putBoolean("refreshComProfile", true).apply();
                 }, error -> {
                     progressDialog.dismiss();
                     Toast.makeText(ComEditProfile.this, "Failed to update", Toast.LENGTH_SHORT).show();
@@ -310,6 +316,12 @@ public class ComEditProfile extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 
 }

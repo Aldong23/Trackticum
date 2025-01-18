@@ -9,11 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -32,11 +34,11 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
-import com.example.trackticum.activities.ComManageJoboffer;
-import com.example.trackticum.activities.StudEditProfile;
+import com.example.trackticum.activities.StudAnnouncementList;
 import com.example.trackticum.activities.StudShowCompany;
+import com.example.trackticum.activities.StudShowWeekly;
+import com.example.trackticum.activities.StudViewWeekly;
 import com.example.trackticum.adapters.StudCompaniesAdapter;
-import com.example.trackticum.models.JobOffer;
 import com.example.trackticum.models.StudCompanies;
 import com.example.trackticum.utils.Constants;
 import com.squareup.picasso.Picasso;
@@ -63,7 +65,12 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
     private StudCompaniesAdapter adapter;
     private List<StudCompanies> companiesList;
 
-    private String companyId, isApproved;
+    //for latest announcement
+    ConstraintLayout annContainer;
+    TextView annMessageTv, annDateTV;
+    TextView hoursRenderedTV, hoursToBeRenderedTV, trainingDurationTV;
+
+    private String companyId, isApproved, announcementID;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,6 +99,18 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         recyclerView = view.findViewById(R.id.stud_companies_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        //for announcement
+        annContainer = view.findViewById(R.id.announcement_container);
+        annMessageTv = view.findViewById(R.id.ann_message);
+        annDateTV = view.findViewById(R.id.ann_date);
+
+        fetchAnnouncement();
+
+        hoursRenderedTV = view.findViewById(R.id.hours_rendered);
+        hoursToBeRenderedTV = view.findViewById(R.id.hours_to_be_rendered);
+        trainingDurationTV = view.findViewById(R.id.training_duration);
+
+        fetchDashboard();
 
         companiesList = new ArrayList<>();
         adapter = new StudCompaniesAdapter(requireContext(), companiesList,this);
@@ -99,6 +118,16 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
         fetchStudDetails();
 
+    }
+
+    private void setupListeners(View view) {
+        annContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(requireContext(), StudAnnouncementList.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchStudDetails() {
@@ -111,20 +140,13 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
                 String stud_id = studDetails.getString("id");
                 String company_id = studDetails.getString("company_id");
-                String is_approved = studDetails.getString("is_approved");
+                String is_approved = studDetails.getString("is_approve");
 
                 companyId = company_id;
                 isApproved = is_approved;
 
-                if(is_approved.equals("1") && is_approved != null){
-                    notApprovedLottie.setVisibility(View.GONE);
-                    fetchCompanies();
-                }else{
-                    notApprovedLottie.setVisibility(View.VISIBLE);
-                    companiesList.clear();
-                    adapter.notifyDataSetChanged();
-                }
-
+                notApprovedLottie.setVisibility(View.GONE);
+                fetchCompanies();
 
             } catch (JSONException e) {
                 Toast.makeText(requireContext(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
@@ -146,9 +168,9 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        companiesList.clear();
                         if (response != null && response.length() > 0){
                             notApprovedLottie.setVisibility(View.GONE);
-                            companiesList.clear();
                             for (int i = 0; i < response.length(); i++) {
                                 try {
                                     JSONObject obj = response.getJSONObject(i);
@@ -165,12 +187,10 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                                     e.printStackTrace();
                                 }
                             }
-                            adapter.notifyDataSetChanged();
                         }else{
                             notApprovedLottie.setVisibility(View.VISIBLE);
-                            companiesList.clear();
-                            adapter.notifyDataSetChanged();
                         }
+                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
@@ -183,9 +203,82 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         queue.add(jsonArrayRequest);
     }
 
-    private void setupListeners(View view) {
+    private void fetchAnnouncement() {
+        String depID = sharedPreferences.getString("dep_id", null);
+        String syID = sharedPreferences.getString("sy_id", null);
 
+        String url = Constants.API_BASE_URL + "/announcement/get-latest-announcement/" + depID + "/" + syID;
+
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+
+                boolean status = jsonObject.getBoolean("status");
+
+                if (status) {
+                    String annID = jsonObject.getString("id");
+                    String annTitle = jsonObject.getString("title");
+                    String annMessage = jsonObject.getString("message");
+                    String annDate = jsonObject.getString("date");
+
+                    announcementID = annID;
+                    annDateTV.setText(annDate);
+                    annMessageTv.setText(Html.fromHtml(annMessage, Html.FROM_HTML_MODE_LEGACY));
+                    annContainer.setVisibility(View.VISIBLE);
+                } else {
+                    annContainer.setVisibility(View.GONE);
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Announcement", error.toString());
+        });
+
+        queue.add(request);
     }
+
+    private void fetchDashboard() {
+        // Get student ID from SharedPreferences
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/get-dashboard-details/" + studID;
+
+        // API Request
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                // Parse the JSON response
+                JSONObject jsonObject = new JSONObject(response);
+                boolean status = jsonObject.getBoolean("status");
+
+                if (status) {
+                    // Extract data from "data" object
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    String hoursRendered = data.getString("hours_rendered");
+                    String hoursToBeRendered = data.getString("hours_to_be_rendered");
+                    String trainingDuration = data.getString("training_duration");
+
+                    // Set the values to the TextViews
+                    hoursRenderedTV.setText(hoursRendered + " hrs");
+                    hoursToBeRenderedTV.setText(hoursToBeRendered + " hrs");
+                    trainingDurationTV.setText(trainingDuration + " hrs");
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+            Toast.makeText(requireActivity(), "Failed to fetch dashboard details", Toast.LENGTH_SHORT).show();
+        });
+
+        // Add request to queue
+        queue.add(request);
+    }
+
+
 
     @Override
     public void onViewCompanies(String comID) {
@@ -220,4 +313,9 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
+    }
 }

@@ -298,4 +298,10 @@ public class ComManageJoboffer extends AppCompatActivity implements JobOfferAdap
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
+    }
+
 }

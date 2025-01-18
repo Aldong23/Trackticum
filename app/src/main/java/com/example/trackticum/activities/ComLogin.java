@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -102,14 +104,17 @@ public class ComLogin extends AppCompatActivity {
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean status = jsonResponse.getBoolean("status");
                             String message = jsonResponse.getString("message");
-                            int comId = jsonResponse.getInt("com_id");
 
                             if (status) {
+                                int comId = jsonResponse.getInt("com_id");
                                 storeComIdToSession(String.valueOf(comId));
+                                storeSchoolYearToSession();
                                 redirectToMain();
+                                Toast.makeText(ComLogin.this, message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ComLogin.this, message, Toast.LENGTH_SHORT).show();
                             }
                             progressDialog.dismiss();
-                            Toast.makeText(ComLogin.this, message, Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             progressDialog.dismiss();
                             Toast.makeText(ComLogin.this, "Error parsing response", Toast.LENGTH_SHORT).show();
@@ -136,6 +141,34 @@ public class ComLogin extends AppCompatActivity {
         editor.apply();
     }
 
+    private void storeSchoolYearToSession() {
+        String url = Constants.API_BASE_URL + "/school-year/get-latest";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+
+                boolean status = jsonObject.getBoolean("status");
+
+                if (status) {
+                    String school_year_id = jsonObject.getString("id");
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("sy_id", school_year_id);
+                    editor.apply();
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(this, "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Announcement", error.toString());
+        });
+
+        queue.add(request);
+    }
+
     private void redirectToMain() {
         Intent intent = new Intent(ComLogin.this, ComMainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -149,5 +182,11 @@ public class ComLogin extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }

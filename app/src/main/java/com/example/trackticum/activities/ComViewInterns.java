@@ -96,8 +96,9 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
     }
 
     private void fetchInterns() {
+        String syID = sharedPreferences.getString("sy_id", null);
         String comId = sharedPreferences.getString("com_id", null);
-        String url = Constants.API_BASE_URL + "/company/get-interns/" + comId;
+        String url = Constants.API_BASE_URL + "/company/get-interns/" + comId + "/" + syID;
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -159,6 +160,12 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 
 }

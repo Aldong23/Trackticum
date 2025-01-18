@@ -1,6 +1,7 @@
 package com.example.trackticum.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class StudCompaniesAdapter extends RecyclerView.Adapter<StudCompaniesAdap
 
         holder.comName.setText(comName);
         holder.comAddress.setText(comAddress);
-        holder.comDescription.setText(comDescription);
+        holder.comDescription.setText(Html.fromHtml(comDescription, Html.FROM_HTML_MODE_LEGACY));
         holder.comSlot.setText("Slot: " + comSlot);
 
         holder.comContainer.setOnClickListener(new View.OnClickListener() {

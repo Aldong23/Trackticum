@@ -34,7 +34,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/stud_profile_header"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
+                android:layout_height="wrap_content"
                 android:paddingVertical="8dp"
                 android:background="?attr/colorPrimary"
                 app:layout_constraintTop_toTopOf="parent"
@@ -60,13 +60,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp"
                     android:ellipsize="end"
-                    android:maxLines="1"
+                    android:maxLines="2"
                     android:text="@string/loading_text"
                     android:textColor="@color/white"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/stud_pic_IV"
+                    android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/stud_pic_IV"
                     app:layout_constraintTop_toTopOf="@+id/stud_pic_IV" />
@@ -82,11 +80,89 @@
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-
                     app:layout_constraintStart_toStartOf="@+id/stud_name_tv"
                     app:layout_constraintTop_toBottomOf="@+id/stud_name_tv" />
 
+                <TextView
+                    android:id="@+id/stud_status"
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/loading_text"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/stud_no_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/stud_no_tv" />
+
+                <TextView
+                    android:id="@+id/stud_deployed_date"
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/loading_text"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/stud_status"
+                    app:layout_constraintTop_toBottomOf="@+id/stud_status" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Horizontal Scrollable Buttons -->
+            <HorizontalScrollView
+                android:id="@+id/buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stud_profile_header">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="2dp"
+                    android:paddingHorizontal="8dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/view_dtr_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="View DTR" />
+
+                    <Button
+                        android:id="@+id/view_weekly_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="View Weekly Report" />
+
+                    <Button
+                        android:id="@+id/midterm_evaluation_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Midterm Evaluations" />
+
+                    <Button
+                        android:id="@+id/final_evaluation_btn"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Final Evaluations" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/stud_skills_label"
@@ -99,7 +175,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/stud_profile_header" />
+                app:layout_constraintTop_toBottomOf="@+id/buttons" />
 
             <View
                 android:id="@+id/divider0"
@@ -393,49 +469,18 @@
                 app:layout_constraintStart_toEndOf="@+id/address_icon"
                 app:layout_constraintTop_toTopOf="@+id/address_icon" />
 
-            <Button
-                android:id="@+id/view_dtr_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="64dp"
-                android:text="View DTR"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/stud_address_tv" />
-
-            <Button
-                android:id="@+id/view_weekly_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="64dp"
-                android:text="View Weekly Report"
-                app:layout_constraintEnd_toEndOf="@+id/view_dtr_btn"
-                app:layout_constraintStart_toStartOf="@+id/view_dtr_btn"
-                app:layout_constraintTop_toBottomOf="@+id/view_dtr_btn" />
-
-            <Button
-                android:id="@+id/view_evaluation_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="64dp"
-                android:text="View Evaluations"
-                app:layout_constraintEnd_toEndOf="@+id/view_weekly_btn"
-                app:layout_constraintStart_toStartOf="@+id/view_weekly_btn"
-                app:layout_constraintTop_toBottomOf="@+id/view_weekly_btn" />
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/complete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Mark as Complete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

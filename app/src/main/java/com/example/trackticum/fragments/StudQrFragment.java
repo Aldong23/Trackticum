@@ -166,4 +166,10 @@ public class StudQrFragment extends Fragment {
 
         queue.add(request);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
+    }
 }

@@ -28,7 +28,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="8dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="80dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/com_logo_IV"
@@ -228,6 +229,69 @@
                     app:justifyContent="flex_start"
                     app:layout_constraintStart_toStartOf="@+id/job_offer_tv"
                     app:layout_constraintTop_toBottomOf="@+id/job_offer_tv" />
+
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/lineBreak"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/jobsContainer" />
+
+                <TextView
+                    android:id="@+id/time_label"
+                    style="@style/SemiBoldText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Time"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+                <ImageView
+                    android:id="@+id/time1"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_time"
+                    app:layout_constraintStart_toStartOf="@+id/time_label"
+                    app:layout_constraintTop_toBottomOf="@+id/time_label" />
+
+                <TextView
+                    android:id="@+id/am_time_in_out"
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/loading_text"
+                    app:layout_constraintBottom_toBottomOf="@+id/time1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/time1"
+                    app:layout_constraintTop_toTopOf="@+id/time1" />
+
+
+                <ImageView
+                    android:id="@+id/time2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_time"
+                    app:layout_constraintStart_toStartOf="@+id/time1"
+                    app:layout_constraintTop_toBottomOf="@+id/time1" />
+
+                <TextView
+                    android:id="@+id/pm_time_in_out"
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/loading_text"
+                    app:layout_constraintBottom_toBottomOf="@+id/time2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/time2"
+                    app:layout_constraintTop_toTopOf="@+id/time2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -41,25 +41,44 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:riv_oval="true" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/upload_image_btn"
+                style="?attr/materialIconButtonFilledStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add_img"
+                app:icon="@drawable/ic_add_img"
                 app:layout_constraintBottom_toBottomOf="@+id/stud_image_tv"
                 app:layout_constraintEnd_toEndOf="@+id/stud_image_tv" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/stud_email_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="24dp"
+                android:hint="Email"
+                app:layout_constraintTop_toBottomOf="@+id/stud_image_tv"
+                app:startIconDrawable="@drawable/ic_email">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/stud_email_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/stud_contact_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="35dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:hint="Contact"
-                app:layout_constraintTop_toBottomOf="@+id/stud_image_tv"
-                app:startIconDrawable="@drawable/ic_telephone"
-                tools:layout_editor_absoluteX="35dp">
+                app:layout_constraintEnd_toEndOf="@+id/stud_email_layout"
+                app:layout_constraintStart_toStartOf="@+id/stud_email_layout"
+                app:layout_constraintTop_toBottomOf="@+id/stud_email_layout"
+                app:startIconDrawable="@drawable/ic_telephone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/stud_contact_et"
@@ -130,6 +149,46 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/stud_address_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/stud_parent_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="8dp"
+                android:hint="Parent/Guardian"
+                app:layout_constraintEnd_toEndOf="@+id/stud_address_layout"
+                app:layout_constraintStart_toStartOf="@+id/stud_address_layout"
+                app:layout_constraintTop_toBottomOf="@+id/stud_address_layout"
+                app:startIconDrawable="@drawable/ic_person1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/stud_parent_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/com_department_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginTop="8dp"
+                android:hint="Company Department Assigned"
+                app:layout_constraintEnd_toEndOf="@+id/stud_parent_layout"
+                app:layout_constraintStart_toStartOf="@+id/stud_parent_layout"
+                app:layout_constraintTop_toBottomOf="@+id/stud_parent_layout"
+                app:startIconDrawable="@drawable/ic_home">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/com_department_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />

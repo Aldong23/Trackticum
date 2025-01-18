@@ -1,5 +1,6 @@
 package com.example.trackticum.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -54,9 +55,10 @@ public class ComShowIntern extends AppCompatActivity {
 
     //widget for student details
     private RoundedImageView studImageIV;
-    private TextView studNameTV, studNoTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studBirthdayTV, studAgeTV, studAddressTV;
+    private TextView studNameTV, studNoTV, studStatusTV, studDeployedDateTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studBirthdayTV, studAgeTV, studAddressTV;
     SharedPreferences sharedPreferences;
-    private Button viewDtrBTN, viewWeeklyReportBTN, viewEvaluationBTN;
+    private Button viewDtrBTN, viewWeeklyReportBTN, midtermEvaluationBTN, finalEvaluationBTN;
+    ExtendedFloatingActionButton completeBTN;
 
     //for Skill Requirements
     private FlexboxLayout skillsContainer;
@@ -98,6 +100,8 @@ public class ComShowIntern extends AppCompatActivity {
         studImageIV = findViewById(R.id.stud_pic_IV);
         studNameTV = findViewById(R.id.stud_name_tv);
         studNoTV = findViewById(R.id.stud_no_tv);
+        studStatusTV = findViewById(R.id.stud_status);
+        studDeployedDateTV = findViewById(R.id.stud_deployed_date);
         studDepTV = findViewById(R.id.stud_school_dep_tv);
         studEmailTV = findViewById(R.id.stud_email_tv);
         studContactTV = findViewById(R.id.stud_contact_tv);
@@ -107,7 +111,10 @@ public class ComShowIntern extends AppCompatActivity {
         studAddressTV = findViewById(R.id.stud_address_tv);
         viewDtrBTN = findViewById(R.id.view_dtr_btn);
         viewWeeklyReportBTN = findViewById(R.id.view_weekly_btn);
-        viewEvaluationBTN = findViewById(R.id.view_evaluation_btn);
+        midtermEvaluationBTN = findViewById(R.id.midterm_evaluation_btn);
+        finalEvaluationBTN = findViewById(R.id.final_evaluation_btn);
+
+        completeBTN = findViewById(R.id.complete_btn);
 
         fetchStudDetails();
 
@@ -125,6 +132,46 @@ public class ComShowIntern extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        viewWeeklyReportBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ComShowIntern.this, ComStudWeekly.class);
+                intent.putExtra("stud_id", studID);
+                startActivity(intent);
+            }
+        });
+        midtermEvaluationBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ComShowIntern.this, StudMidtermEvalutaion.class);
+                intent.putExtra("stud_id", studID);
+                startActivity(intent);
+            }
+        });
+        finalEvaluationBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ComShowIntern.this, StudFinalEvaluation.class);
+                intent.putExtra("stud_id", studID);
+                startActivity(intent);
+            }
+        });
+
+        completeBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Confirmation")
+                        .setMessage("Are you sure you want to mark as complete this student?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            markStudentAsComplete();
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .show();
+            }
+        });
     }
 
     private void fetchStudDetails() {
@@ -137,10 +184,12 @@ public class ComShowIntern extends AppCompatActivity {
                 String studImageUrl = jsonObject.getString("image_url");
                 String studFname = jsonObject.getString("firstname");
                 String studLname = jsonObject.getString("lastname");
-                String studMinitial = jsonObject.getString("middle_initial") + ".";
+                String studMinitial = jsonObject.getString("middle_initial");
                 String studName = studFname + " " + studMinitial + " " + studLname;
                 String stud_no = jsonObject.getString("student_number");
-                String schoolDepartment = jsonObject.getString("department_name");
+                String stud_status = jsonObject.getString("status");
+                String stud_deployed_date = jsonObject.getString("deployed_date");
+                String schoolDepartment = jsonObject.getString("college_name");
                 String studEmail = jsonObject.getString("email");
                 String studContact = jsonObject.getString("contact");
                 String studGender = jsonObject.getString("gender");
@@ -148,16 +197,21 @@ public class ComShowIntern extends AppCompatActivity {
                 String studAge = calculateAge(studBirthday);
                 String studAddress = jsonObject.getString("address");
 
+                boolean midterm_evaluation = jsonObject.getInt("midterm_evaluation") == 1;
+                boolean final_evaluation = jsonObject.getInt("final_evaluation") == 1;
+
                 //students details
                 studNameTV.setText(studName);
                 studNoTV.setText(stud_no);
-                studDepTV.setText(schoolDepartment);
-                studEmailTV.setText(studEmail);
-                studContactTV.setText(studContact);
-                studGenderTV.setText(studGender);
-                studBirthdayTV.setText(studBirthday);
+                studStatusTV.setText("Status: " + (!stud_status.equals("null") ? stud_status : "N/A"));
+                studDeployedDateTV.setText("Deployed Date: " + (!stud_deployed_date.equals("null") ? stud_deployed_date : "N/A"));
+                studDepTV.setText(!schoolDepartment.equals("null") ? schoolDepartment : "N/A");
+                studEmailTV.setText(!studEmail.equals("null") ? studEmail : "N/A");
+                studContactTV.setText(!studContact.equals("null") ? studContact : "N/A");
+                studGenderTV.setText(studGender.toLowerCase());
+                studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");
                 studAgeTV.setText(studAge);
-                studAddressTV.setText(studAddress);
+                studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
 
 
                 Picasso.get().invalidate(studImageUrl);
@@ -169,6 +223,26 @@ public class ComShowIntern extends AppCompatActivity {
                             .resize(500, 500)
                             .centerCrop()
                             .into(studImageIV);
+                }
+
+                if(stud_status.equalsIgnoreCase("Completed") ){
+                    completeBTN.setText("Completed");
+                    completeBTN.setEnabled(false);
+                }else{
+                    completeBTN.setText("Mark as Complete");
+                    completeBTN.setEnabled(true);
+                }
+
+                if(stud_status.equalsIgnoreCase("Ongoing") || stud_status.equalsIgnoreCase("Completed") ){
+                    viewDtrBTN.setVisibility(View.VISIBLE);
+                    viewWeeklyReportBTN.setVisibility(View.VISIBLE);
+                    midtermEvaluationBTN.setVisibility(midterm_evaluation ? View.VISIBLE : View.GONE);
+                    finalEvaluationBTN.setVisibility(final_evaluation ? View.VISIBLE : View.GONE);
+                }else{
+                    viewDtrBTN.setVisibility(View.GONE);
+                    viewWeeklyReportBTN.setVisibility(View.GONE);
+                    midtermEvaluationBTN.setVisibility(View.GONE);
+                    finalEvaluationBTN.setVisibility(View.GONE);
                 }
 
             } catch (JSONException e) {
@@ -241,6 +315,33 @@ public class ComShowIntern extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
+    private void markStudentAsComplete() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = Constants.API_BASE_URL + "/company/mark-stud-complete/" + studID;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject responseObject = new JSONObject(response);
+                        boolean status = responseObject.getBoolean("status");
+                        String message = responseObject.getString("message");
+                        fetchStudDetails();
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Toast.makeText(this, "Response parsing failed", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    Log.e("Error", error.toString());
+                    Toast.makeText(this, "Request failed", Toast.LENGTH_SHORT).show();
+                }
+        );
+
+        queue.add(request);
+    }
+
+
+
     public String calculateAge(String studBirthday) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -260,7 +361,7 @@ public class ComShowIntern extends AppCompatActivity {
             return String.valueOf(age);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Invalid Date";
+            return "N/A";
         }
     }
 
@@ -280,5 +381,11 @@ public class ComShowIntern extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }

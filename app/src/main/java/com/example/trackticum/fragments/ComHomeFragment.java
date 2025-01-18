@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,6 +63,8 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
     SharedPreferences sharedPreferences;
     private LottieAnimationView emptyLottie;
 
+    TextView numInternsTV, availabelSlotTV, moaDurationTV;
+
     //fetching list of companies
     private RecyclerView recyclerView;
     private ComApplicantsAdapter adapter;
@@ -90,6 +93,12 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("Home");
 
+        numInternsTV = view.findViewById(R.id.num_intern_tv);
+        availabelSlotTV = view.findViewById(R.id.slot_tv);
+        moaDurationTV = view.findViewById(R.id.moa_duration_tv);
+
+        fetchComDashboard();
+
         emptyLottie = view.findViewById(R.id.empty_lottie);
         recyclerView = view.findViewById(R.id.com_applicants_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -101,14 +110,14 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         fetchApplicants();
     }
 
-
     private void setupListeners(View view) {
 
     }
 
     private void fetchApplicants() {
         String comId = sharedPreferences.getString("com_id", null);
-        String url = Constants.API_BASE_URL + "/company/get-applicants/" + comId;
+        String syID = sharedPreferences.getString("sy_id", null);
+        String url = Constants.API_BASE_URL + "/company/get-applicants/" + comId + "/" + syID;
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
 
@@ -147,6 +156,45 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
 
         queue.add(jsonArrayRequest);
     }
+
+    private void fetchComDashboard() {
+        // Get student ID from SharedPreferences
+        String syID = sharedPreferences.getString("sy_id", null);
+        String comId = sharedPreferences.getString("com_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/company/com-dashboard-details/" + comId + "/" + syID;
+
+        // API Request
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                // Parse the JSON response
+                JSONObject jsonObject = new JSONObject(response);
+                boolean status = jsonObject.getBoolean("status");
+
+                if (status) {
+                    // Extract data from "data" object
+                    JSONObject data = jsonObject.getJSONObject("data");
+
+                    String numInterns = data.getString("num_interns");
+                    String availableSlots = data.getString("available_slots");
+                    String moaDuration = data.optString("moa_duration", "No MOA available");
+
+                    numInternsTV.setText(numInterns);
+                    availabelSlotTV.setText(availableSlots);
+                    moaDurationTV.setText(moaDuration);
+                }
+            } catch (JSONException e) {
+                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+            Toast.makeText(requireActivity(), "Failed to fetch dashboard details", Toast.LENGTH_SHORT).show();
+        });
+
+        // Add request to queue
+        queue.add(request);
+    }
+
 
     @Override
     public void onViewApplicants(String studID) {
@@ -258,6 +306,34 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         queue.add(stringRequest);
     }
 
+    private void getLatestSchoolYear() {
+        String url = Constants.API_BASE_URL + "/school-year/get-latest";
+
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+
+                boolean status = jsonObject.getBoolean("status");
+
+                if (status) {
+                    String school_year_id = jsonObject.getString("id");
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("sy_id", school_year_id);
+                    editor.apply();
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Announcement", error.toString());
+        });
+
+        queue.add(request);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -276,7 +352,14 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
+            progressDialog.setMessage("Please wait...");
+            progressDialog.setTitle("Refreshing");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+            getLatestSchoolYear();
             fetchApplicants();
+            progressDialog.dismiss();
+            Toast.makeText(requireContext(), "All data has been refreshed.", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -292,5 +375,11 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
             fetchApplicants();
             prefs.edit().putBoolean("refreshApplicantsList", false).apply();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
 }

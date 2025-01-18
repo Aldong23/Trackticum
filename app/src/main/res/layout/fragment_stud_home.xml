@@ -29,83 +29,232 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/announcement_container"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="100dp"
+            android:visibility="gone"
             android:paddingVertical="8dp"
             android:background="?attr/colorPrimary"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ExtraText">
+            android:padding="8dp">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/stud_pic_IV"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:layout_marginStart="16dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/img_placeholder"
-                app:riv_border_width="5dp"
-                app:riv_border_color="@android:color/white"
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/announcement_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:riv_oval="true" />
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/announcement_icon" />
 
             <TextView
-                android:id="@+id/stud_name_tv"
+                android:id="@+id/ann_title"
                 style="@style/BoldText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/loading_text"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:maxLines="1"
+                android:layout_marginStart="8dp"
                 android:ellipsize="end"
-                app:layout_constraintBottom_toTopOf="@+id/stud_no_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/stud_no_tv" />
-
-            <TextView
-                android:id="@+id/stud_no_tv"
-                style="@style/RegularText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/loading_text"
-                android:textColor="@color/white"
-                android:textSize="12sp"
                 android:maxLines="1"
-                android:ellipsize="end"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/stud_pic_IV"
+                android:text="View Announcements"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/arrowIcon"
+                app:layout_constraintStart_toEndOf="@+id/announcement_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/stud_isapprove_tv"
+                android:id="@+id/ann_message"
                 style="@style/RegularText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/loading_text"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@+id/arrowIcon"
+                app:layout_constraintStart_toStartOf="@+id/ann_title"
+                app:layout_constraintTop_toBottomOf="@+id/ann_title" />
+
+            <TextView
+                android:id="@+id/ann_date"
+                style="@style/RegularText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:text="@string/loading_text"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:maxLines="1"
-                android:ellipsize="end"
+                app:layout_constraintStart_toStartOf="@+id/ann_message"
+                app:layout_constraintTop_toBottomOf="@+id/ann_message" />
+
+            <ImageView
+                android:id="@+id/arrowIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_right_white"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/stud_no_tv"
-                app:layout_constraintTop_toBottomOf="@+id/stud_no_tv" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Horizontally aligned CardViews -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_1"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_margin="8dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/announcement_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/card_2">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/hours_rendered_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_rounded_bold"
+                    android:text="Hours Rendered"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/hours_rendered"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sf_rounded_regular"
+                    android:text="486 Hrs"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hours_rendered_text" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_2"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_margin="8dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/announcement_container"
+            app:layout_constraintStart_toEndOf="@id/card_1"
+            app:layout_constraintEnd_toStartOf="@+id/card_3">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/hours_to_be_rendered_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_rounded_bold"
+                    android:text="To be Rendered"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/hours_to_be_rendered"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sf_rounded_regular"
+                    android:text="486 Hrs"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hours_to_be_rendered_text" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_3"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_margin="8dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/announcement_container"
+            app:layout_constraintStart_toEndOf="@id/card_2"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/training_duration_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_rounded_bold"
+                    android:text="Training Duration"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/training_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sf_rounded_regular"
+                    android:text="486 Hrs"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/training_duration_text" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/com_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/sf_rounded_bold"
             android:text="Company"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/announcement_container" />
+            app:layout_constraintTop_toBottomOf="@+id/card_1" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/stud_companies_rv"

@@ -15,7 +15,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_trackticum"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -23,6 +23,39 @@
         android:theme="@style/Theme.Trackticum"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.StudViewPreRequirement"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudPreRequirements"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudFinalEvaluation"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudMidtermEvalutaion"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ComStudShowWeekly"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ComStudWeekly"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ComEditTIme"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudViewAnnouncement"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudAnnouncementList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudShowWeekly"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudViewWeekly"
+            android:exported="false" />
         <activity
             android:name=".activities.StudShowDtr"
             android:exported="false" />

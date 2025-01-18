@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +55,7 @@ public class StudShowCompany extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     //Fetch Company Information
-    private TextView comNameTV, comNatureTV, comLocationTV, comEmailTV, comSlotTV, comContactTV, comBgTV;
+    private TextView comNameTV, comNatureTV, comLocationTV, comEmailTV, comSlotTV, comContactTV, comBgTV, amTimeInOutTV, pmTimeInOutTV;
     private RoundedImageView comLogoIV;
     SharedPreferences sharedPreferences;
     private ExtendedFloatingActionButton applyBTN;
@@ -104,11 +105,13 @@ public class StudShowCompany extends AppCompatActivity {
         comSlotTV = findViewById(R.id.com_slot_tv);
         comContactTV = findViewById(R.id.com_contact_tv);
         comBgTV = findViewById(R.id.com_descrip_tv);
+        amTimeInOutTV = findViewById(R.id.am_time_in_out);
+        pmTimeInOutTV = findViewById(R.id.pm_time_in_out);
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         fetchCompanyDetails();
 
         applyBTN = findViewById(R.id.apply_btn);
-        if(!studComID.equals("null") && studComID != null && !studComID.isEmpty()){
+        if((!studComID.equals("null") && !studComID.isEmpty()) || studIsApproved.equals("0")){
             applyBTN.setVisibility(View.GONE);
         }else{
             applyBTN.setVisibility(View.VISIBLE);
@@ -196,6 +199,12 @@ public class StudShowCompany extends AppCompatActivity {
                 String comSlot = comDetails.getString("slot");
                 String comContact = comDetails.getString("contact");
                 String comBg = comDetails.getString("description");
+                String amTimeIn = comDetails.getString("am_time_in");
+                String amTimeOut = comDetails.getString("am_time_out");
+                String amInOut = amTimeIn + " - " + amTimeOut;
+                String pmTimeIn = comDetails.getString("pm_time_in");
+                String pmTimeOut = comDetails.getString("pm_time_out");
+                String pmInOut = pmTimeIn + " - " + pmTimeOut;
 
                 comNameTV.setText(comName);
                 comNatureTV.setText(comNature);
@@ -203,7 +212,9 @@ public class StudShowCompany extends AppCompatActivity {
                 comEmailTV.setText(comEmail);
                 comSlotTV.setText(comSlot);
                 comContactTV.setText(comContact);
-                comBgTV.setText(comBg);
+                comBgTV.setText(Html.fromHtml(comBg, Html.FROM_HTML_MODE_LEGACY));
+                amTimeInOutTV.setText(!amInOut.equals("null - null") ? amInOut : "N/A");
+                pmTimeInOutTV.setText(!pmInOut.equals("null - null") ? pmInOut : "N/A");
 
                 Picasso.get().invalidate(imageUrl);
                 if (!imageUrl.isEmpty()) {
@@ -339,5 +350,11 @@ public class StudShowCompany extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }

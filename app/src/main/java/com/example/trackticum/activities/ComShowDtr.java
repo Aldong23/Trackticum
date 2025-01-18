@@ -663,10 +663,10 @@ public class ComShowDtr extends AppCompatActivity implements StudDtrAdapter.Stud
         TextInputEditText pmOut = dialogView.findViewById(R.id.pmTimeOutInput);
 
         // Pre-fill the fields with existing values
-        amIn.setText(amTimeIn);
-        amOut.setText(amTimeOut);
-        pmIn.setText(pmTimeIn);
-        pmOut.setText(pmTimeOut);
+        amIn.setText(!amTimeIn.equals("null") ? amTimeIn : "");
+        amOut.setText(!amTimeOut.equals("null") ? amTimeOut : "");
+        pmIn.setText(!pmTimeIn.equals("null") ? pmTimeIn : "");
+        pmOut.setText(!pmTimeOut.equals("null") ? pmTimeOut : "");
 
         // Set up TimePickerDialog with AM/PM selection in the dialog itself
         View.OnClickListener timeClickListener = v -> {
@@ -830,6 +830,12 @@ public class ComShowDtr extends AppCompatActivity implements StudDtrAdapter.Stud
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 
 }

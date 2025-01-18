@@ -188,7 +188,7 @@ public class ComShowApplicants extends AppCompatActivity {
                 String studMinitial = jsonObject.getString("middle_initial") + ".";
                 String studName = studFname + " " + studMinitial + " " + studLname;
                 String stud_no = jsonObject.getString("student_number");
-                String schoolDepartment = jsonObject.getString("department_name");
+                String schoolDepartment = jsonObject.getString("college_name");
                 String studEmail = jsonObject.getString("email");
                 String studContact = jsonObject.getString("contact");
                 String studGender = jsonObject.getString("gender");
@@ -199,13 +199,13 @@ public class ComShowApplicants extends AppCompatActivity {
                 //students details
                 studNameTV.setText(studName);
                 studNoTV.setText(stud_no);
-                studDepTV.setText(schoolDepartment);
-                studEmailTV.setText(studEmail);
-                studContactTV.setText(studContact);
-                studGenderTV.setText(studGender);
-                studBirthdayTV.setText(studBirthday);
+                studDepTV.setText(!schoolDepartment.equals("null") ? schoolDepartment : "N/A");
+                studEmailTV.setText(!studEmail.equals("null") ? studEmail : "N/A");
+                studContactTV.setText(!studContact.equals("null") ? studContact : "N/A");
+                studGenderTV.setText(studGender.toLowerCase());
+                studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");
                 studAgeTV.setText(studAge);
-                studAddressTV.setText(studAddress);
+                studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
 
 
                 Picasso.get().invalidate(studImageUrl);
@@ -308,7 +308,7 @@ public class ComShowApplicants extends AppCompatActivity {
             return String.valueOf(age);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Invalid Date";
+            return "N/A";
         }
     }
 
@@ -328,6 +328,12 @@ public class ComShowApplicants extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 
 }

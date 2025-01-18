@@ -82,7 +82,6 @@ public class StudViewRequirement extends AppCompatActivity {
         //Add code here
         initializeData();
         setupListeners();
-
     }
 
     private void initializeData() {
@@ -138,16 +137,21 @@ public class StudViewRequirement extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Show confirmation dialog
-                new AlertDialog.Builder(view.getContext())
-                        .setTitle("Download")
-                        .setMessage("Are you sure you want to download this document?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            downloadFile();
-                        })
-                        .setNegativeButton("No", (dialog, which) -> {
-                            dialog.dismiss();
-                        })
-                        .show();
+                if(!documentBeforeOjtID.equals("null")){
+                    new AlertDialog.Builder(view.getContext())
+                            .setTitle("Download")
+                            .setMessage("Are you sure you want to download this document?")
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                downloadFile();
+                            })
+                            .setNegativeButton("No", (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .show();
+                }else{
+                    Toast.makeText(StudViewRequirement.this, "No Files", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -320,7 +324,7 @@ public class StudViewRequirement extends AppCompatActivity {
     }
 
     // Custom InputStreamRequest class
-    public class InputStreamRequest extends Request<InputStream> {
+    public static class InputStreamRequest extends Request<InputStream> {
         private final Response.Listener<InputStream> listener;
 
         public InputStreamRequest(int method, String url, Response.Listener<InputStream> listener, Response.ErrorListener errorListener) {
@@ -378,5 +382,11 @@ public class StudViewRequirement extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }

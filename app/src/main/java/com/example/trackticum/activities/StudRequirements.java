@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowInsetsController;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -51,6 +53,8 @@ public class StudRequirements extends AppCompatActivity implements StudRequireme
     private RecyclerView recyclerView;
     private StudRequirementAdapter adapter;
     private List<StudRequirement> studRequirementList;
+
+    LottieAnimationView emptyLottie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,8 @@ public class StudRequirements extends AppCompatActivity implements StudRequireme
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
+        emptyLottie = findViewById(R.id.empty_list_lottie);
+        emptyLottie.setVisibility(View.GONE);
 
         studRequirementList = new ArrayList<>();
         adapter = new StudRequirementAdapter(this, studRequirementList, this);
@@ -110,18 +116,23 @@ public class StudRequirements extends AppCompatActivity implements StudRequireme
                     @Override
                     public void onResponse(JSONArray response) {
                         studRequirementList.clear();
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject obj = response.getJSONObject(i);
-                                String documentRequirementID = obj.getString("document_requirement_id");
-                                String documentBeforeOjtID = obj.getString("document_before_ojt_id");
-                                String requirementTitle = obj.getString("document_requirement_title");
-                                String documentBeforeOjtFile = obj.getString("document_before_ojt_file");
+                        if (response != null && response.length() > 0){
+                            emptyLottie.setVisibility(View.GONE);
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject obj = response.getJSONObject(i);
+                                    String documentRequirementID = obj.getString("document_requirement_id");
+                                    String documentBeforeOjtID = obj.getString("document_before_ojt_id");
+                                    String requirementTitle = obj.getString("document_requirement_title");
+                                    String documentBeforeOjtFile = obj.getString("document_before_ojt_file");
 
-                                studRequirementList.add(new StudRequirement(documentRequirementID, documentBeforeOjtID, requirementTitle, documentBeforeOjtFile));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                    studRequirementList.add(new StudRequirement(documentRequirementID, documentBeforeOjtID, requirementTitle, documentBeforeOjtFile));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                        } else {
+                            emptyLottie.setVisibility(View.VISIBLE);
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -173,5 +184,11 @@ public class StudRequirements extends AppCompatActivity implements StudRequireme
             fetchStudentRequirement();
             prefs.edit().putBoolean("refreshRequirements", false).apply();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Volley.newRequestQueue(this).cancelAll(request -> true);
     }
 }
