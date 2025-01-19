@@ -124,8 +124,18 @@
                     android:layout_marginStart="8dp"
                     android:text="@string/loading_text"
                     app:layout_constraintBottom_toBottomOf="@+id/email_icon"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/status_IV"
                     app:layout_constraintStart_toEndOf="@+id/email_icon"
+                    app:layout_constraintTop_toTopOf="@+id/email_icon" />
+
+                <ImageView
+                    android:id="@+id/status_IV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_verified"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/email_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/email_icon" />
 
                 <ImageView
@@ -315,17 +325,6 @@
                     app:layout_constraintTop_toTopOf="@+id/time2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <Button
-                android:id="@+id/view_interns_btn"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="View Interns"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/content" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

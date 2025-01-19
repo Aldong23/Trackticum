@@ -107,7 +107,8 @@ public class StudRequirements extends AppCompatActivity implements StudRequireme
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String stud_id = sharedPreferences.getString("stud_id", null);
         String dep_id = sharedPreferences.getString("dep_id", null);
-        String url = Constants.API_BASE_URL + "/get-document-requirements/" + stud_id + "/" + dep_id;
+        String syID = sharedPreferences.getString("sy_id", null);
+        String url = Constants.API_BASE_URL + "/get-document-requirements/" + stud_id + "/" + dep_id + "/" + syID;
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

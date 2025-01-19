@@ -60,7 +60,7 @@ public class StudEditProfile extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
 
-    private TextInputEditText studEmailET, studContactET, studBirthdayET, studAddressET, studParentET, comDepartmentEt;
+    private TextInputEditText studContactET, studBirthdayET, studAddressET, studParentET, comDepartmentEt;
     private AutoCompleteTextView studSexET;
     private RoundedImageView studentIV;
     private Button uploadImageBTN;
@@ -104,7 +104,6 @@ public class StudEditProfile extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
 
         //inputs
-        studEmailET = findViewById(R.id.stud_email_et);
         studContactET = findViewById(R.id.stud_contact_et);
         studBirthdayET = findViewById(R.id.stud_birthday_et);
         studAddressET = findViewById(R.id.stud_address_et);
@@ -238,7 +237,6 @@ public class StudEditProfile extends AppCompatActivity {
                 String parent = studDetails.getString("parent_guardian");
                 String comDepartment = studDetails.getString("department_assigned");
 
-                studEmailET.setText(!email.equals("null") ? email : "");
                 studContactET.setText(!contact.equals("null") ? contact : "");
                 studBirthdayET.setText(!birthday.equals("null") ? birthday : "");
                 studAddressET.setText(!address.equals("null") ? address : "");
@@ -269,10 +267,8 @@ public class StudEditProfile extends AppCompatActivity {
 
     private void updateStudInfo() {
         String contactPattern = "[0][6-9][0-9]{9}";
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
         String studID = sharedPreferences.getString("stud_id", null);
-        String stud_email = studEmailET.getText().toString().trim();
         String stud_contact = studContactET.getText().toString().trim();
         String stud_sex = studSexET.getText().toString().trim();
         String stud_birthday = studBirthdayET.getText().toString().trim();
@@ -280,13 +276,7 @@ public class StudEditProfile extends AppCompatActivity {
         String stud_parent = studParentET.getText().toString().trim();
         String com_department = comDepartmentEt.getText().toString().trim();
 
-        if (stud_email.isEmpty()) {
-            studEmailET.setError("Please enter your email");
-            studEmailET.requestFocus();
-        } else if (!stud_email.matches(emailPattern)) {
-            studEmailET.setError("Invalid email format");
-            studEmailET.requestFocus();
-        } else if (stud_contact.isEmpty()) {
+        if (stud_contact.isEmpty()) {
             studContactET.setError("Please enter your contact");
             studContactET.requestFocus();
         } else if (!stud_contact.matches(contactPattern)) {
@@ -305,11 +295,11 @@ public class StudEditProfile extends AppCompatActivity {
             studParentET.setError("Please enter the parent/guardian name");
             studParentET.requestFocus();
         } else {
-            saveDataToDatabase(studID, stud_email, stud_contact, stud_sex, stud_birthday, stud_address, stud_parent, com_department);
+            saveDataToDatabase(studID, stud_contact, stud_sex, stud_birthday, stud_address, stud_parent, com_department);
         }
     }
 
-    private void saveDataToDatabase(String studID, String studEmail, String studContact, String studSex, String studBirthday, String studAddress, String studParent, String comDepartment) {
+    private void saveDataToDatabase(String studID, String studContact, String studSex, String studBirthday, String studAddress, String studParent, String comDepartment) {
         progressDialog.setMessage("Please wait...");
         progressDialog.setTitle("Saving");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -343,7 +333,6 @@ public class StudEditProfile extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("stud_id", studID);
-                params.put("stud_email", studEmail);
                 params.put("stud_contact", studContact);
                 params.put("stud_sex", studSex);
                 params.put("stud_birthday", studBirthday);

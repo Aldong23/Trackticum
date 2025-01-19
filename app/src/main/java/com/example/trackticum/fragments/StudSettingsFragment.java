@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -41,8 +43,9 @@ public class StudSettingsFragment extends Fragment {
     private Toolbar toolbar;
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
-    TextInputEditText oldPasswordET, newPasswordET, confirmPasswordET;
-    Button submitBTN;
+    TextInputEditText oldPasswordET, newPasswordET, confirmPasswordET, emailET;
+    Button submitBTN, verifyBTN;
+    ImageView statusIV;
 
     public StudSettingsFragment() {
         // Required empty public constructor
@@ -75,6 +78,36 @@ public class StudSettingsFragment extends Fragment {
         newPasswordET = view.findViewById(R.id.new_password);
         confirmPasswordET = view.findViewById(R.id.confirm_password);
         submitBTN = view.findViewById(R.id.submit_btn);
+
+        emailET = view.findViewById(R.id.email_et);
+        verifyBTN = view.findViewById(R.id.verify_btn);
+        statusIV = view.findViewById(R.id.status_IV);
+
+        fetchEmailStatus();
+    }
+
+    private void fetchEmailStatus() {
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/company/get-com-verified/" + studID;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject comDetails = new JSONObject(response);
+
+                String email = comDetails.getString("email");
+                String isVerified = comDetails.getString("is_verified");
+
+                emailET.setText(email);
+                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
+
+            } catch (JSONException e) {
+                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+        });
+
+        queue.add(request);
     }
 
     private void setupListeners(View view) {

@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.utils.Constants;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,38 +92,52 @@ public class StudLogin extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             String url = Constants.API_BASE_URL + "/student/stud-login";
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                response -> {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        boolean status = jsonResponse.getBoolean("status");
-                        String message = jsonResponse.getString("message");
-                        if (status) {
-                            String stud_id = jsonResponse.getString("stud_id");
-                            String department_id = jsonResponse.getString("dep_id");
-                            String school_year_id = jsonResponse.getString("school_year_id");
-                            storeStudIdToSession(stud_id, department_id, school_year_id);
-                            redirectToMain();
+            // Retrieve FCM token asynchronously
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(task -> {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(StudLogin.this, "Failed to get FCM token", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        progressDialog.dismiss();
-                        Toast.makeText(StudLogin.this, message, Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(StudLogin.this, "Login Error", Toast.LENGTH_SHORT).show();
-                    }
-                }, error -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(StudLogin.this, "Login failed", Toast.LENGTH_SHORT).show();
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("student_number", stud_no);
-                        params.put("password", stud_password);
-                        return params;
-                    }
-                };
-            queue.add(stringRequest);
+
+                        // Get the FCM token
+                        String fcmToken = task.getResult();
+
+                        // Proceed with the login request
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                                response -> {
+                                    try {
+                                        JSONObject jsonResponse = new JSONObject(response);
+                                        boolean status = jsonResponse.getBoolean("status");
+                                        String message = jsonResponse.getString("message");
+                                        if (status) {
+                                            String stud_id = jsonResponse.getString("stud_id");
+                                            String department_id = jsonResponse.getString("dep_id");
+                                            String school_year_id = jsonResponse.getString("school_year_id");
+                                            storeStudIdToSession(stud_id, department_id, school_year_id);
+                                            redirectToMain();
+                                        }
+                                        progressDialog.dismiss();
+                                        Toast.makeText(StudLogin.this, message, Toast.LENGTH_SHORT).show();
+                                    } catch (JSONException e) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(StudLogin.this, "Login Error", Toast.LENGTH_SHORT).show();
+                                    }
+                                }, error -> {
+                            progressDialog.dismiss();
+                            Toast.makeText(StudLogin.this, "Login failed", Toast.LENGTH_SHORT).show();
+                        }) {
+                            @Override
+                            protected Map<String, String> getParams() {
+                                Map<String, String> params = new HashMap<>();
+                                params.put("student_number", stud_no);
+                                params.put("password", stud_password);
+                                params.put("fcm_token", fcmToken); // Added FCM token here
+                                return params;
+                            }
+                        };
+                        queue.add(stringRequest);
+                    });
         }
     }
 

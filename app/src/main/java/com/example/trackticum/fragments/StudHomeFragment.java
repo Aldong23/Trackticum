@@ -64,13 +64,17 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
     private RecyclerView recyclerView;
     private StudCompaniesAdapter adapter;
     private List<StudCompanies> companiesList;
+    private ConstraintLayout companyDetails;
 
     //for latest announcement
     ConstraintLayout annContainer;
     TextView annMessageTv, annDateTV;
     TextView hoursRenderedTV, hoursToBeRenderedTV, trainingDurationTV;
 
-    private String companyId, isApproved, announcementID;
+    //widget for Company Details
+    private TextView comNameTV, comDepartment, studStatusTV, studDeployedTV, comAddressTV, comSupervisorTV, comContactTV;
+
+    private String companyId, isApproved;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,6 +110,18 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
         fetchAnnouncement();
 
+        //initialize widget for company details
+        companyDetails = view.findViewById(R.id.company_details);
+        comNameTV = view.findViewById(R.id.com_name_tv);
+        comDepartment = view.findViewById(R.id.com_dep_tv);
+        studStatusTV = view.findViewById(R.id.stud_status_tv);
+        studDeployedTV = view.findViewById(R.id.stud_deployed_tv);
+        comAddressTV = view.findViewById(R.id.com_address_tv);
+        comSupervisorTV = view.findViewById(R.id.stud_supervisor_tv);
+        comContactTV = view.findViewById(R.id.com_contact_tv);
+
+        fetchStudAndComDetails();
+
         hoursRenderedTV = view.findViewById(R.id.hours_rendered);
         hoursToBeRenderedTV = view.findViewById(R.id.hours_to_be_rendered);
         trainingDurationTV = view.findViewById(R.id.training_duration);
@@ -117,7 +133,7 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         recyclerView.setAdapter(adapter);
 
         fetchStudDetails();
-
+        fetchCompanies();
     }
 
     private void setupListeners(View view) {
@@ -128,34 +144,6 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 startActivity(intent);
             }
         });
-    }
-
-    private void fetchStudDetails() {
-        String studID = sharedPreferences.getString("stud_id", null);
-        RequestQueue queue = Volley.newRequestQueue(requireContext());
-        String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studID;
-        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject studDetails = new JSONObject(response);
-
-                String stud_id = studDetails.getString("id");
-                String company_id = studDetails.getString("company_id");
-                String is_approved = studDetails.getString("is_approve");
-
-                companyId = company_id;
-                isApproved = is_approved;
-
-                notApprovedLottie.setVisibility(View.GONE);
-                fetchCompanies();
-
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
-            }
-        }, error -> {
-            Log.e("Error Fetching Details", error.toString());
-        });
-
-        queue.add(request);
     }
 
     private void fetchCompanies() {
@@ -203,6 +191,85 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         queue.add(jsonArrayRequest);
     }
 
+    private void fetchStudAndComDetails() {
+
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/get-studcom-details/" + studID;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+
+                String comId = jsonObject.getString("company_id");
+                String comName = jsonObject.getString("company_name");
+                String comDep = jsonObject.getString("department_assigned");
+                String studStatus = jsonObject.getString("status");
+                String stud_deployed_date = jsonObject.getString("deployed_date");
+                String comAddress = jsonObject.getString("company_address");
+                String supervisor = jsonObject.getString("supervisor");
+                String comContact = jsonObject.getString("company_contact");
+
+                if (!comId.equalsIgnoreCase("null")) {
+                    comNameTV.setText(comName);
+                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
+                    studStatusTV.setText(studStatus);
+                    studDeployedTV.setText(!stud_deployed_date.equals("null") ? stud_deployed_date : "N/A");
+                    comAddressTV.setText(comAddress);
+                    comSupervisorTV.setText(supervisor);
+                    comContactTV.setText(comContact);
+                } else {
+                    comNameTV.setText("No Details");
+                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
+                    studStatusTV.setText("No Details");
+                    studDeployedTV.setText("No Details");
+                    comAddressTV.setText("No Details");
+                    comSupervisorTV.setText("No Details");
+                    comContactTV.setText("No Details");
+                }
+
+                if(!studStatus.equalsIgnoreCase("For Approval")) {
+                    companyDetails.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    companyDetails.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+
+            } catch (JSONException e) {
+                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+        });
+
+        queue.add(request);
+    }
+
+    private void fetchStudDetails() {
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studID;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONObject studDetails = new JSONObject(response);
+
+                String stud_id = studDetails.getString("id");
+                String company_id = studDetails.getString("company_id");
+                String is_approved = studDetails.getString("is_approve");
+
+                companyId = company_id;
+                isApproved = is_approved;
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Log.e("Error Fetching Details", error.toString());
+        });
+
+        queue.add(request);
+    }
+
     private void fetchAnnouncement() {
         String depID = sharedPreferences.getString("dep_id", null);
         String syID = sharedPreferences.getString("sy_id", null);
@@ -222,7 +289,6 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                     String annMessage = jsonObject.getString("message");
                     String annDate = jsonObject.getString("date");
 
-                    announcementID = annID;
                     annDateTV.setText(annDate);
                     annMessageTv.setText(Html.fromHtml(annMessage, Html.FROM_HTML_MODE_LEGACY));
                     annContainer.setVisibility(View.VISIBLE);

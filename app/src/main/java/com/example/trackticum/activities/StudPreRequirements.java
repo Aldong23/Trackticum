@@ -106,7 +106,8 @@ public class StudPreRequirements extends AppCompatActivity implements StudPreReq
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String stud_id = sharedPreferences.getString("stud_id", null);
         String dep_id = sharedPreferences.getString("dep_id", null);
-        String url = Constants.API_BASE_URL + "/get-pre-requirements/" + stud_id + "/" + dep_id;
+        String syID = sharedPreferences.getString("sy_id", null);
+        String url = Constants.API_BASE_URL + "/get-pre-requirements/" + stud_id + "/" + dep_id + "/" + syID;
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

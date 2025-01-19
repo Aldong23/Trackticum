@@ -51,33 +51,13 @@
                 app:layout_constraintEnd_toEndOf="@+id/stud_image_tv" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/stud_email_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="35dp"
-                android:layout_marginTop="24dp"
-                android:hint="Email"
-                app:layout_constraintTop_toBottomOf="@+id/stud_image_tv"
-                app:startIconDrawable="@drawable/ic_email">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/stud_email_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/stud_contact_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="35dp"
                 android:layout_marginTop="8dp"
                 android:hint="Contact"
-                app:layout_constraintEnd_toEndOf="@+id/stud_email_layout"
-                app:layout_constraintStart_toStartOf="@+id/stud_email_layout"
-                app:layout_constraintTop_toBottomOf="@+id/stud_email_layout"
+                app:layout_constraintTop_toBottomOf="@+id/stud_image_tv"
                 app:startIconDrawable="@drawable/ic_telephone">
 
                 <com.google.android.material.textfield.TextInputEditText

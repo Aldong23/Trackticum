@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.ComManageJoboffer;
 import com.example.trackticum.activities.ComShowApplicants;
+import com.example.trackticum.activities.ComViewInterns;
 import com.example.trackticum.adapters.ComApplicantsAdapter;
 import com.example.trackticum.adapters.StudCompaniesAdapter;
 import com.example.trackticum.models.ComApplicants;
@@ -64,6 +66,7 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
     private LottieAnimationView emptyLottie;
 
     TextView numInternsTV, availabelSlotTV, moaDurationTV;
+    private Button viewInternsBTN;
 
     //fetching list of companies
     private RecyclerView recyclerView;
@@ -96,6 +99,7 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         numInternsTV = view.findViewById(R.id.num_intern_tv);
         availabelSlotTV = view.findViewById(R.id.slot_tv);
         moaDurationTV = view.findViewById(R.id.moa_duration_tv);
+        viewInternsBTN = view.findViewById(R.id.view_interns_btn);
 
         fetchComDashboard();
 
@@ -111,7 +115,13 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
     }
 
     private void setupListeners(View view) {
-
+        viewInternsBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ComViewInterns.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchApplicants() {
@@ -307,7 +317,11 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
     }
 
     private void getLatestSchoolYear() {
-        String url = Constants.API_BASE_URL + "/school-year/get-latest";
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Refreshing");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        String url = Constants.API_BASE_URL + "/school-year/get-default";
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
@@ -322,6 +336,10 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("sy_id", school_year_id);
                     editor.apply();
+                    Toast.makeText(requireContext(), "All data has been refreshed.", Toast.LENGTH_SHORT).show();
+                    fetchApplicants();
+                    fetchComDashboard();
+                    progressDialog.dismiss();
                 }
 
             } catch (JSONException e) {
@@ -352,14 +370,7 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
-            progressDialog.setMessage("Please wait...");
-            progressDialog.setTitle("Refreshing");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
             getLatestSchoolYear();
-            fetchApplicants();
-            progressDialog.dismiss();
-            Toast.makeText(requireContext(), "All data has been refreshed.", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -382,4 +393,5 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         super.onDestroyView();
         Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
+
 }

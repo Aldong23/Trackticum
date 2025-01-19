@@ -70,7 +70,7 @@ public class ComProfileFragment extends Fragment {
     private RoundedImageView comLogoIV;
     SharedPreferences sharedPreferences;
     private ImageButton manageJobOfferBtn, editTimeBtn;
-    private Button viewInternsBTN;
+    ImageView statusIV;
 
     //for Skill Requirements
     private FlexboxLayout jobsContainer;
@@ -100,6 +100,7 @@ public class ComProfileFragment extends Fragment {
         comNatureTV = view.findViewById(R.id.com_nature_tv);
         comLocationTV = view.findViewById(R.id.com_location_tv);
         comEmailTV = view.findViewById(R.id.com_email_tv);
+        statusIV = view.findViewById(R.id.status_IV);
         comSlotTV = view.findViewById(R.id.com_slot_tv);
         comContactTV = view.findViewById(R.id.com_contact_tv);
         comBgTV = view.findViewById(R.id.com_descrip_tv);
@@ -110,7 +111,6 @@ public class ComProfileFragment extends Fragment {
         fetchCompanyDetails();
 
         manageJobOfferBtn = view.findViewById(R.id.manage_joboffer_btn);
-        viewInternsBTN = view.findViewById(R.id.view_interns_btn);
 
         //Setting up the Skill Requirements
         jobsContainer = view.findViewById(R.id.jobsContainer);
@@ -132,13 +132,6 @@ public class ComProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        viewInternsBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ComViewInterns.class);
-                startActivity(intent);
-            }
-        });
     }
 
     private void fetchCompanyDetails() {
@@ -155,6 +148,7 @@ public class ComProfileFragment extends Fragment {
                 String comNature = comDetails.getString("nature");
                 String comLocation = comDetails.getString("address");
                 String comEmail = comDetails.getString("email");
+                String isVerified = comDetails.getString("is_verified");
                 String comSlot = comDetails.getString("slot");
                 String comContact = comDetails.getString("contact");
                 String comBg = comDetails.getString("description");
@@ -169,7 +163,8 @@ public class ComProfileFragment extends Fragment {
                 comNatureTV.setText(comNature);
                 comLocationTV.setText(comLocation);
                 comEmailTV.setText(comEmail);
-                comSlotTV.setText(comSlot);
+                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
+                comSlotTV.setText(!comSlot.equals("null") ? comSlot : "0");
                 comContactTV.setText(comContact);
                 comBgTV.setText(Html.fromHtml(comBg, Html.FROM_HTML_MODE_LEGACY));
                 amTimeInOutTV.setText(!amInOut.equals("null - null") ? amInOut : "N/A");

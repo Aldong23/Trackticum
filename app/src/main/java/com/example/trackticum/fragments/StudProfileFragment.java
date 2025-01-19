@@ -67,9 +67,6 @@ public class StudProfileFragment extends Fragment {
     private RoundedImageView studImageIV;
     private TextView studNameTV, studNoTV, studApproveTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studBirthdayTV, studAgeTV, studAddressTV;
 
-    //widget for Company Details
-    private TextView comNameTV, comDepartment, studStatusTV, studDeployedTV, comAddressTV, comSupervisorTV, comContactTV;
-
     //button for requirements and weekly report
     private Button viewInitialReqBTN, viewPreReqBTN, viewWeeklyReportBTN, viewDtrButton, viewPostRequirement;
 
@@ -112,15 +109,6 @@ public class StudProfileFragment extends Fragment {
         studBirthdayTV = view.findViewById(R.id.stud_birthday_tv);
         studAgeTV = view.findViewById(R.id.stud_age_tv);
         studAddressTV = view.findViewById(R.id.stud_address_tv);
-
-        //initialize widget for company details
-        comNameTV = view.findViewById(R.id.com_name_tv);
-        comDepartment = view.findViewById(R.id.com_dep_tv);
-        studStatusTV = view.findViewById(R.id.stud_status_tv);
-        studDeployedTV = view.findViewById(R.id.stud_deployed_tv);
-        comAddressTV = view.findViewById(R.id.com_address_tv);
-        comSupervisorTV = view.findViewById(R.id.stud_supervisor_tv);
-        comContactTV = view.findViewById(R.id.com_contact_tv);
 
         //button for requirements and weekly report
         viewInitialReqBTN = view.findViewById(R.id.view_req_btn);
@@ -205,13 +193,7 @@ public class StudProfileFragment extends Fragment {
                 String studBirthday = jsonObject.getString("formatted_birthday");
                 String studAge = calculateAge(jsonObject.getString("birthday"));
                 String studAddress = jsonObject.getString("address");
-                String comName = jsonObject.getString("company_name");
-                String comDep = jsonObject.getString("department_assigned");
                 String studStatus = jsonObject.getString("status");
-                String stud_deployed_date = jsonObject.getString("deployed_date");
-                String comAddress = jsonObject.getString("company_address");
-                String supervisor = jsonObject.getString("supervisor");
-                String comContact = jsonObject.getString("company_contact");
 
                 //students details
                 studNameTV.setText(studName);
@@ -224,25 +206,6 @@ public class StudProfileFragment extends Fragment {
                 studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");
                 studAgeTV.setText(studAge);
                 studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
-
-                //company details
-                if (comId != null && !comId.equalsIgnoreCase("null")) {
-                    comNameTV.setText(comName);
-                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
-                    studStatusTV.setText(studStatus);
-                    studDeployedTV.setText(!stud_deployed_date.equals("null") ? stud_deployed_date : "N/A");
-                    comAddressTV.setText(comAddress);
-                    comSupervisorTV.setText(supervisor);
-                    comContactTV.setText(comContact);
-                } else {
-                    comNameTV.setText("No Details");
-                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
-                    studStatusTV.setText("No Details");
-                    studDeployedTV.setText("No Details");
-                    comAddressTV.setText("No Details");
-                    comSupervisorTV.setText("No Details");
-                    comContactTV.setText("No Details");
-                }
 
 
                 Picasso.get().invalidate(studImageUrl);
