@@ -341,7 +341,7 @@ public class StudShowWeekly extends AppCompatActivity implements ActivityAdapter
                 title.setAlignment(Element.ALIGN_CENTER);
                 document.add(title);
 
-                Paragraph subtitle = new Paragraph("2nd Semester " + studSchoolYear, new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
+                Paragraph subtitle = new Paragraph(studSchoolYear, new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
                 subtitle.setAlignment(Element.ALIGN_CENTER);
                 document.add(subtitle);
 

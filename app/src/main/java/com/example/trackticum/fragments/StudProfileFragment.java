@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,7 @@ public class StudProfileFragment extends Fragment {
     //widget for student details
     private RoundedImageView studImageIV;
     private TextView studNameTV, studNoTV, studApproveTV, studDepTV, studEmailTV, studContactTV, studGenderTV, studBirthdayTV, studAgeTV, studAddressTV;
+    ImageView statusIV;
 
     //button for requirements and weekly report
     private Button viewInitialReqBTN, viewPreReqBTN, viewWeeklyReportBTN, viewDtrButton, viewPostRequirement;
@@ -104,6 +106,7 @@ public class StudProfileFragment extends Fragment {
         studApproveTV = view.findViewById(R.id.stud_isapprove_tv);
         studDepTV = view.findViewById(R.id.stud_school_dep_tv);
         studEmailTV = view.findViewById(R.id.stud_email_tv);
+        statusIV = view.findViewById(R.id.status_IV);
         studContactTV = view.findViewById(R.id.stud_contact_tv);
         studGenderTV = view.findViewById(R.id.stud_gender_tv);
         studBirthdayTV = view.findViewById(R.id.stud_birthday_tv);
@@ -188,6 +191,7 @@ public class StudProfileFragment extends Fragment {
                 String isApproved = jsonObject.getString("is_approve");
                 String schoolDepartment = jsonObject.getString("college_name");
                 String studEmail = jsonObject.getString("email");
+                String isVerified = jsonObject.getString("is_verified");
                 String studContact = jsonObject.getString("contact");
                 String studGender = jsonObject.getString("gender");
                 String studBirthday = jsonObject.getString("formatted_birthday");
@@ -201,6 +205,7 @@ public class StudProfileFragment extends Fragment {
                 studApproveTV.setText(isApproved.equals("1") ? "Approved" : "Not Approved");
                 studDepTV.setText(!schoolDepartment.equals("null") ? schoolDepartment : "N/A");
                 studEmailTV.setText(!studEmail.equals("null") ? studEmail : "N/A");
+                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
                 studContactTV.setText(!studContact.equals("null") ? studContact : "N/A");
                 studGenderTV.setText(studGender.toLowerCase());
                 studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");

@@ -23,12 +23,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.activities.ComOTP;
 import com.example.trackticum.activities.StudLogin;
+import com.example.trackticum.activities.StudOTP;
 import com.example.trackticum.utils.Constants;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -89,7 +92,7 @@ public class StudSettingsFragment extends Fragment {
     private void fetchEmailStatus() {
         String studID = sharedPreferences.getString("stud_id", null);
         RequestQueue queue = Volley.newRequestQueue(requireContext());
-        String url = Constants.API_BASE_URL + "/company/get-com-verified/" + studID;
+        String url = Constants.API_BASE_URL + "/student/get-stud-verified/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
             try {
                 JSONObject comDetails = new JSONObject(response);
@@ -97,7 +100,7 @@ public class StudSettingsFragment extends Fragment {
                 String email = comDetails.getString("email");
                 String isVerified = comDetails.getString("is_verified");
 
-                emailET.setText(email);
+                emailET.setText(!email.equals("null") ? email : "");
                 statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
 
             } catch (JSONException e) {
@@ -117,7 +120,78 @@ public class StudSettingsFragment extends Fragment {
                 validateFields();
             }
         });
+        verifyBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+                String email = emailET.getText().toString().trim();
+
+                if (email.isEmpty()) {
+                    emailET.setError("Email is required");
+                    emailET.requestFocus();
+                } else if (!email.matches(emailPattern)) {
+                    emailET.setError("Please enter a valid email");
+                    emailET.requestFocus();
+                } else {
+                    verifyEmail(email);
+                }
+            }
+        });
     }
+
+    private void verifyEmail(String email) {
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Processing");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/verify-email";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    progressDialog.dismiss();
+                    try {
+                        // Parse the response as JSON
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean status = jsonResponse.getBoolean("status");
+                        String message = jsonResponse.getString("message");
+
+                        // Show the appropriate message
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+
+                        if (status) {
+                            Intent intent = new Intent(requireContext(), StudOTP.class);
+                            startActivity(intent);
+                            emailET.clearFocus();
+                        }
+
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(), "Error parsing response", Toast.LENGTH_SHORT).show();
+                    }
+                }, error -> {
+            progressDialog.dismiss();
+            Toast.makeText(requireContext(), "Failed to process", Toast.LENGTH_SHORT).show();
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("stud_id", studID);
+                params.put("email", email);
+                return params;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                30000, // Timeout in milliseconds (30 seconds)
+                0, // No retries
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT // Backoff multiplier
+        ));
+
+        queue.add(stringRequest);
+    }
+
 
     private void validateFields() {
         String oldPassword = oldPasswordET.getText().toString().trim();
@@ -229,6 +303,20 @@ public class StudSettingsFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        boolean checkVerified = prefs.getBoolean("checkIfVerified", false);
+
+        if(checkVerified){
+            fetchEmailStatus();
+            prefs.edit().putBoolean("checkIfVerified", false).apply();
+        }
+
     }
 
     @Override

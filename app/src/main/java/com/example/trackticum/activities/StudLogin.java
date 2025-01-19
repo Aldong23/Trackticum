@@ -32,7 +32,7 @@ import java.util.Map;
 public class StudLogin extends AppCompatActivity {
 
     private TextInputEditText studno_et, studpassword_et;
-    private Button login_btn, company_link_btn;
+    private Button login_btn, company_link_btn, forgot_password_btn;
     SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
 
@@ -52,6 +52,7 @@ public class StudLogin extends AppCompatActivity {
         studno_et = findViewById(R.id.login_studno);
         studpassword_et = findViewById(R.id.login_password);
         login_btn = findViewById(R.id.login_btn);
+        forgot_password_btn = findViewById(R.id.forgot_password_btn);
         company_link_btn = findViewById(R.id.company_link_btn);
         sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         progressDialog = new ProgressDialog(this);
@@ -68,6 +69,13 @@ public class StudLogin extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(StudLogin.this, ComLogin.class);
+                startActivity(intent);
+            }
+        });
+        forgot_password_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StudLogin.this, StudForgotPassword.class);
                 startActivity(intent);
             }
         });
