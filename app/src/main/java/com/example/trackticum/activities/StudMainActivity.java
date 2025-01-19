@@ -1,5 +1,6 @@
 package com.example.trackticum.activities;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowInsetsController;
@@ -37,7 +38,13 @@ public class StudMainActivity extends AppCompatActivity {
 
         binding = ActivityStudMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new StudHomeFragment());
+
+        String notificationType = getIntent().getStringExtra("notification_type");
+        if (notificationType != null) {
+            handleNotificationType(notificationType);
+        } else {
+            replaceFragment(new StudHomeFragment());
+        }
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
 
@@ -64,5 +71,24 @@ public class StudMainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
+    }
+
+    public void setSelectedBottomMenu(int itemId) {
+        binding.bottomNavigation.setSelectedItemId(itemId);
+    }
+
+    //for push notif
+    private void handleNotificationType(String type) {
+        if (type.equalsIgnoreCase("profile")) {
+            setSelectedBottomMenu(R.id.profile);
+            replaceFragment(new StudProfileFragment());
+        } else if (type.equalsIgnoreCase("settings")) {
+            setSelectedBottomMenu(R.id.settings);
+            replaceFragment(new StudSettingsFragment());
+        } else {
+            setSelectedBottomMenu(R.id.home);
+            replaceFragment(new StudHomeFragment());
+        }
+        // Add more types if needed
     }
 }

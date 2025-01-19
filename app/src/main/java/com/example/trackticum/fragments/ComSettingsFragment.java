@@ -31,8 +31,10 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.ComLogin;
 import com.example.trackticum.activities.ComOTP;
+import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.utils.Constants;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -265,12 +267,45 @@ public class ComSettingsFragment extends Fragment {
     }
 
     private void redirectToLogin() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-        Intent intent = new Intent(requireActivity(), ComLogin.class);
-        startActivity(intent);
-        requireActivity().finish();
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Processing");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+
+        String comId = sharedPreferences.getString("com_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/company/com-log-out/" + comId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                // Parse the response as JSON
+                JSONObject jsonResponse = new JSONObject(response);
+                boolean status = jsonResponse.getBoolean("status");
+                String message = jsonResponse.getString("message");
+
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+
+                // Clear shared preferences and navigate to login screen
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+
+                Intent intent = new Intent(requireActivity(), ComLogin.class);
+                startActivity(intent);
+                requireActivity().finish();
+                progressDialog.dismiss();
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        }, error -> {
+            Log.e("Failed", error.toString());
+            progressDialog.dismiss();
+        });
+
+        queue.add(request);
     }
 
     @Override

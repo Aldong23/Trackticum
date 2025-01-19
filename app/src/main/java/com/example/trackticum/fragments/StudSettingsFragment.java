@@ -34,6 +34,7 @@ import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.activities.StudOTP;
 import com.example.trackticum.utils.Constants;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -271,14 +272,57 @@ public class StudSettingsFragment extends Fragment {
 
 
     private void redirectToLogin() {
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Logging out");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-        Intent intent = new Intent(requireActivity(), StudLogin.class);
-        startActivity(intent);
-        requireActivity().finish();
+
+        String studID = sharedPreferences.getString("stud_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/student/stud-log-out/" + studID;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                // Parse the response as JSON
+                JSONObject jsonResponse = new JSONObject(response);
+                boolean status = jsonResponse.getBoolean("status");
+                String message = jsonResponse.getString("message");
+
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+
+                // Unsubscribe from Firebase topic
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("student_global")
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("Firebase", "Unsubscribed from topic: student_" + studID);
+                            } else {
+                                Log.e("Firebase", "Failed to unsubscribe from topic: student_" + studID);
+                            }
+                        });
+
+                // Clear shared preferences and navigate to login screen
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+
+                Intent intent = new Intent(requireActivity(), StudLogin.class);
+                startActivity(intent);
+                requireActivity().finish();
+                progressDialog.dismiss();
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        }, error -> {
+            Log.e("Failed", error.toString());
+            progressDialog.dismiss();
+        });
+
+        queue.add(request);
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

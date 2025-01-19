@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    android:id="@+id/ann_container"
+<androidx.cardview.widget.CardView xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notif_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,7 +8,7 @@
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
+    app:cardElevation="1dp"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
@@ -17,69 +17,70 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/announcement_container"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:padding="8dp">
 
         <ImageView
-            android:id="@+id/announcement_icon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_announcement"
+            android:id="@+id/notification_icon_iv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/notif_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/unread_badge"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/red_badge"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
-            android:id="@+id/ann_title"
+            android:id="@+id/sender_name_tv"
             style="@style/BoldText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/loading_text"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@+id/arrowIcon"
-            app:layout_constraintStart_toEndOf="@+id/announcement_icon"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/ann_date"
-            style="@style/RegularText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:text="@string/loading_text"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/arrowIcon"
-            app:layout_constraintStart_toStartOf="@+id/ann_title"
-            app:layout_constraintTop_toBottomOf="@+id/ann_title"/>
-
-        <TextView
-            android:id="@+id/ann_message"
-            style="@style/RegularText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/loading_text"
             android:textColor="@color/black"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/arrowIcon"
-            app:layout_constraintStart_toStartOf="@+id/ann_date"
-            app:layout_constraintTop_toBottomOf="@+id/ann_date" />
-
-        <ImageView
-            android:id="@+id/arrowIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrowright"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/notification_icon_iv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/notification_message"
+            style="@style/RegularText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="@string/loading_text"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/sender_name_tv"
+            app:layout_constraintTop_toBottomOf="@+id/sender_name_tv" />
+
+        <TextView
+            android:id="@+id/notification_date"
+            style="@style/RegularText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@string/loading_text"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/notification_message"
+            app:layout_constraintTop_toBottomOf="@+id/notification_message" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

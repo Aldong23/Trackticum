@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -145,6 +146,15 @@ public class StudLogin extends AppCompatActivity {
                             }
                         };
                         queue.add(stringRequest);
+                    });
+
+            FirebaseMessaging.getInstance().subscribeToTopic("student_global")
+                    .addOnCompleteListener(task -> {
+                        String msg = task.isSuccessful() ? "Subscription successful" : "Subscription failed";
+                        Log.d("FCM", msg);
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(StudLogin.this, "Failed to subscribe to topic", Toast.LENGTH_SHORT).show();
+                        }
                     });
         }
     }

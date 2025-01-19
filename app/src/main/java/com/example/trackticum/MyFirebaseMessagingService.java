@@ -15,6 +15,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.example.trackticum.activities.SplashScreen;
 import com.example.trackticum.activities.StudAnnouncementList;
 import com.example.trackticum.activities.StudLogin;
+import com.example.trackticum.activities.StudMainActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -61,10 +62,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         Intent intent;
-        if ("announcement".equals(type)) {
+        if (type.equals("announcement")) {
             intent = new Intent(this, StudAnnouncementList.class); // Replace with your Announcement activity
         } else {
-            intent = new Intent(this, StudLogin.class); // Default activity
+            intent = new Intent(this, StudMainActivity.class);
+            intent.putExtra("notification_type", type);
         }
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

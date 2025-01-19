@@ -18,6 +18,9 @@ import com.example.trackticum.fragments.ComNotificationFragment;
 import com.example.trackticum.fragments.ComProfileFragment;
 import com.example.trackticum.fragments.ComScanQrFragment;
 import com.example.trackticum.fragments.ComSettingsFragment;
+import com.example.trackticum.fragments.StudHomeFragment;
+import com.example.trackticum.fragments.StudProfileFragment;
+import com.example.trackticum.fragments.StudSettingsFragment;
 
 public class ComMainActivity extends AppCompatActivity {
 
@@ -37,7 +40,13 @@ public class ComMainActivity extends AppCompatActivity {
 
         binding = ActivityComMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new ComHomeFragment());
+
+        String notificationType = getIntent().getStringExtra("notification_type");
+        if (notificationType != null) {
+            handleNotificationType(notificationType);
+        } else {
+            replaceFragment(new ComHomeFragment());
+        }
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
 
@@ -64,5 +73,24 @@ public class ComMainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
+    }
+
+    public void setSelectedBottomMenu(int itemId) {
+        binding.bottomNavigation.setSelectedItemId(itemId);
+    }
+
+    //for push notif
+    private void handleNotificationType(String type) {
+        if (type.equalsIgnoreCase("profile")) {
+            setSelectedBottomMenu(R.id.profile);
+            replaceFragment(new ComProfileFragment());
+        } else if (type.equalsIgnoreCase("settings")) {
+            setSelectedBottomMenu(R.id.settings);
+            replaceFragment(new ComSettingsFragment());
+        } else {
+            setSelectedBottomMenu(R.id.home);
+            replaceFragment(new ComHomeFragment());
+        }
+        // Add more types if needed
     }
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "876973724892",
+    "project_id": "trackticumims-886f5",
+    "storage_bucket": "trackticumims-886f5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876973724892:android:96972d9b1cc49e02e81019",
+        "android_client_info": {
+          "package_name": "com.example.trackticum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYfuu3Og3wjOIc4iX4Sz7K-JkWMmHC1h0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

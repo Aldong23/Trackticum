@@ -1,17 +1,41 @@
 package com.example.trackticum.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.adapters.NotificationAdapter;
+import com.example.trackticum.models.Notification;
+import com.example.trackticum.utils.Constants;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -19,58 +43,147 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ComNotificationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ComNotificationFragment extends Fragment {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.ArrayList;
+import java.util.List;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class ComNotificationFragment extends Fragment implements NotificationAdapter.NotificationActions {
 
     public ComNotificationFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ComNotificationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ComNotificationFragment newInstance(String param1, String param2) {
-        ComNotificationFragment fragment = new ComNotificationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private Toolbar toolbar;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    SharedPreferences sharedPreferences;
+    ProgressDialog progressDialog;
+    RecyclerView recyclerView;
+    LottieAnimationView emptyLA;
+
+    private NotificationAdapter adapter;
+    private List<Notification> notificationList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_com_notification, container, false);
+        View view = inflater.inflate(R.layout.fragment_com_notification, container, false);
+
+        // Add code below
+        initializeData(view);
+        setupListeners(view);
+
+        return view;
+    }
+
+    private void initializeData(View view) {
+        sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        progressDialog = new ProgressDialog(requireContext());
+
+        //For action bar
+        toolbar = view.findViewById(R.id.com_notif_toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setTitle("Notifications");
+
+        emptyLA = view.findViewById(R.id.empty_lottie);
+        recyclerView = view.findViewById(R.id.notification_rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        notificationList = new ArrayList<>();
+        adapter = new NotificationAdapter(requireContext(), notificationList,this);
+        recyclerView.setAdapter(adapter);
+
+        fetchNotification();
+    }
+
+    private void setupListeners(View view) {
+
+    }
+
+    private void fetchNotification() {
+        String comId = sharedPreferences.getString("com_id", null);
+        String url = Constants.API_BASE_URL + "/company/com-get-notification/" + comId;
+
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        notificationList.clear();
+                        if (response != null && response.length() > 0){
+                            emptyLA.setVisibility(View.GONE);
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject obj = response.getJSONObject(i);
+                                    String notificationID = obj.getString("id");
+                                    String senderName = obj.getString("sender_name");
+                                    String message = obj.getString("message");
+                                    String type = obj.getString("type");
+                                    String date = obj.getString("formatted_date");
+                                    String isRead = obj.getString("is_read");
+
+                                    notificationList.add(new Notification(notificationID, senderName, message, type, date, isRead));
+                                } catch (JSONException e) {
+                                    Toast.makeText(requireContext(), "Failed to fetch Notification", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            emptyLA.setVisibility(View.VISIBLE);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(requireContext(), "Failed to fetch Notification", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        queue.add(jsonArrayRequest);
+    }
+
+    private void markASAllRead() {
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setTitle("Loading");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        String comId = sharedPreferences.getString("com_id", null);
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        String url = Constants.API_BASE_URL + "/company/mark-notification-read/" + comId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                // Parse the response as JSON
+                JSONObject jsonResponse = new JSONObject(response);
+                boolean status = jsonResponse.getBoolean("status");
+                String message = jsonResponse.getString("message");
+
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                fetchNotification();
+                progressDialog.dismiss();
+
+            } catch (JSONException e) {
+                Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        }, error -> {
+            Log.e("Failed", error.toString());
+            progressDialog.dismiss();
+        });
+
+        queue.add(request);
+    }
+
+
+    @Override
+    public void onClick(String type) {
+
     }
 
     @Override
@@ -100,6 +213,41 @@ public class ComNotificationFragment extends Fragment {
                 }).check();
 
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.notification_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.mark_as_read) {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Mark All as Read")
+                    .setMessage("Are you sure you want to mark all notifications as read?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        markASAllRead();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onDestroyView() {
