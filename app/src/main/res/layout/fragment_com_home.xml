@@ -56,7 +56,7 @@
                         android:id="@+id/num_intern"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_rounded_bold"
+                        android:fontFamily="@font/sf_rounded_regular"
                         android:text="Interns"
                         android:textAlignment="center"
                         android:textColor="@color/black"
@@ -67,11 +67,11 @@
                         android:id="@+id/num_intern_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_rounded_regular"
+                        android:fontFamily="@font/sf_rounded_bold"
                         android:text="0"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         app:layout_constraintTop_toBottomOf="@+id/num_intern" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -95,7 +95,7 @@
                         android:id="@+id/slot"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_rounded_bold"
+                        android:fontFamily="@font/sf_rounded_regular"
                         android:text="Available Slot"
                         android:textAlignment="center"
                         android:textColor="@color/black"
@@ -106,11 +106,11 @@
                         android:id="@+id/slot_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_rounded_regular"
+                        android:fontFamily="@font/sf_rounded_bold"
                         android:text="0"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         app:layout_constraintTop_toBottomOf="@+id/slot" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -134,7 +134,7 @@
                         android:id="@+id/moa_duration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_rounded_bold"
+                        android:fontFamily="@font/sf_rounded_regular"
                         android:text="MOA end date"
                         android:textAlignment="center"
                         android:textColor="@color/black"
@@ -145,11 +145,11 @@
                         android:id="@+id/moa_duration_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_rounded_regular"
+                        android:fontFamily="@font/sf_rounded_bold"
                         android:text="0"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         app:layout_constraintTop_toBottomOf="@+id/moa_duration" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

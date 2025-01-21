@@ -48,6 +48,10 @@ public class ComInternsAdapter extends RecyclerView.Adapter<ComInternsAdapter.Co
         String studName = interns.getName();
         String studDepartment = interns.getDepartment();
         String image = interns.getImage();
+        String deployedDate = interns.getDeployeddate();
+        String trainingDuration = interns.getTrainingDuration();
+        String hoursRendered = interns.getHoursRendered();
+        String progress = interns.getProgress();
 
         if (!image.isEmpty()) {
             Picasso.get()
@@ -61,6 +65,8 @@ public class ComInternsAdapter extends RecyclerView.Adapter<ComInternsAdapter.Co
 
         holder.studName.setText(studName);
         holder.studDepartment.setText(studDepartment);
+        holder.deployedDate.setText(!deployedDate.equals("null") ? deployedDate : "For Approval");
+        holder.progress.setText(hoursRendered + "/" + trainingDuration + " Hrs  " + progress + "%");
 
         holder.internsContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +84,7 @@ public class ComInternsAdapter extends RecyclerView.Adapter<ComInternsAdapter.Co
     public static class ComInternsViewHolder extends RecyclerView.ViewHolder {
         CardView internsContainer;
         RoundedImageView studImage;
-        TextView studName, studDepartment;
+        TextView studName, studDepartment, deployedDate, progress;
 
         public ComInternsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,6 +92,8 @@ public class ComInternsAdapter extends RecyclerView.Adapter<ComInternsAdapter.Co
             studImage = itemView.findViewById(R.id.studentImageView);
             studName = itemView.findViewById(R.id.StudentNameTextView);
             studDepartment = itemView.findViewById(R.id.departmentTextView);
+            deployedDate = itemView.findViewById(R.id.deployed_date_tv);
+            progress = itemView.findViewById(R.id.progress_tv);
         }
     }
 }

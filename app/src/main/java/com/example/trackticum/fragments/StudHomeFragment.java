@@ -133,7 +133,6 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         recyclerView.setAdapter(adapter);
 
         fetchStudDetails();
-        fetchCompanies();
     }
 
     private void setupListeners(View view) {
@@ -233,6 +232,7 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 } else {
                     companyDetails.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
+                    fetchCompanies();
                 }
 
             } catch (JSONException e) {

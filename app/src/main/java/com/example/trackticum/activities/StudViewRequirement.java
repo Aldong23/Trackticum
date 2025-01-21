@@ -305,7 +305,8 @@ public class StudViewRequirement extends AppCompatActivity {
                 response -> {
                     try {
                         // Save the file to device storage
-                        saveFileToStorage(response, requirementTitle + ".pdf");
+                        long timestamp = System.currentTimeMillis();
+                        saveFileToStorage(response, requirementTitle + "_" + timestamp + ".pdf");
                         progressDialog.dismiss();
                         Toast.makeText(this, "File downloaded successfully!", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {

@@ -79,12 +79,9 @@ public class StudMainActivity extends AppCompatActivity {
 
     //for push notif
     private void handleNotificationType(String type) {
-        if (type.equalsIgnoreCase("profile")) {
+        if (type.equalsIgnoreCase("student_profile")) {
             setSelectedBottomMenu(R.id.profile);
             replaceFragment(new StudProfileFragment());
-        } else if (type.equalsIgnoreCase("settings")) {
-            setSelectedBottomMenu(R.id.settings);
-            replaceFragment(new StudSettingsFragment());
         } else {
             setSelectedBottomMenu(R.id.home);
             replaceFragment(new StudHomeFragment());

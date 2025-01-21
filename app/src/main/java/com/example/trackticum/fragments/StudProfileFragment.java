@@ -212,8 +212,6 @@ public class StudProfileFragment extends Fragment {
                 studAgeTV.setText(studAge);
                 studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
 
-
-                Picasso.get().invalidate(studImageUrl);
                 if (!studImageUrl.isEmpty()) {
                     Picasso.get()
                             .load(studImageUrl)

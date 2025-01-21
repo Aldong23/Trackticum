@@ -81,12 +81,9 @@ public class ComMainActivity extends AppCompatActivity {
 
     //for push notif
     private void handleNotificationType(String type) {
-        if (type.equalsIgnoreCase("profile")) {
+        if (type.equalsIgnoreCase("company_profile")) {
             setSelectedBottomMenu(R.id.profile);
             replaceFragment(new ComProfileFragment());
-        } else if (type.equalsIgnoreCase("settings")) {
-            setSelectedBottomMenu(R.id.settings);
-            replaceFragment(new ComSettingsFragment());
         } else {
             setSelectedBottomMenu(R.id.home);
             replaceFragment(new ComHomeFragment());

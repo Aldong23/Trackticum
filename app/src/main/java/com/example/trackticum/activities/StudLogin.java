@@ -103,14 +103,14 @@ public class StudLogin extends AppCompatActivity {
 
             // Retrieve FCM token asynchronously
             FirebaseMessaging.getInstance().getToken()
-                    .addOnCompleteListener(task -> {
-                        if (!task.isSuccessful()) {
+                    .addOnCompleteListener(fcmTokenTask -> {
+                        if (!fcmTokenTask.isSuccessful()) {
                             Toast.makeText(StudLogin.this, "Failed to get FCM token", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         // Get the FCM token
-                        String fcmToken = task.getResult();
+                        String fcmToken = fcmTokenTask.getResult();
 
                         // Proceed with the login request
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -124,6 +124,14 @@ public class StudLogin extends AppCompatActivity {
                                             String department_id = jsonResponse.getString("dep_id");
                                             String school_year_id = jsonResponse.getString("school_year_id");
                                             storeStudIdToSession(stud_id, department_id, school_year_id);
+                                            FirebaseMessaging.getInstance().subscribeToTopic("school_year_id_" + school_year_id)
+                                                    .addOnCompleteListener(task -> {
+                                                        String msg = task.isSuccessful() ? "Subscription successful" : "Subscription failed";
+                                                        Log.d("FCM", msg);
+                                                        if (!task.isSuccessful()) {
+                                                            Toast.makeText(StudLogin.this, "Failed to subscribe to topic", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
                                             redirectToMain();
                                         }
                                         progressDialog.dismiss();
@@ -148,14 +156,6 @@ public class StudLogin extends AppCompatActivity {
                         queue.add(stringRequest);
                     });
 
-            FirebaseMessaging.getInstance().subscribeToTopic("student_global")
-                    .addOnCompleteListener(task -> {
-                        String msg = task.isSuccessful() ? "Subscription successful" : "Subscription failed";
-                        Log.d("FCM", msg);
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(StudLogin.this, "Failed to subscribe to topic", Toast.LENGTH_SHORT).show();
-                        }
-                    });
         }
     }
 

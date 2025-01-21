@@ -289,17 +289,22 @@ public class StudSettingsFragment extends Fragment {
                 boolean status = jsonResponse.getBoolean("status");
                 String message = jsonResponse.getString("message");
 
-                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                if(status) {
+                    String school_year_id = jsonResponse.getString("school_year_id");
 
-                // Unsubscribe from Firebase topic
-                FirebaseMessaging.getInstance().unsubscribeFromTopic("student_global")
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("Firebase", "Unsubscribed from topic: student_" + studID);
-                            } else {
-                                Log.e("Firebase", "Failed to unsubscribe from topic: student_" + studID);
-                            }
-                        });
+                    // Unsubscribe from Firebase topic
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic("school_year_id_" + school_year_id)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d("Firebase", "Unsubscribed from topic: student_" + studID);
+                                } else {
+                                    Log.e("Firebase", "Failed to unsubscribe from topic: student_" + studID);
+                                }
+                            });
+
+                }
+
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
 
                 // Clear shared preferences and navigate to login screen
                 SharedPreferences.Editor editor = sharedPreferences.edit();

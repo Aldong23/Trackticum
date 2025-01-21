@@ -116,8 +116,12 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
                                 String department = obj.getString("department");
                                 String studImage = obj.getString("stud_image");
                                 String imageUrl = Constants.API_BASE_URL + "/" + studImage;
+                                String deployedDate = obj.getString("deployed_date");
+                                String trainingDuration = obj.getString("training_duration");
+                                String hoursRendered = obj.getString("hours_rendered");
+                                String progress = obj.getString("progress");
 
-                                internsList.add(new ComInterns(studID, studName, department, imageUrl));
+                                internsList.add(new ComInterns(studID, studName, department, imageUrl, deployedDate, trainingDuration, hoursRendered, progress));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(this, "Error parsing data", Toast.LENGTH_SHORT).show();

@@ -170,7 +170,6 @@ public class ComProfileFragment extends Fragment {
                 amTimeInOutTV.setText(!amInOut.equals("null - null") ? amInOut : "N/A");
                 pmTimeInOutTV.setText(!pmInOut.equals("null - null") ? pmInOut : "N/A");
 
-                Picasso.get().invalidate(imageUrl);
                 if (!imageUrl.isEmpty()) {
                     Picasso.get()
                             .load(imageUrl)

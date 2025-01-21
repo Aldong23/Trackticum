@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.text.Html;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -16,6 +17,8 @@ import com.example.trackticum.activities.SplashScreen;
 import com.example.trackticum.activities.StudAnnouncementList;
 import com.example.trackticum.activities.StudLogin;
 import com.example.trackticum.activities.StudMainActivity;
+import com.example.trackticum.activities.StudShowWeekly;
+import com.example.trackticum.activities.StudViewWeekly;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -64,9 +67,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent;
         if (type.equals("announcement")) {
             intent = new Intent(this, StudAnnouncementList.class); // Replace with your Announcement activity
-        } else {
+        } else if (type.equals("weekly_report")) {
+            intent = new Intent(this, StudViewWeekly.class); // Replace with your Announcement activity
+        } else if(type.equals("student_profile")){
             intent = new Intent(this, StudMainActivity.class);
             intent.putExtra("notification_type", type);
+        } else {
+            intent = new Intent(this, StudLogin.class);
         }
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -75,7 +82,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with your app icon
                 .setContentTitle(title)
-                .setContentText(message)
+                .setContentText(Html.fromHtml(message).toString())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);

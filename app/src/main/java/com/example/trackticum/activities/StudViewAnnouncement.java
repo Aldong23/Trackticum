@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowInsetsController;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -56,6 +58,7 @@ public class StudViewAnnouncement extends AppCompatActivity implements AnnAttach
     RecyclerView recyclerView;
 
     TextView titleTv, dateTv, messageTv;
+    LottieAnimationView emptyLottie;
 
     String announcementId;
     private AnnAttachmentAdapter adapter;
@@ -93,6 +96,7 @@ public class StudViewAnnouncement extends AppCompatActivity implements AnnAttach
         titleTv = findViewById(R.id.title);
         dateTv = findViewById(R.id.date);
         messageTv = findViewById(R.id.message);
+        emptyLottie = findViewById(R.id.empty_lottie);
 
         //fetching job offer
         recyclerView = findViewById(R.id.attachment_id);
@@ -153,17 +157,23 @@ public class StudViewAnnouncement extends AppCompatActivity implements AnnAttach
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
-                    attachmentList.clear();
-                    for (int i = 0; i < response.length(); i++) {
-                        try {
-                            JSONObject obj = response.getJSONObject(i);
-                            String attachmentId = obj.getString("id");
-                            String file = obj.getString("filename");
+                    if (response != null && response.length() > 0) {
+                        emptyLottie.setVisibility(View.GONE);
+                        attachmentList.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject obj = response.getJSONObject(i);
+                                String attachmentId = obj.getString("id");
+                                String file = obj.getString("filename");
 
-                            attachmentList.add(new AnnAttachment(attachmentId, file));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                                attachmentList.add(new AnnAttachment(attachmentId, file));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
+                    } else {
+                        emptyLottie.setVisibility(View.VISIBLE);
+                        attachmentList.clear();
                     }
                     adapter.notifyDataSetChanged();
                 },
