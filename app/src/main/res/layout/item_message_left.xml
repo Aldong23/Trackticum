@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="5dp"
+    android:paddingVertical="3dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/senderPictureReceived"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/img_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_oval="true"/>
+
+    <TextView
+        android:id="@+id/messageBubbleReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:background="@drawable/message_bubble_received_background"
+        android:padding="8dp"
+        android:text="..."
+        android:textColor="#000000"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/senderPictureReceived"
+        app:layout_constraintStart_toEndOf="@+id/senderPictureReceived"
+        app:layout_constraintTop_toTopOf="@+id/senderPictureReceived" />
+
+    <TextView
+        android:id="@+id/timestampReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="..."
+        android:textColor="#888888"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/messageBubbleReceived"
+        app:layout_constraintTop_toBottomOf="@+id/messageBubbleReceived" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

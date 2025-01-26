@@ -7,4 +7,19 @@
         android:icon="@drawable/ic_refresh"
         android:title="Refresh"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/messages"
+        android:icon="@drawable/ic_messages"
+        android:title="Message"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/coordinators"
+                android:title="Coordinators" />
+            <item
+                android:id="@+id/students"
+                android:title="Students" />
+        </menu>
+    </item>
 </menu>

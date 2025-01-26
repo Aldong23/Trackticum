@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsetsController;
@@ -63,7 +64,7 @@ public class ComShowIntern extends AppCompatActivity {
     //for Skill Requirements
     private FlexboxLayout skillsContainer;
 
-    String studID;
+    String studID, studNAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,6 +202,7 @@ public class ComShowIntern extends AppCompatActivity {
                 boolean final_evaluation = jsonObject.getInt("final_evaluation") == 1;
 
                 //students details
+                studNAME = studName;
                 studNameTV.setText(studName);
                 studNoTV.setText(stud_no);
                 studStatusTV.setText("Status: " + (!stud_status.equals("null") ? stud_status : "N/A"));
@@ -374,11 +376,23 @@ public class ComShowIntern extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.com_show_intern_menu, menu);
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();
             return true;
+        } else if (id == R.id.messages) {
+            Intent intent = new Intent(this, ComMessageStud.class);
+            intent.putExtra("student_id", studID);
+            intent.putExtra("student_name", studNAME);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

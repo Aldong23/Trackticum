@@ -7,10 +7,10 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/pageGrey"
-    tools:context=".activities.ComViewInterns">
+    tools:context=".activities.ComViewCoordinators">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/com_view_interns_toolbar"
+        android:id="@+id/com_view_coordinators_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -24,10 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/com_view_interns_toolbar">
+        app:layout_constraintTop_toBottomOf="@id/com_view_coordinators_toolbar">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/com_interns_rv"
+            android:id="@+id/com_coordinators_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"/>

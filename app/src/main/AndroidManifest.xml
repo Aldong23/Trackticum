@@ -26,6 +26,34 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.StudViewPostRequirement"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudPostRequirements"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ComStudConversation"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ComMessageStud"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.StudMessageCom"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.StudMessageCoordinator"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.ComMessageCoordinator"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.ComViewCoordinators"
+            android:exported="false" />
+        <activity
             android:name=".activities.StudPasswordReset"
             android:exported="false" />
         <activity
@@ -51,10 +79,12 @@
             android:exported="false" />
         <activity
             android:name=".activities.StudFinalEvaluation"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.StudMidtermEvalutaion"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.ComStudShowWeekly"
             android:exported="false" />

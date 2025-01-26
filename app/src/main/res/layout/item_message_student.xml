@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/internsContainer"
+    android:id="@+id/conversationContainer"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -18,8 +18,8 @@
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/studentImageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_placeholder"
             app:layout_constraintTop_toTopOf="parent"
@@ -27,69 +27,43 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:riv_oval="true" />
 
+        <View
+            android:id="@+id/unread_badge"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/red_badge"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/StudentNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:fontFamily="@font/sf_rounded_bold"
             android:maxLines="1"
             android:text="Student Name..."
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@id/acceptButton"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/studentImageView"
             app:layout_constraintTop_toTopOf="@id/studentImageView" />
 
         <TextView
-            android:id="@+id/departmentTextView"
+            android:id="@+id/lastMessageTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Department..."
+            android:text="Message..."
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             app:layout_constraintStart_toStartOf="@id/StudentNameTextView"
             app:layout_constraintTop_toBottomOf="@id/StudentNameTextView"
             app:layout_constraintEnd_toEndOf="@id/StudentNameTextView" />
 
-        <TextView
-            android:id="@+id/deployed_date_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="Date"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="10sp"
-            app:layout_constraintStart_toStartOf="@+id/departmentTextView"
-            app:layout_constraintTop_toBottomOf="@+id/departmentTextView" />
-
-        <TextView
-            android:id="@+id/progress_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="progress"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/departmentTextView"
-            app:layout_constraintTop_toTopOf="@+id/deployed_date_tv" />
-
-
-        <ImageView
-            android:id="@+id/acceptButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrowright"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

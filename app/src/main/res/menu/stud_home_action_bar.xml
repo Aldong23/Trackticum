@@ -6,4 +6,19 @@
         android:icon="@drawable/ic_refresh"
         android:title="Refresh"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/messages"
+        android:icon="@drawable/ic_messages"
+        android:title="Message"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/coordinator"
+                android:title="Coordinator" />
+            <item
+                android:id="@+id/company"
+                android:title="Company" />
+        </menu>
+    </item>
 </menu>

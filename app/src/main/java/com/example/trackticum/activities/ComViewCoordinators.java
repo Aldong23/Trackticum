@@ -27,9 +27,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
-import com.example.trackticum.adapters.ComApplicantsAdapter;
+import com.example.trackticum.adapters.ComCoordinatorsAdapter;
 import com.example.trackticum.adapters.ComInternsAdapter;
-import com.example.trackticum.models.ComApplicants;
+import com.example.trackticum.models.ComCoordinator;
 import com.example.trackticum.models.ComInterns;
 import com.example.trackticum.utils.Constants;
 
@@ -39,7 +39,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComViewInterns extends AppCompatActivity implements ComInternsAdapter.ComInternsAction {
+public class ComViewCoordinators extends AppCompatActivity implements ComCoordinatorsAdapter.ComCoordinatorsAction {
 
     private Toolbar toolbar;
     ProgressDialog progressDialog;
@@ -47,14 +47,13 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
 
     private LottieAnimationView emptyLottie;
     private RecyclerView recyclerView;
-    private ComInternsAdapter adapter;
-    private List<ComInterns> internsList;
+    private ComCoordinatorsAdapter adapter;
+    private List<ComCoordinator> coordinatorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_com_view_interns);
         setupWindowInsets();
         //setting up the status bar
         getWindow().setStatusBarColor(getResources().getColor(R.color.deepTeal));
@@ -71,34 +70,31 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
 
     private void initializeData() {
         //set up action bar
-        toolbar = findViewById(R.id.com_view_interns_toolbar);
+        toolbar = findViewById(R.id.com_view_coordinators_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Interns");
+        getSupportActionBar().setTitle("Coordinators");
         toolbar.setNavigationIcon(R.drawable.ic_back);
 
         progressDialog = new ProgressDialog(this);
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
 
         emptyLottie = findViewById(R.id.empty_lottie);
-        recyclerView = findViewById(R.id.com_interns_rv);
+        recyclerView = findViewById(R.id.com_coordinators_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        internsList = new ArrayList<>();
-        adapter = new ComInternsAdapter(this, internsList, this);
+        coordinatorList = new ArrayList<>();
+        adapter = new ComCoordinatorsAdapter(this, coordinatorList, this);
         recyclerView.setAdapter(adapter);
 
-        fetchInterns();
+        fetchCoordinators();
     }
-
 
     private void setupListeners() {
 
     }
 
-    private void fetchInterns() {
-        String syID = sharedPreferences.getString("sy_id", null);
-        String comId = sharedPreferences.getString("com_id", null);
-        String url = Constants.API_BASE_URL + "/company/get-interns/" + comId + "/" + syID;
+    private void fetchCoordinators() {
+        String url = Constants.API_BASE_URL + "/company/get-coordinator";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -106,33 +102,28 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
                 response -> {
                     if (response != null && response.length() > 0) {
                         emptyLottie.setVisibility(View.GONE);
-                        internsList.clear();
+                        coordinatorList.clear();
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject obj = response.getJSONObject(i);
 
-                                String studID = obj.getString("stud_id");
-                                String studName = obj.getString("stud_name");
+                                String coordinatorId = obj.getString("stud_id");
+                                String name = obj.getString("stud_name");
                                 String department = obj.getString("department");
-                                String studImage = obj.getString("stud_image");
-                                String imageUrl = Constants.API_BASE_URL + "/" + studImage;
-                                String deployedDate = obj.getString("deployed_date");
-                                String trainingDuration = obj.getString("training_duration");
-                                String hoursRendered = obj.getString("hours_rendered");
-                                String progress = obj.getString("progress");
+                                String image = obj.getString("stud_image");
 
-                                internsList.add(new ComInterns(studID, studName, department, imageUrl, deployedDate, trainingDuration, hoursRendered, progress));
+                                coordinatorList.add(new ComCoordinator(coordinatorId, name, department, image));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(this, "Error parsing data", Toast.LENGTH_SHORT).show();
                             }
                         }
-                        adapter.notifyDataSetChanged();
+
                     } else {
                         emptyLottie.setVisibility(View.VISIBLE);
-                        internsList.clear();
-                        adapter.notifyDataSetChanged();
+                        coordinatorList.clear();
                     }
+                    adapter.notifyDataSetChanged();
                 },
                 error -> {
                     Toast.makeText(this, "Failed to fetch interns", Toast.LENGTH_SHORT).show();
@@ -142,13 +133,15 @@ public class ComViewInterns extends AppCompatActivity implements ComInternsAdapt
     }
 
     @Override
-    public void onViewInterns(String studID, String studName) {
-        Intent intent = new Intent(this, ComShowIntern.class);
-        intent.putExtra("stud_id", studID);
+    public void onViewCoordinator(String coordinatorId, String coordinatorName) {
+        Intent intent = new Intent(this, ComMessageCoordinator.class);
+        intent.putExtra("coordinator_id", coordinatorId);
+        intent.putExtra("coordinator_name", coordinatorName);
         startActivity(intent);
     }
 
     private void setupWindowInsets() {
+        setContentView(R.layout.activity_com_view_coordinators);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

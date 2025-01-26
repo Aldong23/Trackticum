@@ -13,6 +13,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.trackticum.activities.ComStudConversation;
+import com.example.trackticum.activities.ComViewCoordinators;
 import com.example.trackticum.activities.SplashScreen;
 import com.example.trackticum.activities.StudAnnouncementList;
 import com.example.trackticum.activities.StudLogin;
@@ -65,15 +67,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         Intent intent;
-        if (type.equals("announcement")) {
-            intent = new Intent(this, StudAnnouncementList.class); // Replace with your Announcement activity
-        } else if (type.equals("weekly_report")) {
-            intent = new Intent(this, StudViewWeekly.class); // Replace with your Announcement activity
-        } else if(type.equals("student_profile")){
-            intent = new Intent(this, StudMainActivity.class);
-            intent.putExtra("notification_type", type);
-        } else {
-            intent = new Intent(this, StudLogin.class);
+        switch (type) {
+            case "announcement":
+                //for student announcement
+                intent = new Intent(this, StudAnnouncementList.class);
+                break;
+            case "weekly_report":
+                //for student weekly report
+                intent = new Intent(this, StudViewWeekly.class);
+                break;
+            case "student_message":
+                //If student send a message to company
+                intent = new Intent(this, ComStudConversation.class);
+                break;
+            case "user_message":
+                //If Coordinator send a message to company
+                intent = new Intent(this, ComViewCoordinators.class);
+                break;
+            case "student_profile":
+                // for student fragment profile
+                intent = new Intent(this, StudMainActivity.class);
+                intent.putExtra("notification_type", type);
+                break;
+            default:
+                intent = new Intent(this, StudLogin.class);
+                break;
         }
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

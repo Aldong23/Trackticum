@@ -31,7 +31,7 @@ public class ComInternsAdapter extends RecyclerView.Adapter<ComInternsAdapter.Co
     }
 
     public interface ComInternsAction {
-        void onViewInterns(String studID);
+        void onViewInterns(String studID, String studName);
     }
 
     @NonNull
@@ -71,7 +71,7 @@ public class ComInternsAdapter extends RecyclerView.Adapter<ComInternsAdapter.Co
         holder.internsContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actions.onViewInterns(studID);
+                actions.onViewInterns(studID, studName);
             }
         });
     }

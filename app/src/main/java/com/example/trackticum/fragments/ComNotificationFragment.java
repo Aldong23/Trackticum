@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -33,6 +34,10 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.activities.ComStudConversation;
+import com.example.trackticum.activities.ComViewCoordinators;
+import com.example.trackticum.activities.StudAnnouncementList;
+import com.example.trackticum.activities.StudMainActivity;
 import com.example.trackticum.adapters.NotificationAdapter;
 import com.example.trackticum.models.Notification;
 import com.example.trackticum.utils.Constants;
@@ -183,7 +188,13 @@ public class ComNotificationFragment extends Fragment implements NotificationAda
 
     @Override
     public void onClick(String type) {
-
+        if(type.equals("student_message")){
+            Intent intent = new Intent(requireContext(), ComStudConversation.class);
+            startActivity(intent);
+        }else if(type.equals("user_message")){
+            Intent intent = new Intent(requireContext(), ComViewCoordinators.class);
+            startActivity(intent);
+        }
     }
 
     @Override

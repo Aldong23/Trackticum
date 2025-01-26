@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +35,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.activities.ComMessageCoordinator;
+import com.example.trackticum.activities.ComViewCoordinators;
+import com.example.trackticum.activities.ComViewInterns;
 import com.example.trackticum.activities.StudAnnouncementList;
+import com.example.trackticum.activities.StudMessageCom;
+import com.example.trackticum.activities.StudMessageCoordinator;
 import com.example.trackticum.activities.StudShowCompany;
 import com.example.trackticum.activities.StudShowWeekly;
 import com.example.trackticum.activities.StudViewWeekly;
@@ -64,7 +70,7 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
     private RecyclerView recyclerView;
     private StudCompaniesAdapter adapter;
     private List<StudCompanies> companiesList;
-    private ConstraintLayout companyDetails;
+    private ScrollView companyDetails;
 
     //for latest announcement
     ConstraintLayout annContainer;
@@ -74,7 +80,7 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
     //widget for Company Details
     private TextView comNameTV, comDepartment, studStatusTV, studDeployedTV, comAddressTV, comSupervisorTV, comContactTV;
 
-    private String companyId, isApproved;
+    private String companyId, companyName, isApproved, coodinatorId, coordinatorName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -203,11 +209,11 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 String comName = jsonObject.getString("company_name");
                 String comDep = jsonObject.getString("department_assigned");
                 String studStatus = jsonObject.getString("status");
-                String stud_deployed_date = jsonObject.getString("deployed_date");
+                String stud_deployed_date = jsonObject.getString("formatted_deployed_date");
                 String comAddress = jsonObject.getString("company_address");
                 String supervisor = jsonObject.getString("supervisor");
                 String comContact = jsonObject.getString("company_contact");
-
+                companyName = comName;
                 if (!comId.equalsIgnoreCase("null")) {
                     comNameTV.setText(comName);
                     comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
@@ -256,9 +262,13 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 String stud_id = studDetails.getString("id");
                 String company_id = studDetails.getString("company_id");
                 String is_approved = studDetails.getString("is_approve");
+                String coordinator_id = studDetails.getString("user_id");
+                String coordinator_name = studDetails.getString("user_name");
 
                 companyId = company_id;
                 isApproved = is_approved;
+                coodinatorId = coordinator_id;
+                coordinatorName = coordinator_name;
 
             } catch (JSONException e) {
                 Toast.makeText(requireContext(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
@@ -374,8 +384,25 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
         if (id == R.id.refresh) {
             fetchStudDetails();
-        }
+            return true;
+        } else if(id == R.id.coordinator){
+            Intent intent = new Intent(requireContext(), StudMessageCoordinator.class);
+            intent.putExtra("coordinator_id", coodinatorId);
+            intent.putExtra("coordinator_name", coordinatorName);
+            startActivity(intent);
+            return true;
+        } else if(id == R.id.company){
+            if(companyId != null || !companyId.equals("null")){
+                Intent intent = new Intent(requireContext(), StudMessageCom.class);
+                intent.putExtra("company_id", companyId);
+                intent.putExtra("company_name", companyName);
+                startActivity(intent);
+            }else{
+                Toast.makeText(requireActivity(), "No company found!", Toast.LENGTH_SHORT).show();
+            }
 
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -80,7 +80,8 @@
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/message_scroll"
                 android:layout_width="0dp"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
+                android:maxHeight="300dp"
                 android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="@+id/divider2"
                 app:layout_constraintStart_toStartOf="@+id/divider2"

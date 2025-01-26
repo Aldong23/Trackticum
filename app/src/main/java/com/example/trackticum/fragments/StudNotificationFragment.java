@@ -193,6 +193,8 @@ public class StudNotificationFragment extends Fragment implements NotificationAd
             startActivity(intent);
         }else if(type.equals("student_profile")){
             ((StudMainActivity) requireActivity()).setSelectedBottomMenu(R.id.profile);
+        }else if(type.equals("message")){
+            ((StudMainActivity) requireActivity()).setSelectedBottomMenu(R.id.home);
         }
     }
 

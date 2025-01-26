@@ -38,6 +38,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.StudEditProfile;
 import com.example.trackticum.activities.StudManageSkills;
+import com.example.trackticum.activities.StudPostRequirements;
 import com.example.trackticum.activities.StudPreRequirements;
 import com.example.trackticum.activities.StudRequirements;
 import com.example.trackticum.activities.StudShowDtr;
@@ -170,6 +171,13 @@ public class StudProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        viewPostRequirement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), StudPostRequirements.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchStudAndComDetails() {
@@ -222,21 +230,32 @@ public class StudProfileFragment extends Fragment {
                             .into(studImageIV);
                 }
 
-                if(comId.equals("null") || comId.isEmpty()){
+                if (comId == null || comId.isEmpty() || comId.equals("null")) {
                     viewDtrButton.setVisibility(View.GONE);
                     viewWeeklyReportBTN.setVisibility(View.GONE);
-                }else{
+                    viewPreReqBTN.setVisibility(View.GONE);
+                    viewPostRequirement.setVisibility(View.GONE);
+                } else {
                     viewPreReqBTN.setVisibility(View.VISIBLE);
-                    if(studStatus.equalsIgnoreCase("For Approval")) {
+                    if (studStatus.equalsIgnoreCase("For Approval")) {
                         viewDtrButton.setVisibility(View.GONE);
                         viewWeeklyReportBTN.setVisibility(View.GONE);
                         viewPostRequirement.setVisibility(View.GONE);
-                    } else {
+                    } else if (studStatus.equalsIgnoreCase("Ongoing")) {
+                        viewDtrButton.setVisibility(View.VISIBLE);
+                        viewWeeklyReportBTN.setVisibility(View.VISIBLE);
+                        viewPostRequirement.setVisibility(View.GONE);
+                    } else if (studStatus.equalsIgnoreCase("Completed")) {
                         viewDtrButton.setVisibility(View.VISIBLE);
                         viewWeeklyReportBTN.setVisibility(View.VISIBLE);
                         viewPostRequirement.setVisibility(View.VISIBLE);
+                    } else {
+                        viewDtrButton.setVisibility(View.GONE);
+                        viewWeeklyReportBTN.setVisibility(View.GONE);
+                        viewPostRequirement.setVisibility(View.GONE);
                     }
                 }
+
             } catch (JSONException e) {
                 Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
             }

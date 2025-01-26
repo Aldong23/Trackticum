@@ -58,4 +58,5 @@ dependencies {
     implementation ("com.github.yuriy-budiyev:code-scanner:2.3.0")
     implementation ("com.karumi:dexter:6.2.3")
     implementation ("com.itextpdf:itextpdf:5.5.13")
+    implementation ("com.pusher:pusher-java-client:2.4.4")
 }

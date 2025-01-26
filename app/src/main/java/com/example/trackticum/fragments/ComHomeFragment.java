@@ -37,6 +37,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
 import com.example.trackticum.activities.ComManageJoboffer;
 import com.example.trackticum.activities.ComShowApplicants;
+import com.example.trackticum.activities.ComStudConversation;
+import com.example.trackticum.activities.ComViewCoordinators;
 import com.example.trackticum.activities.ComViewInterns;
 import com.example.trackticum.adapters.ComApplicantsAdapter;
 import com.example.trackticum.adapters.StudCompaniesAdapter;
@@ -372,8 +374,15 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         if (id == R.id.refresh) {
             getLatestSchoolYear();
             return true;
+        } else if(id == R.id.coordinators){
+            Intent intent = new Intent(getActivity(), ComViewCoordinators.class);
+            startActivity(intent);
+            return true;
+        } else if(id == R.id.students){
+            Intent intent = new Intent(getActivity(), ComStudConversation.class);
+            startActivity(intent);
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

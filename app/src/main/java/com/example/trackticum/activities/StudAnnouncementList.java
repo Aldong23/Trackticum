@@ -35,6 +35,12 @@ import com.example.trackticum.adapters.AnnouncementAdapter;
 import com.example.trackticum.models.Activities;
 import com.example.trackticum.models.Announcements;
 import com.example.trackticum.utils.Constants;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.channel.PusherEvent;
+import com.pusher.client.channel.SubscriptionEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;

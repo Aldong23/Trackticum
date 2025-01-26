@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/pageGrey"
-    tools:context=".activities.StudViewPreRequirement">
+    tools:context=".activities.StudViewPostRequirement">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/stud_view_requirements_toolbar"
