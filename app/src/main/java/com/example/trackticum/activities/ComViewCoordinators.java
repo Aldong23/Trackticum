@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsetsController;
@@ -25,13 +28,15 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.trackticum.R;
+import com.example.trackticum.adapters.ComCoordinatorConversationAdapter;
 import com.example.trackticum.adapters.ComCoordinatorsAdapter;
-import com.example.trackticum.adapters.ComInternsAdapter;
 import com.example.trackticum.models.ComCoordinator;
-import com.example.trackticum.models.ComInterns;
+import com.example.trackticum.models.ComCoordinatorConversation;
 import com.example.trackticum.utils.Constants;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,16 +44,23 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComViewCoordinators extends AppCompatActivity implements ComCoordinatorsAdapter.ComCoordinatorsAction {
+public class ComViewCoordinators extends AppCompatActivity implements ComCoordinatorsAdapter.ComCoordinatorsAction, ComCoordinatorConversationAdapter.ComCoordinatorConversationAction {
 
     private Toolbar toolbar;
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
 
+    private Handler handler = new Handler();
+    private Runnable workRunnable;
+
     private LottieAnimationView emptyLottie;
     private RecyclerView recyclerView;
-    private ComCoordinatorsAdapter adapter;
+    private ComCoordinatorsAdapter coordinatorAdapter;
     private List<ComCoordinator> coordinatorList;
+    private ComCoordinatorConversationAdapter conversationAdapter;
+    private List<ComCoordinatorConversation> conversationList;
+
+    TextInputEditText searchET;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,23 +90,53 @@ public class ComViewCoordinators extends AppCompatActivity implements ComCoordin
         progressDialog = new ProgressDialog(this);
         sharedPreferences = this.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
 
+        searchET = findViewById(R.id.search_filter);
         emptyLottie = findViewById(R.id.empty_lottie);
         recyclerView = findViewById(R.id.com_coordinators_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         coordinatorList = new ArrayList<>();
-        adapter = new ComCoordinatorsAdapter(this, coordinatorList, this);
-        recyclerView.setAdapter(adapter);
+        coordinatorAdapter = new ComCoordinatorsAdapter(this, coordinatorList, this);
 
-        fetchCoordinators();
+        conversationList = new ArrayList<>();
+        conversationAdapter = new ComCoordinatorConversationAdapter(this, conversationList, this);
+
+        fetchConversation();
     }
 
     private void setupListeners() {
+        searchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (workRunnable != null) {
+                    handler.removeCallbacks(workRunnable); // Cancel any previous scheduled run
+                }
+                workRunnable = () -> {
+                    if (charSequence.length() > 0) {
+                        fetchCoordinators(charSequence);
+                    } else {
+                        fetchConversation();
+                    }
+                };
+                handler.postDelayed(workRunnable, 500);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
-    private void fetchCoordinators() {
-        String url = Constants.API_BASE_URL + "/company/get-coordinator";
+    private void fetchCoordinators(CharSequence charSequence) {
+        recyclerView.setAdapter(coordinatorAdapter);
+
+        String url = Constants.API_BASE_URL + "/company/get-coordinator/" + charSequence;
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -108,7 +150,7 @@ public class ComViewCoordinators extends AppCompatActivity implements ComCoordin
                                 JSONObject obj = response.getJSONObject(i);
 
                                 String coordinatorId = obj.getString("stud_id");
-                                String name = obj.getString("stud_name");
+                                String name = obj.getString("name");
                                 String department = obj.getString("department");
                                 String image = obj.getString("stud_image");
 
@@ -123,21 +165,105 @@ public class ComViewCoordinators extends AppCompatActivity implements ComCoordin
                         emptyLottie.setVisibility(View.VISIBLE);
                         coordinatorList.clear();
                     }
-                    adapter.notifyDataSetChanged();
+                    coordinatorAdapter.notifyDataSetChanged();
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to fetch interns", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to fetch", Toast.LENGTH_SHORT).show();
                 });
 
         queue.add(jsonArrayRequest);
     }
 
+    private void fetchConversation() {
+        recyclerView.setAdapter(conversationAdapter);
+
+        String comId = sharedPreferences.getString("com_id", null);
+        String url = Constants.API_BASE_URL + "/company/get-coordinator-convo/" + comId;
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    if (response != null && response.length() > 0) {
+                        emptyLottie.setVisibility(View.GONE);
+                        conversationList.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject obj = response.getJSONObject(i);
+
+                                String messageId = obj.getString("message_id");
+                                String userId = obj.getString("user_id");
+                                String userName = obj.getString("user_name");
+                                String lastMessage = obj.getString("last_message");
+                                String image = obj.getString("user_image");
+                                String imageUrl = Constants.API_BASE_URL + "/" + image;
+                                String seen = obj.getString("is_unseen");
+
+                                conversationList.add(new ComCoordinatorConversation(messageId, userId, userName, lastMessage, imageUrl, seen));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        conversationAdapter.notifyDataSetChanged();
+                    } else {
+                        emptyLottie.setVisibility(View.VISIBLE);
+                        conversationList.clear();
+                        conversationAdapter.notifyDataSetChanged();
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch", Toast.LENGTH_SHORT).show();
+                });
+
+        queue.add(jsonArrayRequest);
+
+    }
+
+    private void redirectToMessaging(String userId, String userName) {
+        Intent intent = new Intent(this, ComMessageCoordinator.class);
+        intent.putExtra("coordinator_id", userId);
+        intent.putExtra("coordinator_name", userName);
+        startActivity(intent);
+    }
+
+    private void readConversation(String messageId) {
+        String comId = sharedPreferences.getString("com_id", null);
+
+        String url = Constants.API_BASE_URL + "/company/read-user-convo/" + comId + "/" + messageId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    // Handle the API response
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        String status = jsonResponse.getString("status");
+
+                        if (status.equals("error")) {
+                            Toast.makeText(this, "Failed to mark message as read", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    // Handle errors
+                    Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
+        Volley.newRequestQueue(this).add(stringRequest);
+    }
+
     @Override
     public void onViewCoordinator(String coordinatorId, String coordinatorName) {
-        Intent intent = new Intent(this, ComMessageCoordinator.class);
-        intent.putExtra("coordinator_id", coordinatorId);
-        intent.putExtra("coordinator_name", coordinatorName);
-        startActivity(intent);
+        redirectToMessaging(coordinatorId, coordinatorName);
+    }
+
+    @Override
+    public void onViewConversation(String messageId, String userId, String userName) {
+        readConversation(messageId);
+        redirectToMessaging(userId, userName);
     }
 
     private void setupWindowInsets() {
@@ -157,6 +283,12 @@ public class ComViewCoordinators extends AppCompatActivity implements ComCoordin
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchConversation();
     }
 
     @Override
