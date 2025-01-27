@@ -185,10 +185,4 @@ public class StudPreRequirements extends AppCompatActivity implements StudPreReq
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

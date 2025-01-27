@@ -832,10 +832,4 @@ public class ComShowDtr extends AppCompatActivity implements StudDtrAdapter.Stud
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

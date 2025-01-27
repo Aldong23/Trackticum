@@ -166,10 +166,4 @@ public class ComStudWeekly extends AppCompatActivity implements WeeklyReportAdap
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

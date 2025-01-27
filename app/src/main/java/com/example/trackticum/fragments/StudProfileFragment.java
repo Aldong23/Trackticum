@@ -186,81 +186,83 @@ public class StudProfileFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/student/get-studcom-details/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
+            if (isAdded()) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-                String comId = jsonObject.getString("company_id");
-                String studImageUrl = jsonObject.getString("image_url");
-                String studFname = jsonObject.getString("firstname");
-                String studLname = jsonObject.getString("lastname");
-                String studMinitial = jsonObject.getString("middle_initial");
-                String studName = studFname + " " + studMinitial + " " + studLname;
-                String stud_no = jsonObject.getString("student_number");
-                String isApproved = jsonObject.getString("is_approve");
-                String schoolDepartment = jsonObject.getString("college_name");
-                String studEmail = jsonObject.getString("email");
-                String isVerified = jsonObject.getString("is_verified");
-                String studContact = jsonObject.getString("contact");
-                String studGender = jsonObject.getString("gender");
-                String studBirthday = jsonObject.getString("formatted_birthday");
-                String studAge = calculateAge(jsonObject.getString("birthday"));
-                String studAddress = jsonObject.getString("address");
-                String studStatus = jsonObject.getString("status");
+                    String comId = jsonObject.getString("company_id");
+                    String studImageUrl = jsonObject.getString("image_url");
+                    String studFname = jsonObject.getString("firstname");
+                    String studLname = jsonObject.getString("lastname");
+                    String studMinitial = jsonObject.getString("middle_initial");
+                    String studName = studFname + " " + studMinitial + " " + studLname;
+                    String stud_no = jsonObject.getString("student_number");
+                    String isApproved = jsonObject.getString("is_approve");
+                    String schoolDepartment = jsonObject.getString("college_name");
+                    String studEmail = jsonObject.getString("email");
+                    String isVerified = jsonObject.getString("is_verified");
+                    String studContact = jsonObject.getString("contact");
+                    String studGender = jsonObject.getString("gender");
+                    String studBirthday = jsonObject.getString("formatted_birthday");
+                    String studAge = calculateAge(jsonObject.getString("birthday"));
+                    String studAddress = jsonObject.getString("address");
+                    String studStatus = jsonObject.getString("status");
 
-                //students details
-                studNameTV.setText(studName);
-                studNoTV.setText(stud_no);
-                studApproveTV.setText(isApproved.equals("1") ? "Approved" : "Not Approved");
-                studDepTV.setText(!schoolDepartment.equals("null") ? schoolDepartment : "N/A");
-                studEmailTV.setText(!studEmail.equals("null") ? studEmail : "N/A");
-                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
-                studContactTV.setText(!studContact.equals("null") ? studContact : "N/A");
-                studGenderTV.setText(studGender.toLowerCase());
-                studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");
-                studAgeTV.setText(studAge);
-                studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
+                    //students details
+                    studNameTV.setText(studName);
+                    studNoTV.setText(stud_no);
+                    studApproveTV.setText(isApproved.equals("1") ? "Approved" : "Not Approved");
+                    studDepTV.setText(!schoolDepartment.equals("null") ? schoolDepartment : "N/A");
+                    studEmailTV.setText(!studEmail.equals("null") ? studEmail : "N/A");
+                    statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
+                    studContactTV.setText(!studContact.equals("null") ? studContact : "N/A");
+                    studGenderTV.setText(studGender.toLowerCase());
+                    studBirthdayTV.setText(!studBirthday.equals("null") ? studBirthday : "N/A");
+                    studAgeTV.setText(studAge);
+                    studAddressTV.setText(!studAddress.equals("null") ? studAddress : "N/A");
 
-                if (!studImageUrl.isEmpty()) {
-                    Picasso.get()
-                            .load(studImageUrl)
-                            .placeholder(R.drawable.img_placeholder)
-                            .error(R.drawable.img_placeholder)
-                            .resize(500, 500)
-                            .centerCrop()
-                            .into(studImageIV);
-                }
-
-                if (comId == null || comId.isEmpty() || comId.equals("null")) {
-                    viewDtrButton.setVisibility(View.GONE);
-                    viewWeeklyReportBTN.setVisibility(View.GONE);
-                    viewPreReqBTN.setVisibility(View.GONE);
-                    viewPostRequirement.setVisibility(View.GONE);
-                } else {
-                    viewPreReqBTN.setVisibility(View.VISIBLE);
-                    if (studStatus.equalsIgnoreCase("For Approval")) {
-                        viewDtrButton.setVisibility(View.GONE);
-                        viewWeeklyReportBTN.setVisibility(View.GONE);
-                        viewPostRequirement.setVisibility(View.GONE);
-                    } else if (studStatus.equalsIgnoreCase("Ongoing")) {
-                        viewDtrButton.setVisibility(View.VISIBLE);
-                        viewWeeklyReportBTN.setVisibility(View.VISIBLE);
-                        viewPostRequirement.setVisibility(View.GONE);
-                    } else if (studStatus.equalsIgnoreCase("Completed")) {
-                        viewDtrButton.setVisibility(View.VISIBLE);
-                        viewWeeklyReportBTN.setVisibility(View.VISIBLE);
-                        viewPostRequirement.setVisibility(View.VISIBLE);
-                    } else {
-                        viewDtrButton.setVisibility(View.GONE);
-                        viewWeeklyReportBTN.setVisibility(View.GONE);
-                        viewPostRequirement.setVisibility(View.GONE);
+                    if (!studImageUrl.isEmpty()) {
+                        Picasso.get()
+                                .load(studImageUrl)
+                                .placeholder(R.drawable.img_placeholder)
+                                .error(R.drawable.img_placeholder)
+                                .resize(500, 500)
+                                .centerCrop()
+                                .into(studImageIV);
                     }
-                }
 
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                    if (comId == null || comId.isEmpty() || comId.equals("null")) {
+                        viewDtrButton.setVisibility(View.GONE);
+                        viewWeeklyReportBTN.setVisibility(View.GONE);
+                        viewPreReqBTN.setVisibility(View.GONE);
+                        viewPostRequirement.setVisibility(View.GONE);
+                    } else {
+                        viewPreReqBTN.setVisibility(View.VISIBLE);
+                        if (studStatus.equalsIgnoreCase("For Approval")) {
+                            viewDtrButton.setVisibility(View.GONE);
+                            viewWeeklyReportBTN.setVisibility(View.GONE);
+                            viewPostRequirement.setVisibility(View.GONE);
+                        } else if (studStatus.equalsIgnoreCase("Ongoing")) {
+                            viewDtrButton.setVisibility(View.VISIBLE);
+                            viewWeeklyReportBTN.setVisibility(View.VISIBLE);
+                            viewPostRequirement.setVisibility(View.GONE);
+                        } else if (studStatus.equalsIgnoreCase("Completed")) {
+                            viewDtrButton.setVisibility(View.VISIBLE);
+                            viewWeeklyReportBTN.setVisibility(View.VISIBLE);
+                            viewPostRequirement.setVisibility(View.VISIBLE);
+                        } else {
+                            viewDtrButton.setVisibility(View.GONE);
+                            viewWeeklyReportBTN.setVisibility(View.GONE);
+                            viewPostRequirement.setVisibility(View.GONE);
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                }
             }
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
@@ -281,39 +283,37 @@ public class StudProfileFragment extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        try {
-                            // Clear the existing views in jobsContainer
-                            skillsContainer.removeAllViews();
+                        if (isAdded()) {
+                            try {
+                                skillsContainer.removeAllViews();
 
-                            // Loop through the job offers in the response
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject obj = response.getJSONObject(i);
-                                int skillID = obj.getInt("id");
-                                String skillTitle = obj.getString("name");
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject obj = response.getJSONObject(i);
+                                    int skillID = obj.getInt("id");
+                                    String skillTitle = obj.getString("name");
 
-                                // Create TextView for each job offer
-                                TextView jobTextView = new TextView(requireActivity());
-                                jobTextView.setText(skillTitle);
-                                jobTextView.setPadding(16, 8, 16, 8);
-                                jobTextView.setBackgroundResource(R.drawable.job_offer_style);
-                                jobTextView.setTextColor(Color.BLACK);
+                                    TextView jobTextView = new TextView(requireActivity());
+                                    jobTextView.setText(skillTitle);
+                                    jobTextView.setPadding(16, 8, 16, 8);
+                                    jobTextView.setBackgroundResource(R.drawable.job_offer_style);
+                                    jobTextView.setTextColor(Color.BLACK);
 
-                                Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
-                                jobTextView.setTypeface(customFont);
+                                    Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
+                                    jobTextView.setTypeface(customFont);
 
-                                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                                        FlexboxLayout.LayoutParams.WRAP_CONTENT,
-                                        FlexboxLayout.LayoutParams.WRAP_CONTENT
-                                );
-                                params.setMargins(2, 2, 2, 2);
-                                jobTextView.setLayoutParams(params);
+                                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                                            FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                                            FlexboxLayout.LayoutParams.WRAP_CONTENT
+                                    );
+                                    params.setMargins(2, 2, 2, 2);
+                                    jobTextView.setLayoutParams(params);
 
-                                // Add the TextView to the container
-                                skillsContainer.addView(jobTextView);
+                                    skillsContainer.addView(jobTextView);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(requireContext(), "Error processing skills", Toast.LENGTH_SHORT).show();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(requireContext(), "Error processing skills", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -394,11 +394,5 @@ public class StudProfileFragment extends Fragment {
             fetchSkills();
             prefs.edit().putBoolean("refreshSkills", false).apply();
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
 }

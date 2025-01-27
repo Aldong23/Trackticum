@@ -218,9 +218,4 @@ public class ComScanQrFragment extends Fragment {
         super.onPause();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
-    }
 }

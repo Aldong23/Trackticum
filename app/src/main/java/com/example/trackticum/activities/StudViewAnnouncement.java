@@ -309,10 +309,4 @@ public class StudViewAnnouncement extends AppCompatActivity implements AnnAttach
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

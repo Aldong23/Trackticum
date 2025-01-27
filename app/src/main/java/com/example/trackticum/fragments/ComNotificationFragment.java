@@ -118,35 +118,39 @@ public class ComNotificationFragment extends Fragment implements NotificationAda
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        notificationList.clear();
-                        if (response != null && response.length() > 0){
-                            emptyLA.setVisibility(View.GONE);
-                            for (int i = 0; i < response.length(); i++) {
-                                try {
-                                    JSONObject obj = response.getJSONObject(i);
-                                    String notificationID = obj.getString("id");
-                                    String senderName = obj.getString("sender_name");
-                                    String message = obj.getString("message");
-                                    String type = obj.getString("type");
-                                    String date = obj.getString("formatted_date");
-                                    String isRead = obj.getString("is_read");
+                        if (isAdded()){
+                            notificationList.clear();
+                            if (response != null && response.length() > 0){
+                                emptyLA.setVisibility(View.GONE);
+                                for (int i = 0; i < response.length(); i++) {
+                                    try {
+                                        JSONObject obj = response.getJSONObject(i);
+                                        String notificationID = obj.getString("id");
+                                        String senderName = obj.getString("sender_name");
+                                        String message = obj.getString("message");
+                                        String type = obj.getString("type");
+                                        String date = obj.getString("formatted_date");
+                                        String isRead = obj.getString("is_read");
 
-                                    notificationList.add(new Notification(notificationID, senderName, message, type, date, isRead));
-                                } catch (JSONException e) {
-                                    Toast.makeText(requireContext(), "Failed to fetch Notification", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
+                                        notificationList.add(new Notification(notificationID, senderName, message, type, date, isRead));
+                                    } catch (JSONException e) {
+                                        Toast.makeText(requireContext(), "Failed to fetch Notification", Toast.LENGTH_SHORT).show();
+                                        e.printStackTrace();
+                                    }
                                 }
+                            }else{
+                                emptyLA.setVisibility(View.VISIBLE);
                             }
-                        }else{
-                            emptyLA.setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(requireContext(), "Failed to fetch Notification", Toast.LENGTH_SHORT).show();
+                        if (isAdded()){
+                            Toast.makeText(requireContext(), "Failed to fetch Notification", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -257,12 +261,5 @@ public class ComNotificationFragment extends Fragment implements NotificationAda
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
 }

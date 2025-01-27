@@ -305,10 +305,4 @@ public class ComStudConversation extends AppCompatActivity implements ComInterns
         fetchConversation();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

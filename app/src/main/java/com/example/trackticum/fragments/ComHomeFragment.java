@@ -135,35 +135,39 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
-                    if (response != null && response.length() > 0) {
-                        emptyLottie.setVisibility(View.GONE);
-                        applicantsList.clear();
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject obj = response.getJSONObject(i);
+                    if(isAdded()){
+                        if (response != null && response.length() > 0) {
+                            emptyLottie.setVisibility(View.GONE);
+                            applicantsList.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject obj = response.getJSONObject(i);
 
-                                String applicantsID = obj.getString("applicants_id");
-                                String studID = obj.getString("stud_id");
-                                String studName = obj.getString("stud_name");
-                                String department = obj.getString("department");
-                                String studImage = obj.getString("stud_image");
-                                String imageUrl = Constants.API_BASE_URL + "/" + studImage;
+                                    String applicantsID = obj.getString("applicants_id");
+                                    String studID = obj.getString("stud_id");
+                                    String studName = obj.getString("stud_name");
+                                    String department = obj.getString("department");
+                                    String studImage = obj.getString("stud_image");
+                                    String imageUrl = Constants.API_BASE_URL + "/" + studImage;
 
-                                applicantsList.add(new ComApplicants(applicantsID, studID, studName, department, imageUrl));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Toast.makeText(requireContext(), "Error parsing data", Toast.LENGTH_SHORT).show();
+                                    applicantsList.add(new ComApplicants(applicantsID, studID, studName, department, imageUrl));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(requireContext(), "Error parsing data", Toast.LENGTH_SHORT).show();
+                                }
                             }
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            emptyLottie.setVisibility(View.VISIBLE);
+                            applicantsList.clear();
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        emptyLottie.setVisibility(View.VISIBLE);
-                        applicantsList.clear();
-                        adapter.notifyDataSetChanged();
                     }
                 },
                 error -> {
-                    Toast.makeText(requireContext(), "Failed to fetch applicants", Toast.LENGTH_SHORT).show();
+                    if(isAdded()){
+                        Toast.makeText(requireContext(), "Failed to fetch applicants", Toast.LENGTH_SHORT).show();
+                    }
                 });
 
         queue.add(jsonArrayRequest);
@@ -178,29 +182,33 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
 
         // API Request
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                // Parse the JSON response
-                JSONObject jsonObject = new JSONObject(response);
-                boolean status = jsonObject.getBoolean("status");
+            if(isAdded()){
+                try {
+                    // Parse the JSON response
+                    JSONObject jsonObject = new JSONObject(response);
+                    boolean status = jsonObject.getBoolean("status");
 
-                if (status) {
-                    // Extract data from "data" object
-                    JSONObject data = jsonObject.getJSONObject("data");
+                    if (status) {
+                        // Extract data from "data" object
+                        JSONObject data = jsonObject.getJSONObject("data");
 
-                    String numInterns = data.getString("num_interns");
-                    String availableSlots = data.getString("available_slots");
-                    String moaDuration = data.optString("moa_duration", "No MOA available");
+                        String numInterns = data.getString("num_interns");
+                        String availableSlots = data.getString("available_slots");
+                        String moaDuration = data.optString("moa_duration", "No MOA available");
 
-                    numInternsTV.setText(numInterns);
-                    availabelSlotTV.setText(availableSlots);
-                    moaDurationTV.setText(moaDuration);
+                        numInternsTV.setText(numInterns);
+                        availabelSlotTV.setText(availableSlots);
+                        moaDurationTV.setText(moaDuration);
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
                 }
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
             }
+
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
-            Toast.makeText(requireActivity(), "Failed to fetch dashboard details", Toast.LENGTH_SHORT).show();
+            if(isAdded()){
+                Toast.makeText(requireActivity(), "Failed to fetch dashboard details", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Add request to queue
@@ -327,28 +335,31 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
+            if(isAdded()){
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-                boolean status = jsonObject.getBoolean("status");
+                    boolean status = jsonObject.getBoolean("status");
 
-                if (status) {
-                    String school_year_id = jsonObject.getString("id");
+                    if (status) {
+                        String school_year_id = jsonObject.getString("id");
 
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("sy_id", school_year_id);
-                    editor.apply();
-                    Toast.makeText(requireContext(), "All data has been refreshed.", Toast.LENGTH_SHORT).show();
-                    fetchApplicants();
-                    fetchComDashboard();
-                    progressDialog.dismiss();
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("sy_id", school_year_id);
+                        editor.apply();
+                        Toast.makeText(requireContext(), "All data has been refreshed.", Toast.LENGTH_SHORT).show();
+                        fetchApplicants();
+                        fetchComDashboard();
+                        progressDialog.dismiss();
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireContext(), "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
             }
+
         }, error -> {
-            Log.e("Error Fetching Announcement", error.toString());
+
         });
 
         queue.add(request);
@@ -397,10 +408,5 @@ public class ComHomeFragment extends Fragment implements ComApplicantsAdapter.Co
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
-    }
 
 }

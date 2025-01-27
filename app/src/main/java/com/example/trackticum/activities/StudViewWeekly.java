@@ -247,9 +247,4 @@ public class StudViewWeekly extends AppCompatActivity implements WeeklyReportAda
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
 }

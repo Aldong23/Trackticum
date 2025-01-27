@@ -222,10 +222,4 @@ public class ComEditTIme extends AppCompatActivity {
             return insets;
         });
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
 }

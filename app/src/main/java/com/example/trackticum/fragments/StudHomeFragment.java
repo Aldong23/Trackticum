@@ -161,35 +161,39 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        companiesList.clear();
-                        if (response != null && response.length() > 0){
-                            notApprovedLottie.setVisibility(View.GONE);
-                            for (int i = 0; i < response.length(); i++) {
-                                try {
-                                    JSONObject obj = response.getJSONObject(i);
-                                    String comID = obj.getString("id");
-                                    String comLogo = obj.getString("image");
-                                    String imageUrl = Constants.API_BASE_URL + "/" + comLogo;
-                                    String comName = obj.getString("name");
-                                    String comAddress = obj.getString("address");
-                                    String comDescription = obj.getString("description");
-                                    String comSlot = obj.getString("slot");
+                        if(isAdded()){
+                            companiesList.clear();
+                            if (response != null && response.length() > 0){
+                                notApprovedLottie.setVisibility(View.GONE);
+                                for (int i = 0; i < response.length(); i++) {
+                                    try {
+                                        JSONObject obj = response.getJSONObject(i);
+                                        String comID = obj.getString("id");
+                                        String comLogo = obj.getString("image");
+                                        String imageUrl = Constants.API_BASE_URL + "/" + comLogo;
+                                        String comName = obj.getString("name");
+                                        String comAddress = obj.getString("address");
+                                        String comDescription = obj.getString("description");
+                                        String comSlot = obj.getString("slot");
 
-                                    companiesList.add(new StudCompanies(comID, comName, imageUrl, comAddress, comDescription, comSlot));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                        companiesList.add(new StudCompanies(comID, comName, imageUrl, comAddress, comDescription, comSlot));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                            }else{
+                                notApprovedLottie.setVisibility(View.VISIBLE);
                             }
-                        }else{
-                            notApprovedLottie.setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(requireContext(), "Failed to fetch companies", Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Toast.makeText(requireContext(), "Failed to fetch companies", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -202,50 +206,53 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/student/get-studcom-details/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
+            if (isAdded()) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-                String comId = jsonObject.getString("company_id");
-                String comName = jsonObject.getString("company_name");
-                String comDep = jsonObject.getString("department_assigned");
-                String studStatus = jsonObject.getString("status");
-                String stud_deployed_date = jsonObject.getString("formatted_deployed_date");
-                String comAddress = jsonObject.getString("company_address");
-                String supervisor = jsonObject.getString("supervisor");
-                String comContact = jsonObject.getString("company_contact");
-                companyName = comName;
-                if (!comId.equalsIgnoreCase("null")) {
-                    comNameTV.setText(comName);
-                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
-                    studStatusTV.setText(studStatus);
-                    studDeployedTV.setText(!stud_deployed_date.equals("null") ? stud_deployed_date : "N/A");
-                    comAddressTV.setText(comAddress);
-                    comSupervisorTV.setText(supervisor);
-                    comContactTV.setText(comContact);
-                } else {
-                    comNameTV.setText("No Details");
-                    comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
-                    studStatusTV.setText("No Details");
-                    studDeployedTV.setText("No Details");
-                    comAddressTV.setText("No Details");
-                    comSupervisorTV.setText("No Details");
-                    comContactTV.setText("No Details");
+                    String comId = jsonObject.getString("company_id");
+                    String comName = jsonObject.getString("company_name");
+                    String comDep = jsonObject.getString("department_assigned");
+                    String studStatus = jsonObject.getString("status");
+                    String stud_deployed_date = jsonObject.getString("formatted_deployed_date");
+                    String comAddress = jsonObject.getString("company_address");
+                    String supervisor = jsonObject.getString("supervisor");
+                    String comContact = jsonObject.getString("company_contact");
+                    companyName = comName;
+                    if (!comId.equalsIgnoreCase("null")) {
+                        comNameTV.setText(comName);
+                        comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
+                        studStatusTV.setText(studStatus);
+                        studDeployedTV.setText(!stud_deployed_date.equals("null") ? stud_deployed_date : "N/A");
+                        comAddressTV.setText(comAddress);
+                        comSupervisorTV.setText(supervisor);
+                        comContactTV.setText(comContact);
+                    } else {
+                        comNameTV.setText("No Details");
+                        comDepartment.setText(!comDep.equals("null") ? comDep : "N/A");
+                        studStatusTV.setText("No Details");
+                        studDeployedTV.setText("No Details");
+                        comAddressTV.setText("No Details");
+                        comSupervisorTV.setText("No Details");
+                        comContactTV.setText("No Details");
+                    }
+
+                    if(!studStatus.equalsIgnoreCase("For Approval")) {
+                        companyDetails.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        companyDetails.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        fetchCompanies();
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
                 }
-
-                if(!studStatus.equalsIgnoreCase("For Approval")) {
-                    companyDetails.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    companyDetails.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    fetchCompanies();
-                }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
             }
+
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
@@ -256,25 +263,27 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject studDetails = new JSONObject(response);
+            if(isAdded()){
+                try {
+                    JSONObject studDetails = new JSONObject(response);
 
-                String stud_id = studDetails.getString("id");
-                String company_id = studDetails.getString("company_id");
-                String is_approved = studDetails.getString("is_approve");
-                String coordinator_id = studDetails.getString("user_id");
-                String coordinator_name = studDetails.getString("user_name");
+                    String stud_id = studDetails.getString("id");
+                    String company_id = studDetails.getString("company_id");
+                    String is_approved = studDetails.getString("is_approve");
+                    String coordinator_id = studDetails.getString("user_id");
+                    String coordinator_name = studDetails.getString("user_name");
 
-                companyId = company_id;
-                isApproved = is_approved;
-                coodinatorId = coordinator_id;
-                coordinatorName = coordinator_name;
+                    companyId = company_id;
+                    isApproved = is_approved;
+                    coodinatorId = coordinator_id;
+                    coordinatorName = coordinator_name;
 
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    Toast.makeText(requireContext(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                }
             }
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
@@ -288,29 +297,31 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
+            if(isAdded()){
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-                boolean status = jsonObject.getBoolean("status");
+                    boolean status = jsonObject.getBoolean("status");
 
-                if (status) {
-                    String annID = jsonObject.getString("id");
-                    String annTitle = jsonObject.getString("title");
-                    String annMessage = jsonObject.getString("message");
-                    String annDate = jsonObject.getString("date");
+                    if (status) {
+                        String annID = jsonObject.getString("id");
+                        String annTitle = jsonObject.getString("title");
+                        String annMessage = jsonObject.getString("message");
+                        String annDate = jsonObject.getString("date");
 
-                    annDateTV.setText(annDate);
-                    annMessageTv.setText(Html.fromHtml(annMessage, Html.FROM_HTML_MODE_LEGACY));
-                    annContainer.setVisibility(View.VISIBLE);
-                } else {
-                    annContainer.setVisibility(View.GONE);
+                        annDateTV.setText(annDate);
+                        annMessageTv.setText(Html.fromHtml(annMessage, Html.FROM_HTML_MODE_LEGACY));
+                        annContainer.setVisibility(View.VISIBLE);
+                    } else {
+                        annContainer.setVisibility(View.GONE);
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireContext(), "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error Fetching Announcement", Toast.LENGTH_SHORT).show();
             }
         }, error -> {
-            Log.e("Error Fetching Announcement", error.toString());
+
         });
 
         queue.add(request);
@@ -324,30 +335,33 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
 
         // API Request
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                // Parse the JSON response
-                JSONObject jsonObject = new JSONObject(response);
-                boolean status = jsonObject.getBoolean("status");
+            if (isAdded()) {
+                try {
+                    // Parse the JSON response
+                    JSONObject jsonObject = new JSONObject(response);
+                    boolean status = jsonObject.getBoolean("status");
 
-                if (status) {
-                    // Extract data from "data" object
-                    JSONObject data = jsonObject.getJSONObject("data");
-                    String hoursRendered = data.getString("hours_rendered");
-                    String hoursToBeRendered = data.getString("hours_to_be_rendered");
-                    String trainingDuration = data.getString("training_duration");
+                    if (status) {
+                        // Extract data from "data" object
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        String hoursRendered = data.getString("hours_rendered");
+                        String hoursToBeRendered = data.getString("hours_to_be_rendered");
+                        String trainingDuration = data.getString("training_duration");
 
-                    // Set the values to the TextViews
-                    hoursRenderedTV.setText(hoursRendered + " hrs");
-                    hoursToBeRenderedTV.setText(hoursToBeRendered + " hrs");
-                    trainingDurationTV.setText(trainingDuration + " hrs");
+                        // Set the values to the TextViews
+                        hoursRenderedTV.setText(hoursRendered + " hrs");
+                        hoursToBeRenderedTV.setText(hoursToBeRendered + " hrs");
+                        trainingDurationTV.setText(trainingDuration + " hrs");
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
             }
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
-            Toast.makeText(requireActivity(), "Failed to fetch dashboard details", Toast.LENGTH_SHORT).show();
+            if (isAdded()) {
+                Toast.makeText(requireActivity(), "Failed to fetch dashboard details", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Add request to queue
@@ -406,9 +420,4 @@ public class StudHomeFragment extends Fragment implements StudCompaniesAdapter.S
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
-    }
 }

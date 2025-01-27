@@ -96,27 +96,30 @@ public class StudQrFragment extends Fragment {
         String url = Constants.API_BASE_URL + "/student/generate-qr-code/" + studID;
 
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            progressDialog.dismiss();
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                boolean isSuccess = jsonObject.getBoolean("success");
-                String message = jsonObject.getString("message");
+            if (isAdded()) {
+                progressDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    boolean isSuccess = jsonObject.getBoolean("success");
+                    String message = jsonObject.getString("message");
 
-                if (isSuccess) {
-                    String qrContent = jsonObject.getString("qr_code");
-                    generateQR(qrContent); // Assuming this is a method to display/generate the QR image
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                    if (isSuccess) {
+                        String qrContent = jsonObject.getString("qr_code");
+                        generateQR(qrContent); // Assuming this is a method to display/generate the QR image
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireContext(), "Error parsing QR response", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error parsing QR response", Toast.LENGTH_SHORT).show();
             }
         }, error -> {
-            progressDialog.dismiss();
-            Toast.makeText(requireContext(), "Failed to generate QR. Please try again.", Toast.LENGTH_SHORT).show();
-            Log.e("Error Fetching QR", error.toString());
+            if (isAdded()) {
+                progressDialog.dismiss();
+                Toast.makeText(requireContext(), "Failed to generate QR. Please try again.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         queue.add(request);
@@ -137,7 +140,6 @@ public class StudQrFragment extends Fragment {
 //            qrCodeIV.setBorderWidth((float) 0);
             qrCodeIV.setImageBitmap(bitmap);
 
-
         } catch (Exception e) {
             Toast.makeText(requireActivity(), "Error generating QR code", Toast.LENGTH_SHORT).show();
         }
@@ -148,28 +150,25 @@ public class StudQrFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/student/get-stud-details/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
+            if (isAdded()) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-                String qrContent = jsonObject.getString("qr_code");
+                    String qrContent = jsonObject.getString("qr_code");
 
-                if(!qrContent.isEmpty() && !qrContent.equalsIgnoreCase("null")){
-                    generateQR(qrContent);
+                    if(!qrContent.isEmpty() && !qrContent.equalsIgnoreCase("null")){
+                        generateQR(qrContent);
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireContext(), "Error Fetching QR", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error Fetching QR", Toast.LENGTH_SHORT).show();
             }
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
-    }
 }

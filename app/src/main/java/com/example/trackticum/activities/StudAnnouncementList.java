@@ -161,9 +161,4 @@ public class StudAnnouncementList extends AppCompatActivity implements Announcem
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
 }

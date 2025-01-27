@@ -95,20 +95,22 @@ public class StudSettingsFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/student/get-stud-verified/" + studID;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject comDetails = new JSONObject(response);
+            if (isAdded()) {
+                try {
+                    JSONObject comDetails = new JSONObject(response);
 
-                String email = comDetails.getString("email");
-                String isVerified = comDetails.getString("is_verified");
+                    String email = comDetails.getString("email");
+                    String isVerified = comDetails.getString("is_verified");
 
-                emailET.setText(!email.equals("null") ? email : "");
-                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
+                    emailET.setText(!email.equals("null") ? email : "");
+                    statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
 
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                }
             }
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
@@ -366,11 +368,5 @@ public class StudSettingsFragment extends Fragment {
             prefs.edit().putBoolean("checkIfVerified", false).apply();
         }
 
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
     }
 }

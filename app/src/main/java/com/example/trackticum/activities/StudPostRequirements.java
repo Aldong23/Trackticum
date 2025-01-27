@@ -186,10 +186,4 @@ public class StudPostRequirements extends AppCompatActivity implements StudPostR
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

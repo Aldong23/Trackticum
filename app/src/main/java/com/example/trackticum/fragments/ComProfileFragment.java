@@ -139,52 +139,55 @@ public class ComProfileFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/company/get-com-details/" + comId;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject comDetails = new JSONObject(response);
+            if(isAdded()){
+                try {
+                    JSONObject comDetails = new JSONObject(response);
 
-                int comID = comDetails.getInt("id");
-                String imageUrl = comDetails.getString("image_url");
-                String comName = comDetails.getString("name");
-                String comNature = comDetails.getString("nature");
-                String comLocation = comDetails.getString("address");
-                String comEmail = comDetails.getString("email");
-                String isVerified = comDetails.getString("is_verified");
-                String comSlot = comDetails.getString("slot");
-                String comContact = comDetails.getString("contact");
-                String comBg = comDetails.getString("description");
-                String amTimeIn = comDetails.getString("am_time_in");
-                String amTimeOut = comDetails.getString("am_time_out");
-                String amInOut = amTimeIn + " - " + amTimeOut;
-                String pmTimeIn = comDetails.getString("pm_time_in");
-                String pmTimeOut = comDetails.getString("pm_time_out");
-                String pmInOut = pmTimeIn + " - " + pmTimeOut;
+                    int comID = comDetails.getInt("id");
+                    String imageUrl = comDetails.getString("image_url");
+                    String comName = comDetails.getString("name");
+                    String comNature = comDetails.getString("nature");
+                    String comLocation = comDetails.getString("address");
+                    String comEmail = comDetails.getString("email");
+                    String isVerified = comDetails.getString("is_verified");
+                    String comSlot = comDetails.getString("slot");
+                    String comContact = comDetails.getString("contact");
+                    String comBg = comDetails.getString("description");
+                    String amTimeIn = comDetails.getString("am_time_in");
+                    String amTimeOut = comDetails.getString("am_time_out");
+                    String amInOut = amTimeIn + " - " + amTimeOut;
+                    String pmTimeIn = comDetails.getString("pm_time_in");
+                    String pmTimeOut = comDetails.getString("pm_time_out");
+                    String pmInOut = pmTimeIn + " - " + pmTimeOut;
 
-                comNameTV.setText(comName);
-                comNatureTV.setText(comNature);
-                comLocationTV.setText(comLocation);
-                comEmailTV.setText(comEmail);
-                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
-                comSlotTV.setText(!comSlot.equals("null") ? comSlot : "0");
-                comContactTV.setText(comContact);
-                comBgTV.setText(Html.fromHtml(comBg, Html.FROM_HTML_MODE_LEGACY));
-                amTimeInOutTV.setText(!amInOut.equals("null - null") ? amInOut : "N/A");
-                pmTimeInOutTV.setText(!pmInOut.equals("null - null") ? pmInOut : "N/A");
+                    comNameTV.setText(comName);
+                    comNatureTV.setText(comNature);
+                    comLocationTV.setText(comLocation);
+                    comEmailTV.setText(comEmail);
+                    statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
+                    comSlotTV.setText(!comSlot.equals("null") ? comSlot : "0");
+                    comContactTV.setText(comContact);
+                    comBgTV.setText(Html.fromHtml(comBg, Html.FROM_HTML_MODE_LEGACY));
+                    amTimeInOutTV.setText(!amInOut.equals("null - null") ? amInOut : "N/A");
+                    pmTimeInOutTV.setText(!pmInOut.equals("null - null") ? pmInOut : "N/A");
 
-                if (!imageUrl.isEmpty()) {
-                    Picasso.get()
-                            .load(imageUrl)
-                            .placeholder(R.drawable.img_placeholder)
-                            .error(R.drawable.img_placeholder)
-                            .resize(500, 500)
-                            .centerCrop()
-                            .into(comLogoIV);
+                    if (!imageUrl.isEmpty()) {
+                        Picasso.get()
+                                .load(imageUrl)
+                                .placeholder(R.drawable.img_placeholder)
+                                .error(R.drawable.img_placeholder)
+                                .resize(500, 500)
+                                .centerCrop()
+                                .into(comLogoIV);
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
             }
+
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
@@ -205,47 +208,50 @@ public class ComProfileFragment extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        try {
-                            // Clear the existing views in jobsContainer
-                            jobsContainer.removeAllViews();
+                        if (isAdded()){
+                            try {
+                                // Clear the existing views in jobsContainer
+                                jobsContainer.removeAllViews();
 
-                            // Loop through the job offers in the response
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject obj = response.getJSONObject(i);
-                                int jobOfferId = obj.getInt("id");
-                                String jobTitle = obj.getString("name");
+                                // Loop through the job offers in the response
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject obj = response.getJSONObject(i);
+                                    int jobOfferId = obj.getInt("id");
+                                    String jobTitle = obj.getString("name");
 
-                                // Create TextView for each job offer
-                                TextView jobTextView = new TextView(requireActivity());
-                                jobTextView.setText(jobTitle);
-                                jobTextView.setPadding(16, 8, 16, 8);
-                                jobTextView.setBackgroundResource(R.drawable.job_offer_style);
-                                jobTextView.setTextColor(Color.BLACK);
+                                    // Create TextView for each job offer
+                                    TextView jobTextView = new TextView(requireActivity());
+                                    jobTextView.setText(jobTitle);
+                                    jobTextView.setPadding(16, 8, 16, 8);
+                                    jobTextView.setBackgroundResource(R.drawable.job_offer_style);
+                                    jobTextView.setTextColor(Color.BLACK);
 
-                                Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
-                                jobTextView.setTypeface(customFont);
+                                    Typeface customFont = ResourcesCompat.getFont(requireContext(), R.font.sf_rounded_regular);
+                                    jobTextView.setTypeface(customFont);
 
-                                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                                        FlexboxLayout.LayoutParams.WRAP_CONTENT,
-                                        FlexboxLayout.LayoutParams.WRAP_CONTENT
-                                );
-                                params.setMargins(2, 2, 2, 2);
-                                jobTextView.setLayoutParams(params);
+                                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                                            FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                                            FlexboxLayout.LayoutParams.WRAP_CONTENT
+                                    );
+                                    params.setMargins(2, 2, 2, 2);
+                                    jobTextView.setLayoutParams(params);
 
-                                // Add the TextView to the container
-                                jobsContainer.addView(jobTextView);
+                                    // Add the TextView to the container
+                                    jobsContainer.addView(jobTextView);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(requireContext(), "Error processing job offers", Toast.LENGTH_SHORT).show();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(requireContext(), "Error processing job offers", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        Toast.makeText(requireContext(), "Failed to fetch job offers", Toast.LENGTH_SHORT).show();
+                        if(isAdded()){
+                            Toast.makeText(requireContext(), "Failed to fetch job offers", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
@@ -299,9 +305,4 @@ public class ComProfileFragment extends Fragment {
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
-    }
 }

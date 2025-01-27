@@ -291,10 +291,4 @@ public class ComViewCoordinators extends AppCompatActivity implements ComCoordin
         fetchConversation();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Volley.newRequestQueue(this).cancelAll(request -> true);
-    }
-
 }

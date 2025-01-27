@@ -93,20 +93,22 @@ public class ComSettingsFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = Constants.API_BASE_URL + "/company/get-com-verified/" + comId;
         StringRequest request = new StringRequest(Request.Method.GET, url, response -> {
-            try {
-                JSONObject comDetails = new JSONObject(response);
+            if(isAdded()){
+                try {
+                    JSONObject comDetails = new JSONObject(response);
 
-                String email = comDetails.getString("email");
-                String isVerified = comDetails.getString("is_verified");
+                    String email = comDetails.getString("email");
+                    String isVerified = comDetails.getString("is_verified");
 
-                emailET.setText(email);
-                statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
+                    emailET.setText(email);
+                    statusIV.setVisibility(isVerified.equals("1") ? View.VISIBLE : View.GONE);
 
-            } catch (JSONException e) {
-                Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    Toast.makeText(requireActivity(), "Error Fetching Details", Toast.LENGTH_SHORT).show();
+                }
             }
         }, error -> {
-            Log.e("Error Fetching Details", error.toString());
+
         });
 
         queue.add(request);
@@ -347,9 +349,4 @@ public class ComSettingsFragment extends Fragment {
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Volley.newRequestQueue(requireContext()).cancelAll(request -> true);
-    }
 }
