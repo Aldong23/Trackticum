@@ -538,7 +538,7 @@ public class ComStudShowWeekly extends AppCompatActivity {
                 fiveColumnTable.addCell(emptyCommentsCell);
 
                 // Merge 5 columns with bottom border
-                PdfPCell bottomBorderCell1 = new PdfPCell(new Phrase(" "));
+                PdfPCell bottomBorderCell1 = new PdfPCell(new Phrase(!supervisorComment.equals("null") ? supervisorComment : " "));
                 bottomBorderCell1.setColspan(5);
                 bottomBorderCell1.setBorder(Rectangle.BOTTOM);
                 fiveColumnTable.addCell(bottomBorderCell1);
