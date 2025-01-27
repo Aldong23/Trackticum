@@ -57,6 +57,7 @@
             <Button
                 android:id="@+id/download_btn"
                 style="?attr/materialIconButtonFilledTonalStyle"
+                android:backgroundTint="@color/lighterTeal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"

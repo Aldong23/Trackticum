@@ -133,7 +133,7 @@
 
                     <Button
                         android:id="@+id/view_dtr_btn"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        style="@style/CustomTonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
@@ -141,7 +141,7 @@
 
                     <Button
                         android:id="@+id/view_weekly_btn"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        style="@style/CustomTonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
@@ -149,7 +149,7 @@
 
                     <Button
                         android:id="@+id/midterm_evaluation_btn"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        style="@style/CustomTonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
@@ -157,7 +157,7 @@
 
                     <Button
                         android:id="@+id/final_evaluation_btn"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        style="@style/CustomTonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Final Evaluations" />

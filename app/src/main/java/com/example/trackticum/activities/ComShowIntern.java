@@ -189,7 +189,7 @@ public class ComShowIntern extends AppCompatActivity {
                 String studName = studFname + " " + studMinitial + " " + studLname;
                 String stud_no = jsonObject.getString("student_number");
                 String stud_status = jsonObject.getString("status");
-                String stud_deployed_date = jsonObject.getString("deployed_date");
+                String stud_deployed_date = jsonObject.getString("formatted_deployed_date");
                 String schoolDepartment = jsonObject.getString("college_name");
                 String studEmail = jsonObject.getString("email");
                 String studContact = jsonObject.getString("contact");

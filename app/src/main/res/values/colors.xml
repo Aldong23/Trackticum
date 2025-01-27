@@ -6,6 +6,8 @@
     <!--  Custom Color theme  -->
     <color name="deepTeal">#145673</color>
     <color name="darkerTeal">#0D3C4E</color>
+    <color name="lighterTeal">#CCE4DF</color>
+    <color name="whiteTeal">#EFF3F6</color>
     <color name="orange">#FF9800</color>
     <color name="darkerOrange">#E68900</color>
 

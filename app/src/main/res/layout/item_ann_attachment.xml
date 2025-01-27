@@ -27,7 +27,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Loading"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/status_IV"
         app:layout_constraintEnd_toStartOf="@+id/download_btn"
         app:layout_constraintStart_toEndOf="@+id/status_IV"

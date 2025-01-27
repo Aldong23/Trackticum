@@ -6,6 +6,7 @@ import android.view.WindowInsetsController;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -47,6 +48,8 @@ public class ComMainActivity extends AppCompatActivity {
         } else {
             replaceFragment(new ComHomeFragment());
         }
+
+        binding.bottomNavigation.setItemActiveIndicatorColor(ContextCompat.getColorStateList(this, R.color.lighterTeal));
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
 

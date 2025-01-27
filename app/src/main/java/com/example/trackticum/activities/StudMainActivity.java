@@ -7,6 +7,7 @@ import android.view.WindowInsetsController;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,6 +39,8 @@ public class StudMainActivity extends AppCompatActivity {
 
         binding = ActivityStudMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.bottomNavigation.setItemActiveIndicatorColor(ContextCompat.getColorStateList(this, R.color.lighterTeal));
 
         String notificationType = getIntent().getStringExtra("notification_type");
         if (notificationType != null) {

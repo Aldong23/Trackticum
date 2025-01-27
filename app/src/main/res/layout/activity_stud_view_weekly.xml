@@ -38,6 +38,7 @@
             android:layout_margin="16dp"
             android:text="Add"
             app:icon="@drawable/ic_plus"
+            android:backgroundTint="@color/lighterTeal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
